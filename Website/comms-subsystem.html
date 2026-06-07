@@ -4,32 +4,48 @@
 <meta charset="UTF-8">
 <title>Communications (COMMS) Subsystem</title>
 <style>
-:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
-body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
-body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
-details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
-summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+:root{--bg:#fdf6f0;--card-bg:#fff9f5;--card-bg-nested:#fff0e8;--text:#5c4a3a;--text-light:#8a7a6a;--border:#f0ddd0;--th-bg:#ffe8dd;--link:#e8786a;--link-hover:#d46050;--note:#a09080;--hr:#f0e0d5;--shadow:rgba(232,120,106,.12);--accent:#f4a261;--accent2:#7bc4b0;--accent3:#c9a0dc;--accent4:#88b0e0}
+body.dark{--bg:#1a1020;--card-bg:#2a1f30;--card-bg-nested:#3a2f40;--text:#e8d8e0;--text-light:#b0a0b0;--border:#4a3a50;--th-bg:#3a2f40;--link:#f0a0b0;--link-hover:#e88090;--note:#a090a8;--hr:#4a3a50;--shadow:rgba(240,160,176,.15);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
+html{scroll-behavior:smooth}
+body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+::selection{background:color-mix(in srgb,var(--link) 30%,transparent)}
+details,.section-card{background:var(--card-bg);margin:14px 0;padding:18px 26px;border-radius:18px;box-shadow:0 3px 12px var(--shadow);border:2px solid var(--border);transition:border-color .2s,box-shadow .2s,transform .15s}
+details{border:2px solid var(--border);box-shadow:0 3px 12px var(--shadow)}
+details details{margin:8px 0 4px 8px;padding:14px 18px;background:var(--card-bg-nested);border:1.5px solid var(--border);box-shadow:none;border-radius:14px}
+.section-card:hover{transform:translateY(-2px);border-color:var(--link);box-shadow:0 6px 20px var(--shadow)}
+summary{font-weight:700;cursor:pointer;font-size:1.05em;padding:6px 0;transition:color .15s;letter-spacing:-.01em}
+summary:hover{color:var(--link)}
 details details summary{font-size:1em}
-a{color:var(--link)}
-h2{margin-top:24px}
-table{width:100%;border-collapse:collapse;margin:10px 0}
-th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
-th{background:var(--th-bg);font-weight:bold}
-.note{color:var(--note);font-style:italic;font-size:0.9em}
-.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
-.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
-.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
-.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
-.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
-.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
-.calc-out div{font-size:0.95em}
-.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
-.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
-.calc-reset:hover{opacity:.8}
-#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
-#toggle-theme:hover{opacity:.8}
-hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+a{color:var(--link);text-decoration:none;transition:all .15s;font-weight:600}
+a:hover{color:var(--link-hover);text-decoration:underline}
+h2{margin-top:28px;font-size:1.3em;border-bottom:3px solid var(--accent);padding-bottom:8px;display:inline-block;border-radius:0 0 3px 3px}
+h3{font-size:1.1em;margin-top:20px;color:var(--text-light)}
+table{width:100%;border-collapse:separate;border-spacing:0;margin:12px 0;font-size:.92em;border-radius:12px;overflow:hidden}
+th,td{border:1px solid var(--border);padding:10px 14px;text-align:left}
+th{background:var(--th-bg);font-weight:700;font-size:.82em;text-transform:uppercase;letter-spacing:.06em;color:var(--text-light)}
+tr:hover td{background:color-mix(in srgb,var(--link) 6%,var(--card-bg))}
+tr:first-child th:first-child{border-top-left-radius:12px}
+tr:first-child th:last-child{border-top-right-radius:12px}
+tr:last-child td:first-child{border-bottom-left-radius:12px}
+tr:last-child td:last-child{border-bottom-right-radius:12px}
+.note{color:var(--note);font-style:italic;font-size:.9em;padding:10px 16px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--card-bg));border-radius:0 10px 10px 0;margin:10px 0}
+.formula{font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;padding:14px 20px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--card-bg-nested)),var(--card-bg-nested));border-left:5px solid var(--accent);border-radius:10px;margin:14px 0;font-size:1.05em;overflow-x:auto;line-height:1.7}
+.calculator{border:2px solid var(--border);border-radius:16px;padding:22px;margin:14px 0;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 4%,var(--card-bg)),var(--card-bg))}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.calc-grid label{font-size:.9em;display:flex;flex-direction:column;gap:2px;font-weight:600}
+.calc-grid input{padding:8px 12px;border:2px solid var(--border);border-radius:10px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:.95em;font-weight:500;transition:border-color .2s,box-shadow .15s}
+.calc-grid input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%,transparent)}
+.calc-out{display:block;padding-top:14px;border-top:2px solid var(--border)}
+.calc-out div{display:flex;flex-wrap:wrap;column-gap:16px;row-gap:4px;margin-bottom:10px;padding:10px 14px;border-left:3px solid var(--accent);border-radius:8px;align-items:baseline}
+.calc-out .calc-f{flex:1 0 45%;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;color:var(--accent);font-size:.9em;font-weight:600}
+.calc-out .calc-s{display:inline;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;color:var(--note);font-size:.84em}
+.calc-out .calc-r{display:inline;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;font-weight:700;color:var(--accent);font-size:.95em;padding-left:4px}
+.calc-reset{padding:8px 20px;background:linear-gradient(135deg,var(--link),var(--link-hover));color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:.85em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;transition:transform .15s,box-shadow .2s;letter-spacing:.02em}
+.calc-reset:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 4px 15px color-mix(in srgb,var(--link) 30%,transparent)}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:8px 18px;background:linear-gradient(135deg,var(--card-bg),color-mix(in srgb,var(--accent) 6%,var(--card-bg)));color:var(--text);border:2px solid var(--border);border-radius:50px;cursor:pointer;font-size:.82em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;z-index:100;transition:all .2s;letter-spacing:.03em}
+#toggle-theme:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px var(--shadow)}
+hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </style>
 </head>
 <body>
@@ -280,6 +296,86 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </details>
 
 <details>
+<summary>Complete Link Budget — Every Variable Explained</summary>
+<p>A link budget accounts for every gain and loss from the transmitter output to the receiver input. Here is each term broken down, with its equation and the physical meaning behind it.</p>
+
+<h3 style="font-size:1em;margin-top:16px">1. Transmit Side</h3>
+<p><strong>EIRP (Effective Isotropic Radiated Power)</strong> — the power that would have to be fed into an isotropic antenna to get the same signal strength in the direction of the receiver.</p>
+<div class="formula">EIRP = P<sub>T</sub> + G<sub>T</sub> − L<sub>feed</sub></div>
+<table>
+<tr><th>Term</th><th>Meaning</th><th>Typical Value</th></tr>
+<tr><td><b>P<sub>T</sub></b></td><td>Transmitter output power at the RF connector (dBm or dBW). For a cubesat, typically 20–30 dBm (0.1–1 W). Power amplifiers are specified at 1 dB compression point — don't operate above it or distortion rises sharply.</td><td>27 dBm (0.5 W)</td></tr>
+<tr><td><b>G<sub>T</sub></b></td><td>Transmit antenna gain (dBi). A patch antenna might give 5 dBi; a helix gives 10–15 dBi; a dish gives 20–50 dBi. The gain is always referenced to an isotropic radiator. Gain is not free — higher gain means a narrower beam, which means tighter pointing requirements.</td><td>5 dBi (patch)</td></tr>
+<tr><td><b>L<sub>feed</sub></b></td><td>Feed and cable losses between the transmitter and the antenna (dB). Coaxial cable at S-band can lose 0.5–2 dB. Connector interfaces add 0.1–0.3 dB each. In space, these losses are permanent — there is no way to fix a loose connector after launch.</td><td>1–3 dB</td></tr>
+</table>
+
+<h3 style="font-size:1em;margin-top:16px">2. Path Loss</h3>
+<p><strong>Free-Space Path Loss (FSL)</strong> — the signal spreads out as it travels, like ripples from a stone dropped in water. The power density drops with the square of distance.</p>
+<div class="formula">FSL = 32.4 + 20·log<sub>10</sub>(f) + 20·log<sub>10</sub>(d)</div>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><b>f</b></td><td>Frequency in MHz. Higher frequencies have shorter wavelengths and therefore higher path loss at the same physical distance. Doubling the frequency adds 6 dB of path loss.</td></tr>
+<tr><td><b>d</b></td><td>Distance in km. For LEO, this is the slant range from spacecraft to ground station at the horizon, not the altitude. At 400 km altitude with a 10° elevation mask, slant range is ~1,200 km. Deep space links can have distances measured in AU (1 AU = 150 million km), where FSL exceeds 250 dB.</td></tr>
+</table>
+<p class="note">The 32.4 constant comes from (4π/c) expressed in dB, where c = 3×10⁸ m/s. The full form is FSL = (4πd/λ)² — the square of the ratio of distance to wavelength.</p>
+
+<p><strong>Atmospheric Loss (L<sub>atm</sub>)</strong> — the atmosphere absorbs RF energy. The absorption comes from oxygen (O₂) and water vapor (H₂O) molecules, each with resonant absorption lines at specific frequencies.</p>
+<table>
+<tr><th>Frequency</th><th>Zenith Loss</th><th>5° Elevation Loss</th><th>Note</th></tr>
+<tr><td>VHF/UHF</td><td>negligible</td><td>&lt;0.5 dB</td><td>Atmosphere is essentially transparent below 1 GHz</td></tr>
+<tr><td>S-band (2.4 GHz)</td><td>~0.03 dB</td><td>~0.3 dB</td><td>Very low absorption — one reason S-band is so popular</td></tr>
+<tr><td>X-band (8.4 GHz)</td><td>~0.04 dB</td><td>~0.5 dB</td><td>Still manageable; starts to become significant below 10° elevation</td></tr>
+<tr><td>Ka-band (32 GHz)</td><td>~0.1 dB</td><td>~1–3 dB</td><td>Rain fade becomes a major factor; need site diversity or fade mitigation</td></tr>
+<tr><td>V-band (60 GHz)</td><td>~15 dB</td><td>extreme</td><td>O₂ resonance at 60 GHz; used only for inter-satellite links</td></tr>
+</table>
+<p>Atmospheric loss varies with elevation angle because the signal passes through more atmosphere at low elevation. The relationship is approximately: L<sub>atm</sub>(θ) = L<sub>zenith</sub> / sin(θ). Most link budgets use a fixed value for a minimum elevation angle (typically 5–10°).</p>
+
+<p><strong>Polarization Mismatch Loss</strong> — when the transmit and receive antennas have different polarizations, some signal power is lost. The loss is:</p>
+<div class="formula">L<sub>pol</sub> = −20·log<sub>10</sub>(|cos(Δθ)|)</div>
+<p>where Δθ is the angle between the transmitted and received polarization vectors. For circular-to-circular with same sense (RHCP→RHCP), loss is near 0 dB. For circular-to-linear, loss is ~3 dB (the circular signal has equal power in both linear components, so half is lost). For orthogonal linear (vertical→horizontal), loss is infinite — no signal gets through. This is why spacecraft almost always use circular polarization: it doesn't matter how the spacecraft tumbles, the ground can still receive the signal, albeit with some rotation loss.</p>
+
+<h3 style="font-size:1em;margin-top:16px">3. Receive Side</h3>
+<p><strong>Ground Station Gain (G<sub>rx</sub>)</strong> — the receiving antenna's gain. For a parabolic dish, gain is related to the antenna aperture area:</p>
+<div class="formula">G = η · (πD/λ)²</div>
+<p>where η is the aperture efficiency (typically 50–70%), D is the dish diameter, and λ is the wavelength. A 3 m dish at S-band has ~30 dBi of gain. Antenna gain is reciprocal — the same antenna has the same gain whether transmitting or receiving.</p>
+
+<p><strong>Pointing Loss (L<sub>point</sub>)</strong> — when the antenna beam is not perfectly aligned, the received signal is reduced. For a Gaussian beam approximation:</p>
+<div class="formula">L<sub>point</sub> = 12 · (θ<sub>err</sub> / θ<sub>HPBW</sub>)²</div>
+<p>where θ<sub>err</sub> is the pointing error and θ<sub>HPBW</sub> is the half-power beamwidth. For an omnidirectional antenna, pointing loss is essentially zero. For a high-gain dish, even a fraction of a degree of error can cause several dB of loss. Typical values: 0.5–2 dB for moderate pointing accuracy.</p>
+
+<h3 style="font-size:1em;margin-top:16px">4. System Noise Temperature</h3>
+<p>Noise temperature is how RF engineers quantify noise power. The total system noise temperature is the sum of all noise sources, referenced to the receiver input:</p>
+<div class="formula">T<sub>sys</sub> = T<sub>ant</sub> + T<sub>LNA</sub> + T<sub>cable</sub></div>
+<p>Each term represents the noise contributed by a different part of the system:</p>
+<table>
+<tr><th>Component</th><th>Typical Value</th><th>What It Is</th></tr>
+<tr><td><b>T<sub>ant</sub></b> (Antenna noise)</td><td>10–150 K</td><td>Noise picked up by the antenna from the sky, ground, and cosmic background. At S-band looking at cold sky, ~10–30 K. Looking at the warm Earth (290 K), much higher. The antenna noise temperature varies with pointing direction and frequency.</td></tr>
+<tr><td><b>T<sub>LNA</sub></b> (LNA noise)</td><td>30–100 K</td><td>The Low-Noise Amplifier adds noise of its own. LNA noise figure (NF) is related to noise temperature by: T = 290 · (10<sup>NF/10</sup> − 1). A 0.5 dB NF LNA has T ≈ 35 K. This is the first amplifier in the chain, so its noise figure dominates the receiver noise budget.</td></tr>
+<tr><td><b>T<sub>cable</sub></b> (Cable loss noise)</td><td>variable</td><td>A lossy cable between the antenna and LNA adds noise proportional to its physical temperature. For a cable with loss L (dB) at physical temperature T<sub>0</sub>: T<sub>cable</sub> = T<sub>0</sub> · (10<sup>L/10</sup> − 1). This is why the LNA should be placed as close to the antenna as possible — any loss before the LNA directly degrades the system noise temperature.</td></tr>
+</table>
+
+<p class="note">The Friis formula for cascaded noise is: T<sub>sys</sub> = T<sub>1</sub> + T<sub>2</sub>/G<sub>1</sub> + T<sub>3</sub>/(G<sub>1</sub>G<sub>2</sub>) + ... where G<sub>i</sub> is the gain of the i-th stage. This shows why the first-stage LNA gain is critical — it suppresses the noise of later stages. A typical LNA has 20–30 dB of gain, making the noise of everything after it negligible.</p>
+
+<h3 style="font-size:1em;margin-top:16px">5. From C/N₀ to Eb/N₀</h3>
+<p>The carrier-to-noise density ratio (C/N₀) tells you the signal quality per Hertz of bandwidth. To get the energy per bit, divide by the data rate:</p>
+<div class="formula">Eb/N₀ = C/N₀ − 10·log<sub>10</sub>(R<sub>b</sub>)</div>
+<p>where R<sub>b</sub> is the bit rate in bps. Eb/N₀ is the fundamental metric because it normalizes for data rate — it tells you how much signal energy each bit gets relative to the noise floor. A higher data rate spreads the same energy over more bits, so each bit gets less energy. This is the fundamental trade: higher data rate requires either more transmit power, a higher-gain antenna, or a lower-noise receiver.</p>
+
+<h3 style="font-size:1em;margin-top:16px">6. Bit Error Rate and Required Eb/N₀</h3>
+<p>Each modulation scheme has a known relationship between Eb/N₀ and bit error rate (BER). For coherent BPSK/QPSK:</p>
+<div class="formula">BER = ½ · erfc(√(Eb/N₀))</div>
+<p>where erfc is the complementary error function. Required Eb/N₀ for common modulation/coding combinations:</p>
+<table>
+<tr><th>Modulation</th><th>BER = 10⁻³</th><th>BER = 10⁻⁵</th><th>BER = 10⁻⁷</th></tr>
+<tr><td>BPSK</td><td>6.8 dB</td><td>9.6 dB</td><td>11.3 dB</td></tr>
+<tr><td>QPSK</td><td>6.8 dB</td><td>9.6 dB</td><td>11.3 dB</td></tr>
+<tr><td>8-PSK</td><td>10.5 dB</td><td>13.4 dB</td><td>15.2 dB</td></tr>
+<tr><td>16-QAM</td><td>12.4 dB</td><td>15.5 dB</td><td>17.4 dB</td></tr>
+</table>
+<p>Forward error correction (FEC) coding improves the effective required Eb/N₀ by the coding gain. A rate-1/2 convolutional code gives ~5 dB of coding gain. Turbo codes and LDPC codes can give 7–9 dB, approaching the Shannon limit (the theoretical minimum Eb/N₀ for error-free communication in additive white Gaussian noise).</p>
+</details>
+
+<details>
 <summary>Link Margin</summary>
 <p>Link margin = (actual Eb/N₀) − (required Eb/N₀ for target BER). Positive margin means the link works. Typical guidelines: 3 dB minimum for TT&amp;C links, 5–10 dB for payload data downlinks. Negative margin forces a trade — increase transmitter power, use a higher-gain antenna, improve the modulation/coding scheme, reduce data rate, or upgrade the ground station.</p>
 <p class="note">Implementation margin accounts for uncertainties: hardware performance not matching datasheets, imperfect pointing, aging components, and modeling errors. A typical implementation margin is 2–3 dB. Always include it.</p>
@@ -463,12 +559,12 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
     <label>Target data rate (kbps): <input type="number" id="c_Rreq" value="653" step="50" min="1" max="100000"></label>
   </div>
   <div class="calc-out">
-    <div>EIRP: <span id="c_outEIRP">--</span></div>
-    <div>Free-space path loss: <span id="c_outFSL">--</span></div>
-    <div>P<sub>rx</sub>: <span id="c_outPrx">--</span></div>
-    <div>C/N₀: <span id="c_outCN0">--</span></div>
-    <div>Max bitrate: <span id="c_outRmax">--</span></div>
-    <div>Link margin at target: <span id="c_outMargin">--</span></div>
+    <div><div class="calc-f">EIRP = P<sub>tx</sub> + G<sub>tx</sub> − L<sub>sys</sub></div><div class="calc-s">= <span id="c_subEIRP"></span></div><div class="calc-r">= <span id="c_outEIRP">--</span></div></div>
+    <div><div class="calc-f">FSL = 32.4 + 20·log(f) + 20·log(d)</div><div class="calc-s">= <span id="c_subFSL"></span></div><div class="calc-r">= <span id="c_outFSL">--</span></div></div>
+    <div><div class="calc-f">P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>atm</sub> − L<sub>point</sub></div><div class="calc-s">= <span id="c_subPrx"></span></div><div class="calc-r">= <span id="c_outPrx">--</span></div></div>
+    <div><div class="calc-f">C/N₀ = P<sub>rx(dBW)</sub> + 228.6 − 10·log(T<sub>sys</sub>)</div><div class="calc-s">= <span id="c_subCN0"></span></div><div class="calc-r">= <span id="c_outCN0">--</span></div></div>
+    <div><div class="calc-f">R<sub>max</sub> = 10<sup>((C/N₀ − Eb/N₀ + G<sub>code</sub>)/10)</sup> / 1000</div><div class="calc-s">= <span id="c_subRmax"></span></div><div class="calc-r">= <span id="c_outRmax">--</span></div></div>
+    <div><div class="calc-f">Margin = C/N₀ − Eb/N₀ + G<sub>code</sub> − 10·log(R<sub>target</sub>)</div><div class="calc-s">= <span id="c_subMargin"></span></div><div class="calc-r">= <span id="c_outMargin">--</span></div></div>
   </div>
   <button class="calc-reset" id="c_reset">Reset to Defaults</button>
 </div>
@@ -517,6 +613,12 @@ function calcLink(){
  const CN0=Prx_dBW+228.6-10*Math.log10(Tsys);
  const Rmax_kbps=Math.pow(10,(CN0-EbN0+Gcode)/10)/1000;
  const margin=CN0-EbN0+Gcode-10*Math.log10(Rreq*1000);
+ s('c_subEIRP',Ptx+' + '+Gtx+' − '+Lsys);
+ s('c_subFSL','32.4 + 20·log('+f+') + 20·log('+d+')');
+ s('c_subPrx',EIRP.toFixed(1)+' + '+Grx+' − '+FSL.toFixed(1)+' − '+Latm+' − '+Lpoint);
+ s('c_subCN0',Prx_dBW.toFixed(1)+' + 228.6 − 10·log('+Tsys+')');
+ s('c_subRmax','10^(('+CN0.toFixed(1)+' − '+EbN0+' + '+Gcode+')/10) / 1000');
+ s('c_subMargin',CN0.toFixed(1)+' − '+EbN0+' + '+Gcode+' − 10·log('+(Rreq*1000)+')');
  s('c_outEIRP',EIRP.toFixed(1)+' dBm');
  s('c_outFSL',FSL.toFixed(1)+' dB');
  s('c_outPrx',Prx_dBm.toFixed(1)+' dBm');

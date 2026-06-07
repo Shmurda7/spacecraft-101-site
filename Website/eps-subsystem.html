@@ -4,32 +4,48 @@
 <meta charset="UTF-8">
 <title>Electrical Power Subsystem (EPS)</title>
 <style>
-:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
-body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
-body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
-details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
-summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+:root{--bg:#fdf6f0;--card-bg:#fff9f5;--card-bg-nested:#fff0e8;--text:#5c4a3a;--text-light:#8a7a6a;--border:#f0ddd0;--th-bg:#ffe8dd;--link:#e8786a;--link-hover:#d46050;--note:#a09080;--hr:#f0e0d5;--shadow:rgba(232,120,106,.12);--accent:#f4a261;--accent2:#7bc4b0;--accent3:#c9a0dc;--accent4:#88b0e0}
+body.dark{--bg:#1a1020;--card-bg:#2a1f30;--card-bg-nested:#3a2f40;--text:#e8d8e0;--text-light:#b0a0b0;--border:#4a3a50;--th-bg:#3a2f40;--link:#f0a0b0;--link-hover:#e88090;--note:#a090a8;--hr:#4a3a50;--shadow:rgba(240,160,176,.15);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
+html{scroll-behavior:smooth}
+body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+::selection{background:color-mix(in srgb,var(--link) 30%,transparent)}
+details,.section-card{background:var(--card-bg);margin:14px 0;padding:18px 26px;border-radius:18px;box-shadow:0 3px 12px var(--shadow);border:2px solid var(--border);transition:border-color .2s,box-shadow .2s,transform .15s}
+details{border:2px solid var(--border);box-shadow:0 3px 12px var(--shadow)}
+details details{margin:8px 0 4px 8px;padding:14px 18px;background:var(--card-bg-nested);border:1.5px solid var(--border);box-shadow:none;border-radius:14px}
+.section-card:hover{transform:translateY(-2px);border-color:var(--link);box-shadow:0 6px 20px var(--shadow)}
+summary{font-weight:700;cursor:pointer;font-size:1.05em;padding:6px 0;transition:color .15s;letter-spacing:-.01em}
+summary:hover{color:var(--link)}
 details details summary{font-size:1em}
-a{color:var(--link)}
-h2{margin-top:24px}
-table{width:100%;border-collapse:collapse;margin:10px 0}
-th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
-th{background:var(--th-bg);font-weight:bold}
-.note{color:var(--note);font-style:italic;font-size:0.9em}
-.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
-.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
-.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
-.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
-.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
-.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
-.calc-out div{font-size:0.95em}
-.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
-.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
-.calc-reset:hover{opacity:.8}
-#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
-#toggle-theme:hover{opacity:.8}
-hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+a{color:var(--link);text-decoration:none;transition:all .15s;font-weight:600}
+a:hover{color:var(--link-hover);text-decoration:underline}
+h2{margin-top:28px;font-size:1.3em;border-bottom:3px solid var(--accent);padding-bottom:8px;display:inline-block;border-radius:0 0 3px 3px}
+h3{font-size:1.1em;margin-top:20px;color:var(--text-light)}
+table{width:100%;border-collapse:separate;border-spacing:0;margin:12px 0;font-size:.92em;border-radius:12px;overflow:hidden}
+th,td{border:1px solid var(--border);padding:10px 14px;text-align:left}
+th{background:var(--th-bg);font-weight:700;font-size:.82em;text-transform:uppercase;letter-spacing:.06em;color:var(--text-light)}
+tr:hover td{background:color-mix(in srgb,var(--link) 6%,var(--card-bg))}
+tr:first-child th:first-child{border-top-left-radius:12px}
+tr:first-child th:last-child{border-top-right-radius:12px}
+tr:last-child td:first-child{border-bottom-left-radius:12px}
+tr:last-child td:last-child{border-bottom-right-radius:12px}
+.note{color:var(--note);font-style:italic;font-size:.9em;padding:10px 16px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--card-bg));border-radius:0 10px 10px 0;margin:10px 0}
+.formula{font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;padding:14px 20px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--card-bg-nested)),var(--card-bg-nested));border-left:5px solid var(--accent);border-radius:10px;margin:14px 0;font-size:1.05em;overflow-x:auto;line-height:1.7}
+.calculator{border:2px solid var(--border);border-radius:16px;padding:22px;margin:14px 0;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 4%,var(--card-bg)),var(--card-bg))}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.calc-grid label{font-size:.9em;display:flex;flex-direction:column;gap:2px;font-weight:600}
+.calc-grid input{padding:8px 12px;border:2px solid var(--border);border-radius:10px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:.95em;font-weight:500;transition:border-color .2s,box-shadow .15s}
+.calc-grid input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%,transparent)}
+.calc-out{display:block;padding-top:14px;border-top:2px solid var(--border)}
+.calc-out div{display:flex;flex-wrap:wrap;column-gap:16px;row-gap:4px;margin-bottom:10px;padding:10px 14px;border-left:3px solid var(--accent);border-radius:8px;align-items:baseline}
+.calc-out .calc-f{flex:1 0 45%;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;color:var(--accent);font-size:.9em;font-weight:600}
+.calc-out .calc-s{display:inline;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;color:var(--note);font-size:.84em}
+.calc-out .calc-r{display:inline;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;font-weight:700;color:var(--accent);font-size:.95em;padding-left:4px}
+.calc-reset{padding:8px 20px;background:linear-gradient(135deg,var(--link),var(--link-hover));color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:.85em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;transition:transform .15s,box-shadow .2s;letter-spacing:.02em}
+.calc-reset:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 4px 15px color-mix(in srgb,var(--link) 30%,transparent)}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:8px 18px;background:linear-gradient(135deg,var(--card-bg),color-mix(in srgb,var(--accent) 6%,var(--card-bg)));color:var(--text);border:2px solid var(--border);border-radius:50px;cursor:pointer;font-size:.82em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;z-index:100;transition:all .2s;letter-spacing:.03em}
+#toggle-theme:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px var(--shadow)}
+hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </style>
 </head>
 <body>
@@ -260,6 +276,93 @@ hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
 </details>
 
 <details>
+<summary>Complete Power Budget — Every Variable Explained</summary>
+<p>The power budget is the master spreadsheet that tracks every watt from generation to consumption. Here is each term broken down.</p>
+
+<h3 style="font-size:1em;margin-top:16px">1. Power Equipment List (PEL)</h3>
+<p>The PEL is the foundation of the power budget — it lists every component that draws power, in every operating mode. Each component has four columns:</p>
+<table>
+<tr><th>Component</th><th>Voltage (V)</th><th>Current (A)</th><th>Power (W)</th><th>Duty Cycle</th><th>Notes</th></tr>
+<tr><td>OBC</td><td>3.3</td><td>0.6</td><td>2.0</td><td>100%</td><td>Always on in nominal ops</td></tr>
+<tr><td>ADCS computer</td><td>3.3</td><td>0.3</td><td>1.0</td><td>100%</td><td>Always on for attitude knowledge</td></tr>
+<tr><td>Reaction wheels (×3)</td><td>12</td><td>0.08 each</td><td>3.0 total</td><td>variable</td><td>Peak during slews; average much lower</td></tr>
+<tr><td>Star tracker</td><td>5</td><td>0.2</td><td>1.0</td><td>100%</td><td>Continuous attitude determination</td></tr>
+<tr><td>COMMS receiver</td><td>5</td><td>0.15</td><td>0.75</td><td>100%</td><td>Always listening for commands</td></tr>
+<tr><td>COMMS transmitter</td><td>5</td><td>2.0</td><td>10.0</td><td>~5%</td><td>Only during downlink passes</td></tr>
+<tr><td>Payload camera</td><td>12</td><td>1.25</td><td>15.0</td><td>~10%</td><td>Per orbit imaging window</td></tr>
+<tr><td>EPS housekeeping</td><td>3.3</td><td>0.15</td><td>0.5</td><td>100%</td><td>BMS, MPPT, telemetry collection</td></tr>
+<tr><td>Heaters (survival)</td><td>28</td><td>0.18</td><td>5.0</td><td>~60%</td><td>Thermostat-controlled; duty-cycled</td></tr>
+</table>
+
+<h3 style="font-size:1em;margin-top:16px">2. Harness and Distribution Losses</h3>
+<p>Every wire and connector in the power path has resistance that drops voltage and wastes power as heat. For a wire of length L and cross-sectional area A:</p>
+<div class="formula">R = ρ · L / A</div>
+<p>where ρ is the resistivity of copper (1.68×10⁻⁸ Ω·m). The power lost in the harness is:</p>
+<div class="formula">P<sub>loss</sub> = I² · R</div>
+<p>For a 28 V bus at 2 A over 1 m of 20 AWG wire (R ≈ 0.033 Ω): P<sub>loss</sub> = 4 × 0.033 = 0.13 W per meter (round trip).</p>
+<table>
+<tr><th>Wire Gauge</th><th>Resistance (Ω/m)</th><th>Max Current (A)</th><th>Typical Use</th></tr>
+<tr><td>30 AWG</td><td>0.339</td><td>0.5</td><td>Signal wiring, sensor leads</td></tr>
+<tr><td>24 AWG</td><td>0.084</td><td>2.0</td><td>Low-power component feeds</td></tr>
+<tr><td>22 AWG</td><td>0.053</td><td>3.0</td><td>Medium-power distribution</td></tr>
+<tr><td>20 AWG</td><td>0.033</td><td>5.0</td><td>Main bus, high-current loads</td></tr>
+<tr><td>18 AWG</td><td>0.021</td><td>8.0</td><td>Battery harness, array feeds</td></tr>
+</table>
+<p>Connector contact resistance adds 5–15 mΩ per pin pair. A multi-pin connector carrying 2 A over 10 pins can lose 0.2–0.6 W just at the connector. The total distribution loss is typically 3–8% of the bus power.</p>
+
+<h3 style="font-size:1em;margin-top:16px">3. DC-DC Converter Efficiency Chain</h3>
+<p>Power converters transform raw bus voltage to regulated rails for each subsystem. Each stage has an efficiency that depends on load current, input voltage, and temperature:</p>
+<table>
+<tr><th>Converter Type</th><th>Efficiency</th><th>When Efficiency Drops</th></tr>
+<tr><td>Buck (step-down)</td><td>85–95%</td><td>Low load current (&lt;10% rated), or high step-down ratio</td></tr>
+<tr><td>Boost (step-up)</td><td>82–92%</td><td>High step-up ratio, or input near minimum operating voltage</td></tr>
+<tr><td>SEPIC / buck-boost</td><td>80–88%</td><td>Widest operating range comes at cost of lower peak efficiency</td></tr>
+<tr><td>LDO (linear regulator)</td><td>V<sub>out</sub>/V<sub>in</sub></td><td>Always poor — a 3.3 V rail from 28 V is only 12% efficient</td></tr>
+</table>
+<p>The overall efficiency from array to load can be calculated as a product of cascaded stages:</p>
+<div class="formula">η<sub>total</sub> = η<sub>MPPT</sub> · η<sub>bus</sub> · η<sub>dist</sub> · η<sub>conv</sub></div>
+<p>For example: MPPT at 95% × bus regulator at 92% × distribution at 97% × point-of-load converter at 88% = 74.6% total efficiency. This means every watt at the load requires 1.34 W from the array — a 34% overhead that must be included in the array sizing.</p>
+
+<h3 style="font-size:1em;margin-top:16px">4. Solar Array Degradation Over Time</h3>
+<p>A solar array's power output degrades over the mission due to multiple mechanisms. The end-of-life (EOL) power is always less than the beginning-of-life (BOL) power:</p>
+<div class="formula">P<sub>EOL</sub> = P<sub>BOL</sub> · (1 − D<sub>rad</sub>) · (1 − D<sub>UV</sub>) · (1 − D<sub>therm</sub>) · (1 − D<sub>contam</sub>)</div>
+<table>
+<tr><th>Degradation Factor</th><th>Typical Loss</th><th>Source</th></tr>
+<tr><td><b>D<sub>rad</sub></b> — Radiation damage</td><td>10–25%</td><td>Protons and electrons displace atoms in the solar cell lattice, reducing minority carrier lifetime. The damage is quantified by the 1 MeV electron equivalent fluence. Triple-junction cells are more radiation-tolerant than silicon. Shielding with cover glass (100–300 μm) reduces damage.</td></tr>
+<tr><td><b>D<sub>UV</sub></b> — Ultraviolet darkening</td><td>2–5%</td><td>UV radiation darkens the cover glass and adhesive layers, reducing light transmission. This is most significant in the first few months and stabilizes.</td></tr>
+<tr><td><b>D<sub>therm</sub></b> — Thermal cycling</td><td>1–3%</td><td>Each LEO orbit cycles from −80°C (eclipse) to +80°C (sunlight). The thermal stress causes microcracks in solder joints and cell interconnects, increasing series resistance. After 30,000 cycles, the accumulated damage can be significant.</td></tr>
+<tr><td><b>D<sub>contam</sub></b> — Contamination</td><td>1–5%</td><td>Outgassing from spacecraft materials can deposit a thin film on the array surface. Thruster plumes can also deposit contamination. This reduces the light reaching the cells.</td></tr>
+</table>
+<p>Typical EOL/BOL ratios: 0.85 for a 2-year LEO mission, 0.77 for a 5-year LEO, 0.90 for a 15-year GEO (less radiation at GEO altitude).</p>
+
+<h3 style="font-size:1em;margin-top:16px">5. Battery Charge/Discharge Efficiency</h3>
+<p>Batteries are not perfectly efficient — some energy is lost as heat during charging and discharging. The round-trip efficiency accounts for both:</p>
+<div class="formula">η<sub>RT</sub> = η<sub>charge</sub> · η<sub>discharge</sub></div>
+<table>
+<tr><th>Chemistry</th><th>Charge Efficiency</th><th>Discharge Efficiency</th><th>Round-Trip</th></tr>
+<tr><td>Li-ion (NCA/NMC)</td><td>95–98%</td><td>95–98%</td><td>~90–96%</td></tr>
+<tr><td>LiFePO₄</td><td>96–99%</td><td>96–99%</td><td>~92–98%</td></tr>
+<tr><td>NiCd</td><td>80–90%</td><td>90–95%</td><td>~72–85%</td></tr>
+<tr><td>NiH₂</td><td>85–95%</td><td>90–95%</td><td>~77–90%</td></tr>
+</table>
+<p>The charge efficiency also depends on the C-rate — charging at 1C is less efficient than charging at C/5. For the power budget, the array must supply not just the load power but also recharge energy to replace what was used in eclipse, adjusted for round-trip efficiency:</p>
+<div class="formula">P<sub>recharge</sub> = E<sub>ecl</sub> / (T<sub>sun</sub> · η<sub>charge</sub>)</div>
+
+<h3 style="font-size:1em;margin-top:16px">6. Putting It All Together — The Budget Flow</h3>
+<p>The complete power budget follows this dependency chain:</p>
+<ol>
+<li><strong>Build the PEL</strong> — list every component, its power draw in every mode, and its duty cycle.</li>
+<li><strong>Sum loads per mode</strong> — total power for each operating mode (sun, eclipse, payload, safe hold).</li>
+<li><strong>Calculate orbit energy</strong> — multiply each mode's power by its duration, sum to get orbit energy.</li>
+<li><strong>Add distribution and conversion losses</strong> — increase the load power by the overhead factor (typically 25–35%).</li>
+<li><strong>Size the battery</strong> — eclipse energy + margin, divided by DoD, accounting for temperature derating and cycle life.</li>
+<li><strong>Size the array</strong> — sunlight load + recharge energy, divided by sunlit time, with EOL degradation and margin.</li>
+<li><strong>Verify the budget closes</strong> — array EOL power ≥ sunlight load + recharge power; battery energy ≥ eclipse load × margin.</li>
+</ol>
+<p>Each step involves iteration — if the battery needs more capacity, the array must be larger to recharge it, which means more mass, which affects the structure, which changes the power profile of other subsystems. The converged budget is the result of 5–10 iterations through this chain.</p>
+</details>
+
+<details>
 <summary>Power Modes</summary>
 <table>
 <tr><th>Mode</th><th>Typical Load (% of max)</th><th>Duration</th><th>Notes</th></tr>
@@ -408,14 +511,14 @@ hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
   <label>Eclipse power (W): <input type="number" id="e_Pecl" value="10" step="1" min="0" max="1000"></label>
   <label>Eclipse margin (%): <input type="number" id="e_margin" value="20" step="5" min="0" max="100"></label>
  </div>
- <div class="calc-out">
-  <div>Orbit period: <span id="e_outPeriod">--</span></div>
-  <div>Eclipse time: <span id="e_outEclipse">--</span></div>
-  <div>Sunlight time: <span id="e_outSun">--</span></div>
-  <div>Sunlight energy: <span id="e_outSunE">--</span></div>
-  <div>Eclipse energy: <span id="e_outEclE">--</span></div>
-  <div>Battery energy needed: <span id="e_outBatE">--</span></div>
- </div>
+  <div class="calc-out">
+   <div><div class="calc-f">T<sub>orb</sub> = 2π·√((R<sub>E</sub>+h)³/μ) / 60</div><div class="calc-s">= <span id="e_subPeriod"></span></div><div class="calc-r">= <span id="e_outPeriod">--</span></div></div>
+   <div><div class="calc-f">T<sub>ecl</sub> = T<sub>orb</sub> · acos(R<sub>E</sub>/(R<sub>E</sub>+h)) / π</div><div class="calc-s">= <span id="e_subEclipse"></span></div><div class="calc-r">= <span id="e_outEclipse">--</span></div></div>
+   <div><div class="calc-f">T<sub>sun</sub> = T<sub>orb</sub> − T<sub>ecl</sub></div><div class="calc-s">= <span id="e_subSun"></span></div><div class="calc-r">= <span id="e_outSun">--</span></div></div>
+   <div><div class="calc-f">E<sub>sun</sub> = P<sub>base</sub>·t<sub>base</sub> + P<sub>pay</sub>·t<sub>pay</sub> + P<sub>dl</sub>·t<sub>dl</sub></div><div class="calc-s">= <span id="e_subSunE"></span></div><div class="calc-r">= <span id="e_outSunE">--</span></div></div>
+   <div><div class="calc-f">E<sub>ecl</sub> = P<sub>ecl</sub> · T<sub>ecl</sub></div><div class="calc-s">= <span id="e_subEclE"></span></div><div class="calc-r">= <span id="e_outEclE">--</span></div></div>
+   <div><div class="calc-f">E<sub>bat</sub> = E<sub>ecl</sub> · (1 + margin/100)</div><div class="calc-s">= <span id="e_subBatE"></span></div><div class="calc-r">= <span id="e_outBatE">--</span></div></div>
+  </div>
  <button class="calc-reset" id="e_reset">Reset to Defaults</button>
 </div>
 </details>
@@ -442,13 +545,13 @@ hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
   <label>Bus voltage target (V): <input type="number" id="b_Vbus" value="28" step="2" min="1" max="200"></label>
   <label>String margin (extra parallel): <input type="number" id="b_par" value="0" step="1" min="0" max="10"></label>
  </div>
- <div class="calc-out">
-  <div>Usable energy per cell: <span id="b_outUcell">--</span></div>
-  <div>Min cells in series: <span id="b_outS">--</span></div>
-  <div>Min cells needed: <span id="b_outNmin">--</span></div>
-  <div>Config with margin: <span id="b_outConfig">--</span></div>
-  <div>Usable energy (full config): <span id="b_outUsable">--</span></div>
- </div>
+  <div class="calc-out">
+   <div><div class="calc-f">U<sub>cell</sub> = V<sub>cell</sub> · Ah · DoD/100</div><div class="calc-s">= <span id="b_subUcell"></span></div><div class="calc-r">= <span id="b_outUcell">--</span></div></div>
+   <div><div class="calc-f">S = ceil(V<sub>bus</sub> / V<sub>cell</sub>)</div><div class="calc-s">= <span id="b_subS"></span></div><div class="calc-r">= <span id="b_outS">--</span></div></div>
+   <div><div class="calc-f">N<sub>min</sub> = ceil(E<sub>ecl</sub> / U<sub>cell</sub>)</div><div class="calc-s">= <span id="b_subNmin"></span></div><div class="calc-r">= <span id="b_outNmin">--</span></div></div>
+   <div><div class="calc-f">Config = S × (ceil(N<sub>min</sub>/S) + M)</div><div class="calc-s">= <span id="b_subConfig"></span></div><div class="calc-r">= <span id="b_outConfig">--</span></div></div>
+   <div><div class="calc-f">U<sub>total</sub> = N<sub>total</sub> · U<sub>cell</sub></div><div class="calc-s">= <span id="b_subUsable"></span></div><div class="calc-r">= <span id="b_outUsable">--</span></div></div>
+  </div>
  <button class="calc-reset" id="b_reset">Reset to Defaults</button>
 </div>
 </details>
@@ -474,12 +577,12 @@ hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
   <label>Solar cell efficiency (%): <input type="number" id="s_eff" value="30" step="1" min="5" max="50"></label>
   <label>Solar flux (W/m²): <input type="number" id="s_flux" value="1367" step="10" min="500" max="2000"></label>
  </div>
- <div class="calc-out">
-  <div>Required average power: <span id="s_outPavg">--</span></div>
-  <div>With margin: <span id="s_outPmargin">--</span></div>
-  <div>Required array area: <span id="s_outArea">--</span></div>
-  <div>6U face equivalent: <span id="s_outFaces">--</span></div>
- </div>
+  <div class="calc-out">
+   <div><div class="calc-f">P<sub>avg</sub> = E<sub>sun</sub> / T<sub>sun</sub></div><div class="calc-s">= <span id="s_subPavg"></span></div><div class="calc-r">= <span id="s_outPavg">--</span></div></div>
+   <div><div class="calc-f">P<sub>mar</sub> = P<sub>avg</sub> · (1 + margin/100)</div><div class="calc-s">= <span id="s_subPmargin"></span></div><div class="calc-r">= <span id="s_outPmargin">--</span></div></div>
+   <div><div class="calc-f">A = P<sub>mar</sub> / (flux · η)</div><div class="calc-s">= <span id="s_subArea"></span></div><div class="calc-r">= <span id="s_outArea">--</span></div></div>
+   <div><div class="calc-f">Faces = A / 0.1</div><div class="calc-s">= <span id="s_subFaces"></span></div><div class="calc-r">= <span id="s_outFaces">--</span></div></div>
+  </div>
  <button class="calc-reset" id="s_reset">Reset to Defaults</button>
 </div>
 </details>
@@ -514,6 +617,13 @@ function calcOrbit(){
  const tPay_s=Tp*60, tDl_s=Td*60, tBase_s=Tsun*60-tPay_s-tDl_s, tEcl_s=Tecl*60;
  const Ebase=Pb*tBase_s, Epay=Pp*tPay_s, Edl=Pd*tDl_s, Eecl=Pe*tEcl_s;
  const Ebat=Eecl*(1+M/100);
+ const Rkm=R;
+ s('e_subPeriod','2π·√(('+Rkm+')³/μ) / 60');
+ s('e_subEclipse',Torb.toFixed(1)+' · acos(6371/'+Rkm+') / π');
+ s('e_subSun',Torb.toFixed(1)+' − '+Tecl.toFixed(1));
+ s('e_subSunE',Pb+'·'+tBase_s.toFixed(0)+' + '+Pp+'·'+(Tp*60)+' + '+Pd+'·'+(Td*60));
+ s('e_subEclE',Pe+' · '+(Tecl*60).toFixed(0));
+ s('e_subBatE',(Eecl/1000).toFixed(1)+' · (1 + '+M+'/100)');
  s('e_outPeriod',Torb.toFixed(1)+' min');
  s('e_outEclipse',Tecl.toFixed(1)+' min');
  s('e_outSun',Tsun.toFixed(1)+' min');
@@ -533,6 +643,11 @@ function calcBattery(){
  const S=Math.ceil(Vbus/Vc);
  const P=S+Par>0?Math.ceil(Nmin/S)+(Par>0?Par:0):Math.ceil(Nmin/S);
  const Ntotal=S*P;
+ s('b_subUcell',Vc+' · '+Ah+' · '+DoD+'/100');
+ s('b_subS','ceil('+Vbus+' / '+Vc+')');
+ s('b_subNmin','ceil('+Eecl+' / '+Ucell.toFixed(2)+')');
+ s('b_subConfig',S+' × (ceil('+Nmin+'/'+S+') + '+Par+')');
+ s('b_subUsable',Ntotal+' · '+Ucell.toFixed(2));
  s('b_outUcell',Ucell.toFixed(2)+' Wh');
  s('b_outS',S+'S');
  s('b_outNmin',Nmin+' cells');
@@ -550,6 +665,10 @@ function calcArray(){
  const Pmarg=Pavg*(1+Pm/100);
  const Area=Pmarg/(flux*eff);
  const faces=Area/0.1;
+ s('s_subPavg',E.toFixed(0)+' / '+T.toFixed(0));
+ s('s_subPmargin',Pavg.toFixed(1)+' · (1 + '+Pm+'/100)');
+ s('s_subArea',Pmarg.toFixed(1)+' / ('+flux+' · '+g('s_eff')+'/100)');
+ s('s_subFaces',Area.toFixed(4)+' / 0.1');
  s('s_outPavg',Pavg.toFixed(1)+' W');
  s('s_outPmargin',Pmarg.toFixed(1)+' W');
  s('s_outArea',Area.toFixed(4)+' m²');

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SatLab — Build & Launch Your Spacecraft</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+:root{--bg:#fdf6f0;--card-bg:#fff9f5;--text:#5c4a3a;--text-light:#8a7a6a;--link:#e8786a;--link-hover:#d46050;--shadow:rgba(232,120,106,.12);--border:#f0ddd0;--accent:#f4a261}
+body.dark{--bg:#1a1020;--card-bg:#2a1f30;--text:#e8d8e0;--link:#f0a0b0;--link-hover:#e88090;--shadow:rgba(240,160,176,.15);--border:#4a3a50;--accent:#e8a050}
+html{scroll-behavior:smooth}
+body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:900px;margin:auto;padding:30px 20px;background:var(--bg);color:var(--text);transition:background .3s,color .3s;overflow-x:hidden}
+::selection{background:color-mix(in srgb,var(--link) 30%,transparent)}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:8px 18px;background:linear-gradient(135deg,var(--card-bg),color-mix(in srgb,var(--accent) 6%,var(--card-bg)));color:var(--text);border:2px solid var(--border);border-radius:50px;cursor:pointer;font-size:.82em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;z-index:100;transition:all .2s;letter-spacing:.03em}
+#toggle-theme:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px var(--shadow)}
+.card{background:var(--card-bg);padding:22px 30px;border-radius:18px;box-shadow:0 3px 12px var(--shadow);border:2px solid var(--border);margin-top:20px;transition:all .2s}
+a.button{display:inline-block;padding:12px 22px;background:linear-gradient(135deg,var(--link),var(--link-hover));color:white;text-decoration:none;border-radius:50px;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;transition:transform .15s,box-shadow .2s}
+a.button:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 16px var(--shadow)}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--link);text-decoration:none;font-size:.9em;margin-bottom:8px;font-weight:600}
+.back-link:hover{text-decoration:underline;color:var(--link-hover)}
+
+/* Progress */
+#progress{display:flex;gap:6px;margin:10px 0 20px}
+.prog-step{flex:1;text-align:center;padding:10px 4px;border-radius:50px;font-size:.75em;font-weight:700;background:var(--border);color:var(--text);opacity:.5;transition:.3s;cursor:default;letter-spacing:.03em}
+.prog-step.active{background:linear-gradient(135deg,var(--link),var(--link-hover));color:#fff;opacity:1}
+.prog-step.done{background:linear-gradient(135deg,var(--accent2),color-mix(in srgb,#000 10%,var(--accent2)));color:#fff;opacity:.9}
+
+/* Steps */
+.step{display:none}
+.step.active{display:block;animation:fadeUp .35s ease-out}
+@keyframes fadeUp{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+.step h2{margin-top:0}
+.step p{color:var(--text);opacity:.8}
+
+/* Option cards */
+.opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin:16px 0}
+.opt-card{cursor:pointer;padding:18px;border-radius:16px;border:2px solid var(--border);background:var(--card-bg);transition:all .2s;position:relative}
+.opt-card:hover{border-color:var(--link);transform:translateY(-3px);box-shadow:0 6px 18px var(--shadow)}
+.opt-card.selected{border-color:var(--link);background:color-mix(in srgb,var(--link) 10%,var(--card-bg))}
+.opt-card .icon{font-size:2.2em;margin-bottom:8px}
+.opt-card h3{margin:0;font-size:1em}
+.opt-card .specs{font-size:.8em;opacity:.7;margin-top:6px;line-height:1.4}
+.opt-card .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:.7em;font-weight:700;margin-top:6px}
+.badge-green{background:color-mix(in srgb,var(--accent2) 20%,transparent);color:var(--accent2);border:1px solid color-mix(in srgb,var(--accent2) 40%,transparent)}
+.badge-blue{background:color-mix(in srgb,var(--accent4) 20%,transparent);color:var(--accent4);border:1px solid color-mix(in srgb,var(--accent4) 40%,transparent)}
+.badge-orange{background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--accent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.badge-red{background:color-mix(in srgb,var(--link) 20%,transparent);color:var(--link);border:1px solid color-mix(in srgb,var(--link) 40%,transparent)}
+
+/* Nav buttons */
+.nav-row{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.nav-row button{padding:12px 28px;border:none;border-radius:50px;cursor:pointer;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;font-size:.92em;transition:transform .15s,box-shadow .2s,opacity .2s}
+.btn-next{background:linear-gradient(135deg,var(--link),var(--link-hover));color:white}
+.btn-next:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 16px color-mix(in srgb,var(--link) 30%,transparent)}
+.btn-prev{background:var(--border);color:var(--text)}
+.btn-prev:hover{opacity:.8}
+.btn-launch{background:linear-gradient(135deg,var(--accent2),color-mix(in srgb,#000 10%,var(--accent2)));color:white;font-size:1.15em;padding:14px 36px}
+.btn-launch:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 16px color-mix(in srgb,var(--accent2) 30%,transparent)}
+.btn-launch:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-reset{background:linear-gradient(135deg,var(--link),var(--link-hover));color:white}
+.btn-reset:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 6px 16px color-mix(in srgb,var(--link) 30%,transparent)}
+
+/* Summary */
+#summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin:12px 0}
+.summary-item{padding:8px 12px;border-radius:8px;background:color-mix(in srgb,var(--link) 6%,var(--card-bg));border:1px solid color-mix(in srgb,var(--link) 15%,var(--border))}
+.summary-item .label{font-size:.7em;opacity:.6}
+.summary-item .value{font-weight:bold}
+#sat-visual{text-align:center;margin:16px 0;overflow-x:auto}
+#sat-visual svg{max-width:380px}
+
+/* Launch */
+#launch-scene{position:relative;height:420px;border-radius:10px;overflow:hidden;margin:16px 0;background:linear-gradient(180deg,#0b0e2a 0%,#1a1f4e 40%,#2d3a8c 70%,#4a6fa5 100%);display:none}
+#launch-scene.active{display:block}
+#countdown{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:5em;font-weight:bold;color:#fff;text-shadow:0 0 30px rgba(255,255,255,.3);z-index:10;animation:none}
+#countdown.go{animation:countPulse .8s ease-out}
+@keyframes countPulse{0%{transform:translate(-50%,-50%) scale(1.5);opacity:0}50%{opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+#launch-rocket{position:absolute;bottom:40px;left:50%;margin-left:-20px;width:40px;transition:bottom 3s cubic-bezier(.1,.8,.3,1);z-index:5}
+#launch-rocket.lift-off{bottom:460px}
+#launch-rocket .flame{position:absolute;bottom:-20px;left:50%;margin-left:-8px;width:16px;height:0;background:linear-gradient(0deg,#f97316,#fbbf24);border-radius:0 0 8px 8px;transition:height 3s}
+#launch-rocket.lift-off .flame{height:60px}
+#pad{position:absolute;bottom:0;left:0;right:0;height:40px;background:#334155}
+#smoke{position:absolute;bottom:20px;left:50%;margin-left:-40px;width:80px;height:0;opacity:0;z-index:4}
+#smoke.puff{animation:smokePuff 3s ease-out forwards}
+@keyframes smokePuff{0%{height:10px;width:40px;opacity:.8}100%{height:120px;width:160px;opacity:0;margin-left:-80px}}
+
+#results{display:none;margin-top:16px}
+#results.active{display:block}
+#achievements{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.achievement{padding:8px 14px;border-radius:20px;font-size:0.8em;font-weight:bold;background:#f59e0b20;border:1px solid #f59e0b;color:#f59e0b}
+.spec-table{width:100%;border-collapse:collapse;margin:12px 0}
+.spec-table td{padding:6px 10px;border-bottom:1px solid var(--border);font-size:0.9em}
+.spec-table td:first-child{font-weight:bold;width:140px;opacity:.7}
+.launch-btn-wrap{text-align:center;margin:24px 0}
+.shake{animation:shake .15s infinite}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(420px) rotate(720deg);opacity:0}}
+.confetti{position:absolute;width:8px;height:8px;border-radius:2px;z-index:6;animation:confetti-fall 3s ease-in forwards}
+.confetti:nth-child(odd){border-radius:50%}
+
+/* Spec colors */
+.spec-good{color:#22c55e;font-weight:700}
+.spec-warn{color:#f59e0b;font-weight:700}
+.spec-bad{color:#ef4444;font-weight:700}
+
+/* Enhanced launch */
+#launch-rocket.lift-off{bottom:1000px;transition:bottom 5s cubic-bezier(.1,.8,.3,1)}
+#launch-rocket.lift-off .flame{height:80px}
+#launch-scene.exo-atmo{background:linear-gradient(180deg,#0b0e2a 10%,#0b0e2a 60%,#1a1f4e 80%,#2d3a8c 100%)}
+#launch-scene.dark-space{background:#0b0e2a}
+
+/* Explosion */
+#explosion-overlay{position:absolute;top:0;left:0;right:0;bottom:0;z-index:15;display:none;pointer-events:none}
+#explosion-overlay.active{display:block}
+.exp-particle{position:absolute;width:8px;height:8px;border-radius:50%;opacity:0}
+.exp-particle.fly{animation:expFly .8s ease-out forwards}
+@keyframes expFly{0%{transform:translate(0,0) scale(1.5);opacity:1}100%{transform:translate(var(--ex),var(--ey)) scale(0);opacity:0}}
+#exp-flash{position:absolute;top:50%;left:50%;width:30px;height:30px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);opacity:0;z-index:16}
+#exp-flash.active{animation:flashBang .4s ease-out forwards}
+@keyframes flashBang{0%{width:30px;height:30px;opacity:1}50%{width:250px;height:250px;opacity:.6;background:#fbbf24}100%{width:400px;height:400px;opacity:0}}
+
+/* Failed state */
+#launch-failed{display:none;text-align:center;padding:30px 20px}
+#launch-failed.active{display:block;animation:fadeUp .5s ease-out}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+
+<a href="index.html" class="back-link">← Back to Knowledge Base</a>
+<h1 style="margin:4px 0 0">🛰️ SatLab</h1>
+<p style="margin:2px 0 12px;opacity:.7;font-size:0.9em">Build a spacecraft. Pick your parts. Launch it.</p>
+
+<div id="progress">
+<div class="prog-step active" data-step="1">1. Mission</div>
+<div class="prog-step" data-step="2">2. Orbit</div>
+<div class="prog-step" data-step="3">3. Components</div>
+<div class="prog-step" data-step="4">4. Review</div>
+<div class="prog-step" data-step="5">5. Launch!</div>
+</div>
+
+<div class="card">
+<div id="step1" class="step active">
+<h2>Choose Your Mission</h2>
+<p>What will your satellite do?</p>
+<div class="opt-grid">
+<div class="opt-card" data-mission="earth-obs" onclick="selectMission(this)">
+<div class="icon">🌍</div>
+<h3>Earth Observer</h3>
+<div class="specs">Cameras &amp; sensors watching our planet. Weather, agriculture, disaster monitoring.</div>
+<span class="badge badge-green">Popular choice</span>
+</div>
+<div class="opt-card" data-mission="comms" onclick="selectMission(this)">
+<div class="icon">📡</div>
+<h3>Comms Relay</h3>
+<div class="specs">Connect people. Voice, data, internet relay from orbit.</div>
+<span class="badge badge-blue">High bandwidth</span>
+</div>
+<div class="opt-card" data-mission="science" onclick="selectMission(this)">
+<div class="icon">🔭</div>
+<h3>Science Explorer</h3>
+<div class="specs">Study the universe. Cosmic rays, magnetic fields, distant stars.</div>
+<span class="badge badge-orange">Deep space capable</span>
+</div>
+<div class="opt-card" data-mission="deep-space" onclick="selectMission(this)">
+<div class="icon">🚀</div>
+<h3>Deep Space Probe</h3>
+<div class="specs">Go where no one has gone before. Asteroids, outer planets, interstellar.</div>
+<span class="badge badge-red">Maximum challenge</span>
+</div>
+</div>
+<div class="nav-row">
+<div></div>
+<button class="btn-next" onclick="nextStep()" id="next1" disabled>Choose a mission →</button>
+</div>
+</div>
+
+<div id="step2" class="step">
+<h2>Choose Your Orbit</h2>
+<p>Where will your satellite live?</p>
+<div class="opt-grid">
+<div class="opt-card" data-orbit="leo" onclick="selectOrbit(this)">
+<div class="icon">🌏</div>
+<h3>Low Earth Orbit</h3>
+<div class="specs">400–2,000 km altitude. Great for Earth observation. ~90 min orbit period.</div>
+<span class="badge badge-green">Most popular</span>
+</div>
+<div class="opt-card" data-orbit="geo" onclick="selectOrbit(this)">
+<div class="icon">🌐</div>
+<h3>Geostationary</h3>
+<div class="specs">35,786 km. Stays over one spot. Perfect for comms. Heavy launch required.</div>
+<span class="badge badge-blue">Comms favorite</span>
+</div>
+<div class="opt-card" data-orbit="sso" onclick="selectOrbit(this)">
+<div class="icon">☀️</div>
+<h3>Sun-Synchronous</h3>
+<div class="specs">~600–800 km. Always sees the same lighting. Ideal for imaging.</div>
+<span class="badge badge-green">Earth observer</span>
+</div>
+<div class="opt-card" data-orbit="polar" onclick="selectOrbit(this)">
+<div class="icon">🧊</div>
+<h3>Polar Orbit</h3>
+<div class="specs">Passes over poles. Sees the whole planet over time. Science &amp; mapping.</div>
+<span class="badge badge-blue">Global coverage</span>
+</div>
+<div class="opt-card" data-orbit="heo" onclick="selectOrbit(this)">
+<div class="icon">🌌</div>
+<h3>Highly Elliptical</h3>
+<div class="specs">Closest approach ~300 km, farthest ~40,000 km. Good for high-latitude comms.</div>
+<span class="badge badge-orange">Specialized</span>
+</div>
+</div>
+<div class="nav-row">
+<button class="btn-prev" onclick="prevStep()">← Back</button>
+<button class="btn-next" onclick="nextStep()" id="next2" disabled>Choose an orbit →</button>
+</div>
+</div>
+
+<div id="step3" class="step">
+<h2>Build Your Satellite</h2>
+<p>Pick components for each subsystem. No math — just choose what feels right!</p>
+<div style="margin:16px 0" id="component-area"></div>
+<div class="nav-row">
+<button class="btn-prev" onclick="prevStep()">← Back</button>
+<button class="btn-next" onclick="nextStep()" id="next3">Review your design →</button>
+</div>
+</div>
+
+<div id="step4" class="step">
+<h2>Review Your Spacecraft</h2>
+<div id="summary-area"></div>
+<div class="launch-btn-wrap">
+<button class="btn-launch" onclick="startLaunch()">🚀 Launch It!</button>
+<button class="btn-reset" onclick="resetAll()" style="margin-left:8px">↺ Start Over</button>
+</div>
+<div class="nav-row">
+<button class="btn-prev" onclick="prevStep()">← Back to components</button>
+</div>
+</div>
+
+<div id="step5" class="step">
+<h2>Launch Sequence</h2>
+<div id="launch-scene">
+<div id="countdown"></div>
+<div id="explosion-overlay">
+<div id="exp-flash"></div>
+</div>
+<div id="smoke"></div>
+<div id="launch-rocket">
+<svg viewBox="0 0 40 60" width="40" height="60">
+<ellipse cx="20" cy="40" rx="12" ry="18" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+<rect x="8" y="22" width="24" height="14" rx="3" fill="#64748b"/>
+<rect x="10" y="14" width="20" height="10" rx="4" fill="#475569"/>
+<path d="M14,14 L14,4 Q14,0 20,0 Q26,0 26,4 L26,14" fill="#475569"/>
+<rect x="14" y="4" width="12" height="6" rx="2" fill="#3b82f6" opacity=".7"/>
+<rect x="6" y="44" width="6" height="10" rx="2" fill="#64748b"/>
+<rect x="28" y="44" width="6" height="10" rx="2" fill="#64748b"/>
+<polygon points="14,56 20,70 26,56" fill="#f97316"/>
+<rect x="17" y="47" width="6" height="18" rx="2" fill="#f59e0b" opacity=".6"/>
+</svg>
+<div class="flame"></div>
+</div>
+<div id="pad"></div>
+</div>
+<div id="launch-failed">
+<div style="font-size:4em">💥</div>
+<h2 style="color:#ef4444">Launch Failed!</h2>
+<p>Your satellite is too heavy for this rocket. Try lighter components.</p>
+<button class="btn-reset" onclick="resetAll()" style="margin-top:12px">↺ Build Another Satellite</button>
+</div>
+<div id="results">
+<h3>🛰️ Mission Status</h3>
+<div id="results-content"></div>
+</div>
+<div class="nav-row" style="display:none" id="post-launch-nav">
+<button class="btn-reset" onclick="resetAll()">↺ Build Another Satellite</button>
+<a href="satlab.html" class="button" style="background:var(--border);color:var(--text);text-decoration:none">🔁 Reload</a>
+</div>
+</div>
+
+</div><!-- end .card -->
+
+<script>
+/* State */
+let state={
+  step:1,
+  mission:null,
+  orbit:null,
+  components:{}
+};
+let componentDefs={};
+const rocketCapacity=50;
+const missionDv={'earth-obs':30,'comms':50,'science':100,'deep-space':1000};
+
+/* Theme */
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+  document.body.classList.toggle('dark');
+  const isDark=document.body.classList.contains('dark');
+  localStorage.setItem('theme',isDark?'dark':'light');
+  btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+
+/* Step nav */
+function updateProgress(){
+  document.querySelectorAll('.prog-step').forEach(el=>{
+    const s=parseInt(el.dataset.step);
+    el.classList.toggle('active',s===state.step);
+    el.classList.toggle('done',s<state.step);
+  });
+}
+function showStep(n){
+  document.querySelectorAll('.step').forEach(el=>el.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  state.step=n;
+  updateProgress();
+}
+
+function nextStep(){
+  if(state.step<5){
+    if(state.step===2) buildComponentArea();
+    if(state.step===3) renderSummary();
+    showStep(state.step+1);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+function prevStep(){
+  if(state.step>1){
+    if(state.step===5) hideLaunch();
+    if(state.step===4) buildComponentArea();
+    showStep(state.step-1);
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+
+/* Mission selection */
+function selectMission(el){
+  document.querySelectorAll('[data-mission]').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.mission=el.dataset.mission;
+  document.getElementById('next1').disabled=false;
+}
+
+/* Orbit selection */
+function selectOrbit(el){
+  document.querySelectorAll('[data-orbit]').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.orbit=el.dataset.orbit;
+  document.getElementById('next2').disabled=false;
+}
+
+/* Component definitions per mission */
+function getComponentDefs(){
+  const all={
+    structure:[
+      {id:'str-nano',name:'NanoFrame-1U',icon:'📦',specs:'1 kg · Cheap · 1U form',mass:1,cost:1,power:0,desc:'Tiny but mighty. For the smallest birds.'},
+      {id:'str-std',name:'Standard-6U',icon:'🏢',specs:'3 kg · Medium cost · 6U form',mass:3,cost:2,power:0,desc:'The workhorse. Fits most missions.'},
+      {id:'str-heavy',name:'HeavyDuty-12U',icon:'🏗️',specs:'6 kg · Expensive · 12U form',mass:6,cost:3,power:0,desc:'Built like a tank. For demanding payloads.'}
+    ],
+    power:[
+      {id:'pwr-twin',name:'TwinPanel-30',icon:'☀️',specs:'30 W · 2 kg · Reliable',mass:2,cost:1,power:30,desc:'Simple deployable panels. Gets the job done.'},
+      {id:'pwr-quad',name:'QuadFold-80',icon:'🌞',specs:'80 W · 4 kg · Efficient',mass:4,cost:2,power:80,desc:'More power, more possibilities.'},
+      {id:'pwr-rtg',name:'RTG-100',icon:'☢️',specs:'100 W · 12 kg · Never sleeps',mass:12,cost:3,power:100,desc:'Nuclear power. Runs for decades.'}
+    ],
+    comms:[
+      {id:'com-whip',name:'Whip Antenna',icon:'📡',specs:'1 kg · Low rate · Cheap',mass:1,cost:1,power:2,desc:'Simple whip. Good for basic telemetry.'},
+      {id:'com-dish',name:'Parabolic Dish',icon:'📡📡',specs:'3 kg · High rate · Expensive',mass:3,cost:2,power:5,desc:'Point it right and talk fast.'},
+      {id:'com-laser',name:'LaserLink-OS',icon:'🔦',specs:'2 kg · Very high rate · Needs pointing',mass:2,cost:3,power:8,desc:'Light-speed comms. Literally.'}
+    ],
+    cdh:[
+      {id:'cdh-ardu',name:'ArduSat-C',icon:'💻',specs:'0.2 kg · Basic · Low power',mass:0.2,cost:1,power:1,desc:'Simple controller. Flies straight.'},
+      {id:'cdh-pro',name:'FlightPro-4',icon:'🖥️',specs:'0.5 kg · Powerful · Moderate cost',mass:0.5,cost:2,power:3,desc:'The brain your satellite deserves.'},
+      {id:'cdh-rad',name:'RadHard-3000',icon:'🛡️',specs:'1.2 kg · Very reliable · Expensive',mass:1.2,cost:3,power:5,desc:'Radiation hardened. For the tough routes.'}
+    ],
+    propulsion:[
+      {id:'pro-none',name:'None (Ballistic)',icon:'🚫',specs:'0 kg · Free · No maneuvers',mass:0,cost:0,power:0,dv:0,desc:'No propulsion. Simple. You will decay.'},
+      {id:'pro-cold',name:'Cold Gas Thruster',icon:'💨',specs:'1.5 kg · Low Δv · Simple',mass:1.5,cost:1,power:2,dv:50,desc:'Safe and simple. Small burns.'},
+      {id:'pro-chem',name:'Chemical Rocket',icon:'🔥',specs:'4 kg · High Δv · Uses fuel',mass:4,cost:2,power:5,dv:500,desc:'Big burns, big thrust. Get where you need.'},
+      {id:'pro-ion',name:'Ion Thruster',icon:'⚡',specs:'3 kg · Very high Isp · Needs power',mass:3,cost:3,power:20,dv:2000,desc:'Slow but efficient. Ultimate Δv.'}
+    ],
+    gnc:[
+      {id:'gnc-spin',name:'Passive Spin',icon:'🌀',specs:'0.3 kg · Simple · No power',mass:0.3,cost:1,power:0,desc:'Spin-stabilized. Old school.'},
+      {id:'gnc-mag',name:'Magneto-3Axis',icon:'🧲',specs:'0.8 kg · Moderate · Low power',mass:0.8,cost:2,power:2,desc:'Magnetorquers. Solid 3-axis control.'},
+      {id:'gnc-rwheels',name:'Reaction Wheels',icon:'⚙️',specs:'1.5 kg · Precise · Expensive',mass:1.5,cost:3,power:3,desc:'Ultimate pointing accuracy.'}
+    ],
+    thermal:[
+      {id:'th-passive',name:'Passive (MLI/Paint)',icon:'🌡️',specs:'0.5 kg · No power · Basic',mass:0.5,cost:1,power:0,desc:'MLI blankets + proper coatings.'},
+      {id:'th-heater',name:'Heater-Assisted',icon:'🔥',specs:'1.0 kg · Needs power · Cold capable',mass:1,cost:2,power:5,desc:'For when things get cold.'},
+      {id:'th-active',name:'Active Cooling Loop',icon:'❄️',specs:'2.5 kg · Power hungry · Extreme temps',mass:2.5,cost:3,power:10,desc:'Handles the worst thermal environments.'}
+    ]
+  };
+  return all;
+}
+
+function buildComponentArea(){
+  const defs=getComponentDefs();
+  componentDefs=defs;
+  const area=document.getElementById('component-area');
+  area.innerHTML='';
+  const keys=Object.keys(defs);
+  keys.forEach((key,idx)=>{
+    const opts=defs[key];
+    const labels={structure:'Structure',power:'Power',comms:'COMMS',cdh:'OBC / CDH',propulsion:'Propulsion',gnc:'GNC / ADCS',thermal:'Thermal'};
+    const label=labels[key]||key;
+    const block=document.createElement('div');
+    block.style.marginBottom='16px';
+    block.innerHTML=`<h3 style="margin:0 0 8px;font-size:1em">${label}</h3>`;
+    const grid=document.createElement('div');
+    grid.className='opt-grid';
+    grid.style.gridTemplateColumns='repeat(auto-fill,minmax(160px,1fr))';
+    grid.id='comp-grid-'+key;
+    opts.forEach(o=>{
+      const card=document.createElement('div');
+      card.className='opt-card'+(state.components[key]===o.id?' selected':'');
+      card.dataset.key=key;
+      card.dataset.id=o.id;
+      card.innerHTML=`<div class="icon">${o.icon}</div>
+<h3>${o.name}</h3>
+<div class="specs">${o.specs}</div>
+<div class="specs" style="margin-top:4px;font-style:italic">${o.desc}</div>`;
+      card.onclick=()=>selectComponent(key,o.id);
+      grid.appendChild(card);
+    });
+    block.appendChild(grid);
+    area.appendChild(block);
+  });
+}
+
+function selectComponent(key,id){
+  state.components[key]=id;
+  const grid=document.getElementById('comp-grid-'+key);
+  if(!grid) return;
+  grid.querySelectorAll('.opt-card').forEach(c=>{
+    c.classList.toggle('selected',c.dataset.id===id);
+  });
+}
+
+/* Summary */
+function computeTotals(){
+  const defs=getComponentDefs();
+  let totalMass=0,totalCost=0,totalPowerGen=0,totalPowerCon=0,propDv=0;
+  Object.keys(defs).forEach(key=>{
+    const id=state.components[key];
+    if(!id) return;
+    const opt=defs[key].find(o=>o.id===id);
+    if(!opt) return;
+    totalMass+=opt.mass;
+    totalCost+=opt.cost;
+    if(key==='power') totalPowerGen+=opt.power||0;
+    else totalPowerCon+=opt.power||0;
+    if(key==='propulsion'&&opt.dv) propDv=opt.dv;
+  });
+  return {totalMass,totalCost,totalPowerGen,totalPowerCon,propDv};
+}
+
+function renderSummary(){
+  const area=document.getElementById('summary-area');
+  const defs=getComponentDefs();
+  const mNames={earthObs:'Earth Observer',comms:'Comms Relay',science:'Science Explorer','deep-space':'Deep Space Probe'};
+  const oNames={leo:'Low Earth Orbit',geo:'Geostationary',sso:'Sun-Synchronous',polar:'Polar Orbit',heo:'Highly Elliptical Orbit'};
+  const t=computeTotals();
+  const parts=[];
+  Object.keys(defs).forEach(key=>{
+    const id=state.components[key];
+    if(!id) return;
+    const opt=defs[key].find(o=>o.id===id);
+    if(!opt) return;
+    const labels={structure:'Structure',power:'Power',comms:'COMMS',cdh:'OBC / CDH',propulsion:'Propulsion',gnc:'GNC / ADCS',thermal:'Thermal'};
+    parts.push(`<div class="summary-item"><div class="label">${labels[key]||key}</div><div class="value">${opt.icon} ${opt.name}</div><div class="specs">${opt.specs}</div></div>`);
+  });
+  const missionName=mNames[state.mission]||state.mission;
+  const orbitName=oNames[state.orbit]||state.orbit;
+
+  /* Budget colors */
+  const massColor=t.totalMass<=rocketCapacity*0.8?'spec-good':t.totalMass<=rocketCapacity?'spec-warn':'spec-bad';
+  const massPct=((t.totalMass/rocketCapacity)*100).toFixed(0);
+  const powerMargin=t.totalPowerGen-t.totalPowerCon;
+  const powerColor=powerMargin>=t.totalPowerCon*0.2?'spec-good':powerMargin>=0?'spec-warn':'spec-bad';
+  const dvReq=missionDv[state.mission]||0;
+  const dvColor=t.propDv>=dvReq?'spec-good':t.propDv>=dvReq*0.5?'spec-warn':'spec-bad';
+  const costColor=t.totalCost<=5?'spec-good':t.totalCost<=10?'spec-warn':'spec-bad';
+
+  /* Satellite visual */
+  const vis=buildSatSVG();
+
+  area.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px">
+    <div><strong>Mission:</strong> ${missionName}</div>
+    <div><strong>Orbit:</strong> ${orbitName}</div>
+    <div><strong>Total Mass:</strong> <span class="${massColor}">${t.totalMass.toFixed(1)} kg</span> (${massPct}% of ${rocketCapacity} kg capacity)</div>
+    <div><strong>Cost Class:</strong> <span class="${costColor}">${t.totalCost<=5?'💰 Budget':t.totalCost<=10?'💰💰 Mid-Range':'💰💰💰 Flagship'}</span></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;padding:10px;background:color-mix(in srgb,var(--accent) 8%,var(--card-bg));border-radius:10px">
+    <div style="font-size:.85em"><strong>⚡ Power Budget:</strong> Generate ${t.totalPowerGen} W · Consume ${t.totalPowerCon} W · Margin <span class="${powerColor}">${powerMargin >= 0 ? '+' : ''}${powerMargin} W</span></div>
+    <div style="font-size:.85em"><strong>🚀 Propulsion:</strong> ${t.propDv} m/s Δv · Need ${dvReq} m/s · <span class="${dvColor}">${t.propDv >= dvReq ? '✔️' : '⚠️'}</span></div>
+  </div>
+  <div id="sat-visual">${vis}</div>
+  <div id="summary-grid">${parts.join('')}</div>
+  `;
+}
+
+function buildSatSVG(){
+  const hasPanels=true;
+  const hasProp=state.components.propulsion&&state.components.propulsion!=='pro-none';
+  const hasDish=state.components.comms==='com-dish';
+  const hasLaser=state.components.comms==='com-laser';
+  const hasRtg=state.components.power==='pwr-rtg';
+  const hasWheels=state.components.gnc==='gnc-rwheels';
+  const hasMag=state.components.gnc==='gnc-mag';
+  const hasHeater=state.components.thermal==='th-heater'||state.components.thermal==='th-active';
+  return `<svg viewBox="0 0 300 200" width="100%" style="max-width:300px">
+<rect x="0" y="0" width="300" height="200" rx="6" fill="#0a0e1a"/>
+<rect x="20" y="50" width="16" height="90" rx="3" fill="#1d4ed8" opacity=".7"/>
+<line x1="28" y1="50" x2="28" y2="140" stroke="#3b82f6" stroke-width=".5"/>
+<rect x="264" y="50" width="16" height="90" rx="3" fill="#1d4ed8" opacity=".7"/>
+<line x1="272" y1="50" x2="272" y2="140" stroke="#3b82f6" stroke-width=".5"/>
+${hasRtg?'<rect x="10" y="80" width="10" height="30" rx="2" fill="#f97316" opacity=".5"/><rect x="280" y="80" width="10" height="30" rx="2" fill="#f97316" opacity=".5"/>':''}
+<rect x="40" y="35" width="220" height="120" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+<rect x="100" y="45" width="100" height="60" rx="4" fill="#334155" stroke="#64748b" stroke-width="1"/>
+${hasDish?'<ellipse cx="200" cy="75" rx="18" ry="12" fill="none" stroke="#fbbf24" stroke-width="1.5"/><line x1="218" y1="75" x2="230" y2="85" stroke="#fbbf24" stroke-width="1"/>':''}
+${hasLaser?'<line x1="210" y1="55" x2="250" y2="40" stroke="#f97316" stroke-width="1.5" stroke-dasharray="3,2"/><circle cx="250" cy="40" r="3" fill="#f97316"/>':''}
+${!hasDish&&!hasLaser?'<line x1="200" y1="60" x2="240" y2="40" stroke="#94a3b8" stroke-width="1"/><line x1="200" y1="70" x2="240" y2="70" stroke="#94a3b8" stroke-width="1"/><line x1="200" y1="80" x2="240" y2="80" stroke="#94a3b8" stroke-width="1"/>':''}
+${hasWheels?'<circle cx="110" cy="120" r="6" fill="none" stroke="#a78bfa" stroke-width="1.5"/><circle cx="110" cy="120" r="2" fill="#a78bfa"/>':''}
+${hasMag?'<rect x="120" y="115" width="12" height="10" rx="2" fill="none" stroke="#a78bfa" stroke-width="1"/><text x="126" y="123" text-anchor="middle" fill="#a78bfa" font-size="6">M</text>':''}
+${hasHeater?'<rect x="140" y="115" width="12" height="10" rx="2" fill="#f97316" opacity=".4"/><text x="146" y="123" text-anchor="middle" fill="#f97316" font-size="6">H</text>':''}
+${hasProp?'<polygon points="120,150 150,170 180,150" fill="#f97316" opacity=".5"/><rect x="140" y="155" width="20" height="40" rx="3" fill="#1e293b" stroke="#f97316" stroke-width="1"/>':''}
+<rect x="60" y="45" width="30" height="20" rx="2" fill="#3b82f6" opacity=".3"/>
+<rect x="60" y="70" width="30" height="20" rx="2" fill="#3b82f6" opacity=".3"/>
+<rect x="60" y="95" width="30" height="20" rx="2" fill="#3b82f6" opacity=".3"/>
+<text x="150" y="185" text-anchor="middle" fill="#e2e8f0" font-size="8">Your Spacecraft</text>
+</svg>`;
+}
+
+/* Launch */
+let launchAnim=null;
+function startLaunch(){
+  showStep(5);
+  const t=computeTotals();
+  if(t.totalMass>rocketCapacity){
+    showExplosion();
+    return;
+  }
+  document.getElementById('post-launch-nav').style.display='none';
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('launch-failed').classList.remove('active');
+  const scene=document.getElementById('launch-scene');
+  scene.classList.remove('dark-space');
+  scene.classList.add('active');
+  const cd=document.getElementById('countdown');
+  const rocket=document.getElementById('launch-rocket');
+  const smoke=document.getElementById('smoke');
+  const overlay=document.getElementById('explosion-overlay');
+  overlay.classList.remove('active');
+  overlay.innerHTML='<div id="exp-flash"></div>';
+  rocket.classList.remove('lift-off');
+  smoke.classList.remove('puff');
+  rocket.style.bottom='40px';
+  rocket.style.opacity='1';
+  rocket.style.transform='';
+
+  let count=3;
+  cd.textContent=count;
+  cd.classList.remove('go');
+  void cd.offsetWidth;
+  cd.classList.add('go');
+  const ci=setInterval(()=>{
+    count--;
+    if(count>0){
+      cd.textContent=count;
+      cd.classList.remove('go');
+      void cd.offsetWidth;
+      cd.classList.add('go');
+    } else if(count===0){
+      cd.textContent='LIFTOFF!';
+      cd.classList.remove('go');
+      void cd.offsetWidth;
+      cd.classList.add('go');
+      clearInterval(ci);
+
+      smoke.classList.add('puff');
+      setTimeout(()=>{
+        rocket.classList.add('lift-off');
+        setTimeout(()=>{scene.classList.add('dark-space')},2000);
+      },200);
+      setTimeout(()=>{
+        scene.classList.remove('active');
+        document.getElementById('results').classList.add('active');
+        showResults();
+        document.getElementById('post-launch-nav').style.display='flex';
+      },5500);
+    }
+  },1000);
+}
+
+function showExplosion(){
+  document.getElementById('launch-failed').classList.remove('active');
+  document.getElementById('post-launch-nav').style.display='none';
+  document.getElementById('results').classList.remove('active');
+  const scene=document.getElementById('launch-scene');
+  scene.classList.remove('dark-space');
+  scene.classList.add('active');
+  const cd=document.getElementById('countdown');
+  const rocket=document.getElementById('launch-rocket');
+  rocket.classList.remove('lift-off');
+  rocket.style.bottom='40px';
+  rocket.style.opacity='1';
+  rocket.style.transform='';
+
+  let count=3;
+  cd.textContent=count;
+  cd.classList.remove('go');
+  void cd.offsetWidth;
+  cd.classList.add('go');
+  const ci=setInterval(()=>{
+    count--;
+    if(count>0){
+      cd.textContent=count;
+      cd.classList.remove('go');
+      void cd.offsetWidth;
+      cd.classList.add('go');
+    } else if(count===0){
+      cd.textContent='BOOM!';
+      cd.classList.remove('go');
+      void cd.offsetWidth;
+      cd.classList.add('go');
+      clearInterval(ci);
+
+      const overlay=document.getElementById('explosion-overlay');
+      overlay.classList.add('active');
+      const flash=document.getElementById('exp-flash');
+      flash.classList.add('active');
+
+      const colors=['#ef4444','#f59e0b','#f97316','#dc2626','#fdba74'];
+      for(let i=0;i<40;i++){
+        const p=document.createElement('div');
+        p.className='exp-particle';
+        const angle=Math.random()*Math.PI*2;
+        const dist=60+Math.random()*140;
+        p.style.setProperty('--ex',Math.cos(angle)*dist+'px');
+        p.style.setProperty('--ey',Math.sin(angle)*dist+'px');
+        p.style.background=colors[i%colors.length];
+        p.style.width=(4+Math.random()*8)+'px';
+        p.style.height=(4+Math.random()*8)+'px';
+        p.style.left='50%';
+        p.style.top='50%';
+        setTimeout(()=>p.classList.add('fly'),50);
+        overlay.appendChild(p);
+      }
+
+      rocket.style.transform='scale(1.5)';
+      rocket.style.opacity='0';
+      rocket.style.transition='all .5s';
+
+      document.body.classList.add('shake');
+      setTimeout(()=>{
+        document.body.classList.remove('shake');
+        scene.classList.remove('active');
+        document.getElementById('launch-failed').classList.add('active');
+        document.getElementById('post-launch-nav').style.display='flex';
+      },2000);
+    }
+  },1000);
+}
+
+function showResults(){
+  const area=document.getElementById('results-content');
+  const defs=getComponentDefs();
+  const mNames={earthObs:'Earth Observer',comms:'Comms Relay',science:'Science Explorer','deep-space':'Deep Space Probe'};
+  const oNames={leo:'Low Earth Orbit',geo:'Geostationary',sso:'Sun-Synchronous',polar:'Polar Orbit',heo:'Highly Elliptical Orbit'};
+  const missionName=mNames[state.mission]||state.mission;
+  const orbitName=oNames[state.orbit]||state.orbit;
+  const t=computeTotals();
+  const totalMass=t.totalMass,totalCost=t.totalCost;
+
+  const achievements=[];
+  achievements.push('🛰️ First Satellite');
+  if(totalCost<=5) achievements.push('💰 Budget Build');
+  if(totalMass>=15) achievements.push('🏋️ Heavy Lifter');
+  if(state.components.propulsion==='pro-chem') achievements.push('🔥 Burn Baby Burn');
+  if(state.components.propulsion==='pro-ion'&&state.components.power==='pwr-rtg') achievements.push('☢️ Deep Space Explorer');
+  if(state.components.comms==='com-laser') achievements.push('🔦 Laser Pointer');
+  if(state.components.comms==='com-dish'&&state.components.power==='pwr-quad') achievements.push('📡 Commander');
+  if(state.orbit==='geo') achievements.push('🌐 Geostationary Gang');
+  if(state.orbit==='sso') achievements.push('☀️ Sun-Syncer');
+  if(state.mission==='deep-space') achievements.push('🌌 Pioneer');
+  if(state.components.gnc==='gnc-rwheels'&&state.components.cdh==='cdh-rad') achievements.push('🛡️ Heavy Duty');
+  if(Object.keys(state.components).length>=6) achievements.push('🧩 System Integrator');
+
+  const missionRatings={
+    'earth-obs':'Earth Observer satellites help us understand our planet. Your camera will capture forests, cities, and storms from above.',
+    'comms':'Comms Relay satellites keep the world connected. Your bird will bounce voices and data across the globe.',
+    'science':'Science Explorer satellites push the boundaries of knowledge. Your sensors will reveal the unseen universe.',
+    'deep-space':'Deep Space Probes are humanity\'s ambassadors. Your spacecraft will venture where only a few have gone before.'
+  };
+
+  const rating=Math.min(100,Math.round(40+totalCost*8+totalMass*1.5-(state.components.propulsion==='pro-none'?10:0)+(state.components.comms==='com-laser'?15:0)+(state.components.gnc==='gnc-rwheels'?10:0)));
+  const grade=rating>=90?'S':rating>=75?'A':rating>=60?'B':rating>=45?'C':'D';
+  const gradeColors={S:'#f59e0b',A:'#16a34a',B:'#2563eb',C:'#f97316',D:'#ef4444'};
+
+  area.innerHTML=`
+<div style="text-align:center;margin-bottom:16px">
+  <span style="font-size:4em">🎉</span>
+  <h2 style="margin:8px 0">Mission Successful!</h2>
+  <p style="opacity:.7">Your spacecraft is now in ${orbitName}</p>
+</div>
+<div style="display:flex;gap:20px;align-items:center;justify-content:center;margin:16px 0;flex-wrap:wrap">
+  <div style="text-align:center">
+    <div style="font-size:3em;font-weight:bold;color:${gradeColors[grade]}">${grade}</div>
+    <div style="font-size:0.8em;opacity:.7">Rating</div>
+  </div>
+  <div style="text-align:left;font-size:0.9em">
+    <div>📋 <strong>Mission:</strong> ${missionName}</div>
+    <div>🌍 <strong>Orbit:</strong> ${orbitName}</div>
+    <div>⚖️ <strong>Mass:</strong> ${totalMass.toFixed(1)} kg</div>
+    <div>💰 <strong>Cost:</strong> ${'💰'.repeat(Math.min(3,Math.ceil(totalCost/4)))} (${totalCost} pts)</div>
+  </div>
+</div>
+<div style="background:color-mix(in srgb,var(--link) 6%,var(--card-bg));border-radius:8px;padding:12px 16px;margin:12px 0;font-size:0.9em;line-height:1.5">${missionRatings[state.mission]||'Your satellite is in orbit doing science!'}</div>
+<div id="achievements">${achievements.map(a=>`<div class="achievement">${a}</div>`).join('')}</div>
+<table class="spec-table">
+<tr><td>Dry Mass</td><td>${totalMass.toFixed(1)} kg</td></tr>
+<tr><td>Propulsion</td><td>${state.components.propulsion==='pro-none'?'None (ballistic)':state.components.propulsion==='pro-cold'?'Cold Gas':state.components.propulsion==='pro-chem'?'Chemical Rocket':'Ion Thruster'}</td></tr>
+<tr><td>Power System</td><td>${state.components.power==='pwr-twin'?'TwinPanel-30 (30 W)':state.components.power==='pwr-quad'?'QuadFold-80 (80 W)':'RTG-100 (100 W, continuous)'}</td></tr>
+<tr><td>Downlink Rate</td><td>${state.components.comms==='com-whip'?'Low (kbps)':state.components.comms==='com-dish'?'High (Mbps)':'Very High (Gbps laser)'}</td></tr>
+<tr><td>Pointing Accuracy</td><td>${state.components.gnc==='gnc-spin'?'±5° (spin)':state.components.gnc==='gnc-mag'?'±1° (magnetorquer)':'±0.01° (reaction wheels)'}</td></tr>
+</table>
+<details style="margin-top:8px;font-size:0.85em;opacity:.6">
+<summary>📋 Full Component List</summary>
+${Object.keys(defs).map(key=>{
+  const id=state.components[key];
+  if(!id) return '';
+  const opt=defs[key].find(o=>o.id===id);
+  if(!opt) return '';
+  const labels={structure:'Structure',power:'Power',comms:'COMMS',cdh:'OBC / CDH',propulsion:'Propulsion',gnc:'GNC / ADCS',thermal:'Thermal'};
+  return `<div style="margin:4px 0">${opt.icon} <strong>${labels[key]||key}:</strong> ${opt.name}</div>`;
+}).join('')}
+</details>
+<details style="margin-top:8px;font-size:0.85em;opacity:.6">
+<summary>📖 Mission Debrief</summary>
+<div style="line-height:1.6;margin-top:6px">
+Your ${missionName.toLowerCase()} satellite launched successfully into ${orbitName.toLowerCase()}.
+Its ${totalMass.toFixed(1)} kg bus carries a ${defs.comms.find(o=>o.id===state.components.comms)?.name.toLowerCase()||'communications'} system
+powered by ${defs.power.find(o=>o.id===state.components.power)?.name.toLowerCase()||'power'}.
+${state.components.propulsion!=='pro-none'?'With onboard propulsion, it can perform orbital maneuvers and extend its mission life.':'Without propulsion, its orbit will slowly decay — but it will still return great data.'}
+Congratulations, mission controller!
+</div>
+</details>
+  `;
+  document.getElementById('results').classList.add('active');
+  spawnConfetti();
+}
+
+function spawnConfetti(){
+  const scene=document.getElementById('launch-scene');
+  const colors=['#ef4444','#f59e0b','#22c55e','#3b82f6','#a855f7','#ec4899','#06b6d4'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');
+    el.className='confetti';
+    el.style.left=(Math.random()*100)+'%';
+    el.style.top='-10px';
+    el.style.background=colors[i%colors.length];
+    el.style.animationDelay=(Math.random()*2)+'s';
+    el.style.animationDuration=(2+Math.random()*2)+'s';
+    el.style.width=(4+Math.random()*6)+'px';
+    el.style.height=(4+Math.random()*6)+'px';
+    scene.appendChild(el);
+  }
+}
+
+function hideLaunch(){
+  document.getElementById('launch-scene').classList.remove('active');
+  document.getElementById('launch-scene').classList.remove('dark-space');
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('launch-failed').classList.remove('active');
+  document.getElementById('post-launch-nav').style.display='none';
+  document.getElementById('explosion-overlay').classList.remove('active');
+}
+
+function resetAll(){
+  hideLaunch();
+  state={step:1,mission:null,orbit:null,components:{}};
+  componentDefs={};
+  document.querySelectorAll('[data-mission],[data-orbit]').forEach(c=>c.classList.remove('selected'));
+  document.getElementById('next1').disabled=true;
+  document.getElementById('next2').disabled=true;
+  document.getElementById('component-area').innerHTML='';
+  document.getElementById('summary-area').innerHTML='';
+  document.getElementById('results-content').innerHTML='';
+  showStep(1);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

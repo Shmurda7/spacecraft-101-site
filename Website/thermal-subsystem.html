@@ -4,32 +4,48 @@
 <meta charset="UTF-8">
 <title>Thermal Control Subsystem</title>
 <style>
-:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
-body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
-body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
-details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
-details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
-summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+:root{--bg:#fdf6f0;--card-bg:#fff9f5;--card-bg-nested:#fff0e8;--text:#5c4a3a;--text-light:#8a7a6a;--border:#f0ddd0;--th-bg:#ffe8dd;--link:#e8786a;--link-hover:#d46050;--note:#a09080;--hr:#f0e0d5;--shadow:rgba(232,120,106,.12);--accent:#f4a261;--accent2:#7bc4b0;--accent3:#c9a0dc;--accent4:#88b0e0}
+body.dark{--bg:#1a1020;--card-bg:#2a1f30;--card-bg-nested:#3a2f40;--text:#e8d8e0;--text-light:#b0a0b0;--border:#4a3a50;--th-bg:#3a2f40;--link:#f0a0b0;--link-hover:#e88090;--note:#a090a8;--hr:#4a3a50;--shadow:rgba(240,160,176,.15);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
+html{scroll-behavior:smooth}
+body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+::selection{background:color-mix(in srgb,var(--link) 30%,transparent)}
+details,.section-card{background:var(--card-bg);margin:14px 0;padding:18px 26px;border-radius:18px;box-shadow:0 3px 12px var(--shadow);border:2px solid var(--border);transition:border-color .2s,box-shadow .2s,transform .15s}
+details{border:2px solid var(--border);box-shadow:0 3px 12px var(--shadow)}
+details details{margin:8px 0 4px 8px;padding:14px 18px;background:var(--card-bg-nested);border:1.5px solid var(--border);box-shadow:none;border-radius:14px}
+.section-card:hover{transform:translateY(-2px);border-color:var(--link);box-shadow:0 6px 20px var(--shadow)}
+summary{font-weight:700;cursor:pointer;font-size:1.05em;padding:6px 0;transition:color .15s;letter-spacing:-.01em}
+summary:hover{color:var(--link)}
 details details summary{font-size:1em}
-a{color:var(--link)}
-h2{margin-top:24px}
-table{width:100%;border-collapse:collapse;margin:10px 0}
-th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
-th{background:var(--th-bg);font-weight:bold}
-.note{color:var(--note);font-style:italic;font-size:0.9em}
-.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
-.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
-.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
-.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
-.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
-.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
-.calc-out div{font-size:0.95em}
-.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
-.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
-.calc-reset:hover{opacity:.8}
-#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
-#toggle-theme:hover{opacity:.8}
-hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+a{color:var(--link);text-decoration:none;transition:all .15s;font-weight:600}
+a:hover{color:var(--link-hover);text-decoration:underline}
+h2{margin-top:28px;font-size:1.3em;border-bottom:3px solid var(--accent);padding-bottom:8px;display:inline-block;border-radius:0 0 3px 3px}
+h3{font-size:1.1em;margin-top:20px;color:var(--text-light)}
+table{width:100%;border-collapse:separate;border-spacing:0;margin:12px 0;font-size:.92em;border-radius:12px;overflow:hidden}
+th,td{border:1px solid var(--border);padding:10px 14px;text-align:left}
+th{background:var(--th-bg);font-weight:700;font-size:.82em;text-transform:uppercase;letter-spacing:.06em;color:var(--text-light)}
+tr:hover td{background:color-mix(in srgb,var(--link) 6%,var(--card-bg))}
+tr:first-child th:first-child{border-top-left-radius:12px}
+tr:first-child th:last-child{border-top-right-radius:12px}
+tr:last-child td:first-child{border-bottom-left-radius:12px}
+tr:last-child td:last-child{border-bottom-right-radius:12px}
+.note{color:var(--note);font-style:italic;font-size:.9em;padding:10px 16px;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,var(--card-bg));border-radius:0 10px 10px 0;margin:10px 0}
+.formula{font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;padding:14px 20px;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 8%,var(--card-bg-nested)),var(--card-bg-nested));border-left:5px solid var(--accent);border-radius:10px;margin:14px 0;font-size:1.05em;overflow-x:auto;line-height:1.7}
+.calculator{border:2px solid var(--border);border-radius:16px;padding:22px;margin:14px 0;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 4%,var(--card-bg)),var(--card-bg))}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+.calc-grid label{font-size:.9em;display:flex;flex-direction:column;gap:2px;font-weight:600}
+.calc-grid input{padding:8px 12px;border:2px solid var(--border);border-radius:10px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:.95em;font-weight:500;transition:border-color .2s,box-shadow .15s}
+.calc-grid input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%,transparent)}
+.calc-out{display:block;padding-top:14px;border-top:2px solid var(--border)}
+.calc-out div{display:flex;flex-wrap:wrap;column-gap:16px;row-gap:4px;margin-bottom:10px;padding:10px 14px;border-left:3px solid var(--accent);border-radius:8px;align-items:baseline}
+.calc-out .calc-f{flex:1 0 45%;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;color:var(--accent);font-size:.9em;font-weight:600}
+.calc-out .calc-s{display:inline;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;color:var(--note);font-size:.84em}
+.calc-out .calc-r{display:inline;font-family:'JetBrains Mono','Fira Code','Cascadia Code','Consolas','Courier New',monospace;font-weight:700;color:var(--accent);font-size:.95em;padding-left:4px}
+.calc-reset{padding:8px 20px;background:linear-gradient(135deg,var(--link),var(--link-hover));color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:.85em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;transition:transform .15s,box-shadow .2s;letter-spacing:.02em}
+.calc-reset:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 4px 15px color-mix(in srgb,var(--link) 30%,transparent)}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:8px 18px;background:linear-gradient(135deg,var(--card-bg),color-mix(in srgb,var(--accent) 6%,var(--card-bg)));color:var(--text);border:2px solid var(--border);border-radius:50px;cursor:pointer;font-size:.82em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;z-index:100;transition:all .2s;letter-spacing:.03em}
+#toggle-theme:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px var(--shadow)}
+hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </style>
 </head>
 <body>
@@ -266,6 +282,29 @@ hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
 <p>The radiator (ε = 0.82, A = 0.03 m²) loses:</p>
 <p class="formula">Q<sub>rad</sub> = 0.82 × 5.67×10⁻⁸ × 0.03 × (293⁴ − 3⁴) ≈ 10.3 W</p>
 <p>Total heat loss in eclipse ≈ 14.5 W. Internal dissipation ≈ 8 W. Shortfall = <strong>~6.5 W</strong> — this is the heater power needed to maintain battery temperature above +5 °C.</p>
+<details>
+<summary>Interactive Radiator &amp; Heater Calculator</summary>
+<div class="calculator">
+<div class="calc-grid">
+<label>Internal dissipation (W): <input type="number" id="t_Q" value="15" step="1" min="0" max="200"></label>
+<label>Radiator temp (°C): <input type="number" id="t_Thot" value="35" step="5" min="-50" max="100"></label>
+<label>Radiator emissivity: <input type="number" id="t_eps" value="0.82" step="0.02" min="0.01" max="1"></label>
+<label>Eclipse dissipation (W): <input type="number" id="t_Qecl" value="8" step="1" min="0" max="200"></label>
+<label>MLI area (m²): <input type="number" id="t_Amli" value="0.5" step="0.05" min="0" max="5"></label>
+<label>MLI effective ε: <input type="number" id="t_epsmli" value="0.02" step="0.005" min="0.001" max="0.5"></label>
+<label>Cold temp (°C): <input type="number" id="t_Tcold" value="20" step="5" min="-50" max="100"></label>
+<label>Eclipse duration (min): <input type="number" id="t_Tecl" value="35" step="1" min="0" max="120"></label>
+</div>
+<div class="calc-out">
+<div><div class="calc-f">A<sub>rad</sub> = Q / (ε·σ·T⁴)</div><div class="calc-s">= <span id="t_subArea"></span></div><div class="calc-r">= <span id="t_outArea">--</span></div></div>
+<div><div class="calc-f">Q<sub>MLI</sub> = ε<sub>eff</sub>·σ·A·(T⁴ − T<sub>space</sub>⁴)</div><div class="calc-s">= <span id="t_subQmli"></span></div><div class="calc-r">= <span id="t_outQmli">--</span></div></div>
+<div><div class="calc-f">Q<sub>rad</sub> = ε·σ·A<sub>rad</sub>·(T⁴ − T<sub>space</sub>⁴)</div><div class="calc-s">= <span id="t_subQrad"></span></div><div class="calc-r">= <span id="t_outQrad">--</span></div></div>
+<div><div class="calc-f">P<sub>heat</sub> = Q<sub>loss</sub> − Q<sub>int</sub></div><div class="calc-s">= <span id="t_subHeater"></span></div><div class="calc-r">= <span id="t_outHeater">--</span></div></div>
+<div><div class="calc-f">E = P<sub>heat</sub> · t<sub>ecl</sub></div><div class="calc-s">= <span id="t_subEnergy"></span></div><div class="calc-r">= <span id="t_outEnergy">--</span></div></div>
+</div>
+<button class="calc-reset" id="t_reset">Reset to Defaults</button>
+</div>
+</details>
 <p>A <strong>7 W heater</strong> on the battery with a thermostat set at +7 °C (turn-on) / +12 °C (turn-off) provides margin. Over 35 min eclipse: energy = 7 W × 35 min = 7 × 2,100 s = <strong>14.7 kJ = 4.1 Wh</strong>. This must be included in the EPS eclipse energy budget.</p>
 </details>
 
@@ -299,6 +338,37 @@ btn.onclick=()=>{
  localStorage.setItem('theme',isDark?'dark':'light');
  btn.textContent=isDark?'☀ Light':'☾ Dark';
 };
+
+function g(id){return +document.getElementById(id).value}
+function s(id,v){document.getElementById(id).textContent=v}
+
+const tDefs={};
+['t_Q','t_Thot','t_eps','t_Qecl','t_Amli','t_epsmli','t_Tcold','t_Tecl'].forEach(id=>{tDefs[id]=g(id)});
+function calcThermal(){
+ const Q=g('t_Q'),Thot=g('t_Thot'),eps=g('t_eps'),Qecl=g('t_Qecl'),Amli=g('t_Amli');
+ const epsmli=g('t_epsmli'),Tcold=g('t_Tcold'),Tecl=g('t_Tecl');
+ const sigma=5.67e-8;
+ const Thot_K=Thot+273,Tcold_K=Tcold+273;
+ const Arad=Q/(eps*sigma*Math.pow(Thot_K,4));
+ const qmli=epsmli*sigma*Amli*(Math.pow(Tcold_K,4)-Math.pow(3,4));
+ const qrad=eps*sigma*Arad*(Math.pow(Tcold_K,4)-Math.pow(3,4));
+ const Qloss=qmli+qrad;
+ const Pheater=Math.max(0,Qloss-Qecl);
+ const E=Pheater*Tecl*60;
+ s('t_subArea',Q+' / ('+eps+' · '+sigma+' · '+Thot_K+'⁴)');
+ s('t_subQmli',epsmli+' · '+sigma+' · '+Amli+' · ('+Tcold_K+'⁴ − 3⁴)');
+ s('t_subQrad',eps+' · '+sigma+' · '+Arad.toFixed(4)+' · ('+Tcold_K+'⁴ − 3⁴)');
+ s('t_subHeater',Qloss.toFixed(1)+' − '+Qecl);
+ s('t_subEnergy',Pheater.toFixed(1)+' · '+(Tecl*60));
+ s('t_outArea',Arad.toFixed(4)+' m²');
+ s('t_outQmli',qmli.toFixed(2)+' W');
+ s('t_outQrad',qrad.toFixed(2)+' W');
+ s('t_outHeater',Pheater.toFixed(1)+' W');
+ s('t_outEnergy',E.toFixed(0)+' J = '+(E/3600).toFixed(2)+' Wh');
+}
+document.querySelectorAll('#t_Q,#t_Thot,#t_eps,#t_Qecl,#t_Amli,#t_epsmli,#t_Tcold,#t_Tecl').forEach(el=>el.addEventListener('input',calcThermal));
+document.getElementById('t_reset').addEventListener('click',()=>{Object.keys(tDefs).forEach(id=>document.getElementById(id).value=tDefs[id]);calcThermal()});
+calcThermal();
 </script>
 </body>
 </html>
