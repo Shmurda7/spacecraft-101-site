@@ -3,21 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <title>Communications (COMMS) Subsystem</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
-:root{--bg:#fdf6f0;--card-bg:#fff9f5;--card-bg-nested:#fff0e8;--text:#5c4a3a;--text-light:#8a7a6a;--border:#f0ddd0;--th-bg:#ffe8dd;--link:#e8786a;--link-hover:#d46050;--note:#a09080;--hr:#f0e0d5;--shadow:rgba(232,120,106,.12);--accent:#f4a261;--accent2:#7bc4b0;--accent3:#c9a0dc;--accent4:#88b0e0}
-body.dark{--bg:#1a1020;--card-bg:#2a1f30;--card-bg-nested:#3a2f40;--text:#e8d8e0;--text-light:#b0a0b0;--border:#4a3a50;--th-bg:#3a2f40;--link:#f0a0b0;--link-hover:#e88090;--note:#a090a8;--hr:#4a3a50;--shadow:rgba(240,160,176,.15);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
+<style>@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+:root{--bg:#f0e8f5;--card-bg:#fff9fb;--card-bg-nested:#faf0f5;--text:#3a2a4a;--text-light:#7a6a8a;--border:#e0d0e5;--th-bg:#f5eaf5;--link:#d0608a;--link-hover:#c04070;--note:#9a8aa0;--hr:#e5d5ea;--shadow:rgba(208,96,138,.12);--accent:#e8a050;--accent2:#7bc4b0;--accent3:#b080d0;--accent4:#6888c0}
+body.dark{--bg:#0a0515;--card-bg:#151020;--card-bg-nested:#1f1530;--text:#e0d0e8;--text-light:#a090b0;--border:#3a2a50;--th-bg:#1f1530;--link:#f0a0b0;--link-hover:#e88090;--note:#9080a0;--hr:#3a2a50;--shadow:rgba(240,160,176,.12);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
 html{scroll-behavior:smooth}
-body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .4s,color .4s;opacity:0;animation:pageIn .5s ease-out forwards}
+@keyframes pageIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
 ::selection{background:color-mix(in srgb,var(--link) 30%,transparent)}
-details,.section-card{background:var(--card-bg);margin:14px 0;padding:18px 26px;border-radius:18px;box-shadow:0 3px 12px var(--shadow);border:2px solid var(--border);transition:border-color .2s,box-shadow .2s,transform .15s}
-details{border:2px solid var(--border);box-shadow:0 3px 12px var(--shadow)}
+details,.section-card{background:var(--card-bg);margin:14px 0;padding:18px 26px;border-radius:18px;box-shadow:0 3px 16px var(--shadow);border:2px solid var(--border);transition:border-color .25s,box-shadow .25s,transform .25s cubic-bezier(.34,1.56,.64,1)}
+details{border:2px solid var(--border);box-shadow:0 3px 16px var(--shadow)}
 details details{margin:8px 0 4px 8px;padding:14px 18px;background:var(--card-bg-nested);border:1.5px solid var(--border);box-shadow:none;border-radius:14px}
-.section-card:hover{transform:translateY(-2px);border-color:var(--link);box-shadow:0 6px 20px var(--shadow)}
-summary{font-weight:700;cursor:pointer;font-size:1.05em;padding:6px 0;transition:color .15s;letter-spacing:-.01em}
-summary:hover{color:var(--link)}
+.section-card:hover{transform:translateY(-4px);border-color:var(--link);box-shadow:0 10px 28px var(--shadow)}
+summary{font-weight:700;cursor:pointer;font-size:1.05em;padding:8px 0;transition:color .2s;letter-spacing:-.01em}
+summary:hover{color:var(--link);padding-left:4px}
 details details summary{font-size:1em}
-a{color:var(--link);text-decoration:none;transition:all .15s;font-weight:600}
+details[open]>summary{color:var(--link)}summary::marker{color:var(--accent)}summary::-webkit-details-marker{color:var(--accent)}
+a{color:var(--link);text-decoration:none;transition:all .2s;font-weight:600}
 a:hover{color:var(--link-hover);text-decoration:underline}
 h2{margin-top:28px;font-size:1.3em;border-bottom:3px solid var(--accent);padding-bottom:8px;display:inline-block;border-radius:0 0 3px 3px}
 h3{font-size:1.1em;margin-top:20px;color:var(--text-light)}
@@ -44,9 +45,10 @@ tr:last-child td:last-child{border-bottom-right-radius:12px}
 .calc-reset{padding:8px 20px;background:linear-gradient(135deg,var(--link),var(--link-hover));color:#fff;border:none;border-radius:50px;cursor:pointer;font-size:.85em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;transition:transform .15s,box-shadow .2s;letter-spacing:.02em}
 .calc-reset:hover{transform:translateY(-2px) scale(1.02);box-shadow:0 4px 15px color-mix(in srgb,var(--link) 30%,transparent)}
 #toggle-theme{position:fixed;top:16px;right:16px;padding:8px 18px;background:linear-gradient(135deg,var(--card-bg),color-mix(in srgb,var(--accent) 6%,var(--card-bg)));color:var(--text);border:2px solid var(--border);border-radius:50px;cursor:pointer;font-size:.82em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;z-index:100;transition:all .2s;letter-spacing:.03em}
-#toggle-theme:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px var(--shadow)}
+#toggle-theme:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px var(--shadow)}
 hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
-</style>
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:hidden}
+.p-star{position:absolute;border-radius:50%;opacity:0;animation:starFloat linear infinite}@keyframes starFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-5vh) scale(1) rotate(360deg)}}</style>
 </head>
 <body>
 <button id="toggle-theme">☾ Dark</button>
@@ -57,18 +59,25 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
 <h2 style="margin-top:0;font-size:1em">Contents</h2>
 <ul style="margin:4px 0;padding-left:20px">
+<li><a href="#idea">★ The Idea</a></li>
+<li><a href="#process">★ The Process</a></li>
+<li><a href="#design">★ The Design</a>
+<ul style="margin:2px 0;padding-left:20px">
 <li><a href="#s1">1. RF Fundamentals</a></li>
 <li><a href="#s2">2. Antennas</a></li>
 <li><a href="#s3">3. Transmitters &amp; Receivers</a></li>
 <li><a href="#s4">4. Link Analysis</a></li>
 <li><a href="#s5">5. Ground Segment</a></li>
 <li><a href="#s6">6. Regulations &amp; Licensing</a></li>
-<li><a href="#s7">7. Designing a Communications System</a></li>
+</ul>
+</li>
+<li><a href="#s7">Design Walkthrough — Worked Example</a></li>
+<li><a href="#refs">★ References</a></li>
 </ul>
 </nav>
 
-<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;">
-<h2 style="margin-top:0;font-size:1.1em">Before You Dive In — The Big Picture</h2>
+<section class="section-card" id="idea">
+<h2 style="margin-top:0">★ The Idea</h2>
 <p style="margin:8px 0">The <strong>COMMS subsystem</strong> is the only connection between the spacecraft and the mission team. If the link fails, the spacecraft is unreachable — no commands can be sent, no data can be recovered. Every COMMS design starts with a simple question: <em>how much data do I need to get down, and how often can I talk to the ground?</em></p>
 <p style="margin:8px 0">The sections below give you the reference material — frequency bands, modulation schemes, antenna types, link budgets, ground stations. But if you're designing a comms system from scratch, start with <a href="#s7">Section 7</a> — it walks through a complete example (a cubesat measuring radiation in the Van Allen Belt) step by step, showing how each decision flows from the data requirement.</p>
 <p style="margin:8px 0">Every COMMS subsystem is built from six fundamental elements:</p>
@@ -82,10 +91,31 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <tr><td style="padding:4px 8px"><strong>Ground Segment Interface</strong></td><td style="padding:4px 8px">The ground station network, antenna tracking, Doppler compensation, and protocol stack that make the space-to-ground link usable.</td></tr>
 </table>
 <p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These elements work together: the modem produces a modulated signal, the transmitter amplifies it, and the antenna radiates it to the ground station — with every stage subject to frequency allocation, power limits, and link budget constraints.</p>
-</div>
+</section>
+
+<section class="section-card" id="process">
+<h2 style="margin-top:0">★ The Process</h2>
+<p><strong>Responsible Engineers:</strong> RF Engineer, Systems Engineer, Communications Engineer</p>
+<p><strong>Users:</strong> Systems Engineers, Operations Engineers, Flight Software Engineers, Ground Station Operators</p>
+<p>Designing a communications subsystem begins with the mission's data requirement — how much data needs to come down, how often you can talk to the ground, and how much power, mass, and money you have available. Everything else follows from there.</p>
+<p>The typical design workflow:</p>
+<ol style="margin:8px 0;padding-left:20px">
+<li><strong>Determine the data requirement</strong> — science data volume per orbit, housekeeping telemetry, ground contact schedule</li>
+<li><strong>Choose the modulation scheme</strong> — spectral efficiency vs. Eb/N₀ trade; BPSK, QPSK, or higher-order</li>
+<li><strong>Select the frequency band</strong> — driven by data rate, antenna size constraints, and regulatory environment</li>
+<li><strong>Pick polarization and antenna type</strong> — circular vs. linear; patch, helix, dish, or phased array</li>
+<li><strong>Build the link budget</strong> — verify that received power and Eb/N₀ meet the required bit error rate with margin</li>
+<li><strong>Iterate and converge</strong> — revisit each choice as trades tighten mass, power, cost, and performance</li>
+</ol>
+<p>A complete step-by-step walkthrough is in the <a href="#s7">Design Walkthrough — Worked Example</a> below.</p>
+</section>
+
+<section class="section-card" id="design">
+<h2 style="margin-top:0">★ The Design</h2>
+<p>The sections below provide the detailed reference material — frequency bands, antenna parameters, transmitter/receiver architectures, link budget equations, ground segment standards, and regulatory requirements. Use these as a lookup reference while following the design process above.</p>
 
 <section class="section-card" id="s1">
-<h2 style="margin-top:0">1. RF Fundamentals</h2>
+<h3 style="margin-top:0">1. RF Fundamentals</h3>
 <p>Radio-frequency fundamentals underpin every COMMS design. Frequency band choice determines antenna size, atmospheric loss, and data rate capability. Modulation and coding determine how efficiently you use the bandwidth and how robust the link is to noise. The key insight: <strong>there is no direct conversion from frequency to data rate</strong> — the relationship depends entirely on how data is modulated onto the carrier wave.</p>
 
 <details>
@@ -135,7 +165,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </section>
 
 <section class="section-card" id="s2">
-<h2 style="margin-top:0">2. Antennas</h2>
+<h3 style="margin-top:0">2. Antennas</h3>
 <p>The antenna converts electrical signals into radiated electromagnetic waves and vice versa. Antenna design starts with Maxwell's equations — the four laws that describe how electric and magnetic fields are generated and interact. Understanding these fundamentals is essential because antenna performance directly determines whether your link closes, and every parameter (gain, directivity, efficiency, polarization, radiation pattern) involves trade-offs.</p>
 
 <details>
@@ -217,7 +247,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </section>
 
 <section class="section-card" id="s3">
-<h2 style="margin-top:0">3. Transmitters &amp; Receivers</h2>
+<h3 style="margin-top:0">3. Transmitters &amp; Receivers</h3>
 <p>The transmitter amplifies and radiates the modulated signal; the receiver captures and demodulates the weak ground signal. Together they define the achievable data rate and link margin.</p>
 
 <details>
@@ -258,7 +288,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </section>
 
 <section class="section-card" id="s4">
-<h2 style="margin-top:0">4. Link Analysis</h2>
+<h3 style="margin-top:0">4. Link Analysis</h3>
 <p>The link budget is the fundamental calculation that proves the communication link will work. It accounts for every gain and loss between the transmitter and receiver — transmit power, antenna gains, free-space path loss, atmospheric effects, pointing error, and implementation margin. The result is compared against the required signal quality for your modulation and coding scheme to determine whether the link has positive margin.</p>
 
 <details>
@@ -383,7 +413,7 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </section>
 
 <section class="section-card" id="s5">
-<h2 style="margin-top:0">5. Ground Segment</h2>
+<h3 style="margin-top:0">5. Ground Segment</h3>
 <p>The ground segment is the earth-side half of the communication link. Ground stations, antenna tracking, Doppler compensation, and protocol stacks must be designed together with the spacecraft COMMS subsystem.</p>
 
 <details>
@@ -420,7 +450,7 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </section>
 
 <section class="section-card" id="s6">
-<h2 style="margin-top:0">6. Regulations &amp; Licensing</h2>
+<h3 style="margin-top:0">6. Regulations &amp; Licensing</h3>
 <p>Space communications are regulated internationally by the ITU and nationally by agencies like the FCC (US) or OFCOM (UK). Frequency allocation, power limits, and orbital slot registration must be secured before launch.</p>
 
 <details>
@@ -454,9 +484,10 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </ul>
 </details>
 </section>
+</section>
 
 <section class="section-card" id="s7">
-<h2 style="margin-top:0">7. Designing a Communications System — A Worked Example</h2>
+<h2 style="margin-top:0">Design Walkthrough — Worked Example</h2>
 <p>This section walks through designing a COMMS subsystem from scratch using a concrete example. Every decision flows from the data requirement, and each step references the relevant reference section above. The design is iterative — expect to loop back through the steps as choices in one area constrain options in another.</p>
 
 <details>
@@ -585,54 +616,29 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </details>
 </section>
 
+<section class="section-card" id="refs">
+<h2 style="margin-top:0">★ References</h2>
+<p>Standards, tutorials, and further reading for communications subsystem design:</p>
+<ul>
+<li><a href="https://www.nasa.gov/smallsat-institute/sst-soa/soa-communications/" target="_blank">NASA SmallSat SOA — Communications</a></li>
+<li><a href="https://www.unoosa.org/documents/pdf/psa/access2space4all/KiboCUBE/AcademySeason2/On-demand_Pre-recorded_Lectures/KiboCUBE_Academy_2021_OPL09.pdf" target="_blank">KiboCUBE Academy — Communications lecture</a></li>
+<li><a href="https://www.numberanalytics.com/blog/spacecraft-communication-system-design" target="_blank">Spacecraft Communications System Design overview</a></li>
+<li><a href="https://complextoreal.com/tutorials/" target="_blank">complextoreal — RF tutorials (link budget, modulation)</a></li>
+<li><a href="https://www.antenna-theory.com/" target="_blank">Antenna Theory — fundamentals and design</a></li>
+<li><a href="https://pressbooks-dev.oer.hawaii.edu/epet302/chapter/9-6-link-budget/" target="_blank">Link Budget tutorial — University of Hawaii</a></li>
+<li><a href="https://www.itu.int/en/ITU-R/space/workshops/2015-prague-small-sat/Presentations/ITU-linkbudget.pdf" target="_blank">ITU Link Budget presentation</a></li>
+<li><a href="https://complextoreal.com/wp-content/uploads/2013/01/linkbud.pdf" target="_blank">Link Budget — complextoreal PDF</a></li>
+<li><a href="https://www.youtube.com/watch?v=jgjaFzsYd88" target="_blank">RF elements — Understanding Link Budgets on YouTube</a></li>
+</ul>
+<hr>
+<p style="font-size:0.85em;color:var(--note)">These resources complement the content on this page. The worked example above is adapted from the <a href="https://docs.google.com/spreadsheets/d/1St7OgRfg7CElAO7TT4rqVKN-ZBS_3-LcApncXWG3Z-4/edit" target="_blank">Link Budget Google Sheet</a> referenced in the spacecraft learning notes.</p>
+</section>
+
 <script>
-const btn=document.getElementById('toggle-theme');
-const stored=localStorage.getItem('theme');
-if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
-btn.onclick=()=>{
- document.body.classList.toggle('dark');
- const isDark=document.body.classList.contains('dark');
- localStorage.setItem('theme',isDark?'dark':'light');
- btn.textContent=isDark?'☀ Light':'☾ Dark';
-};
-
-function g(id){return +document.getElementById(id).value}
-function s(id,v){document.getElementById(id).textContent=v}
-
-const cDefaults={};
-['c_freq','c_dist','c_ptx','c_gtx','c_Lsys','c_grx','c_Latm','c_Lpoint','c_Tsys','c_EbN0','c_Gcode','c_Rreq'].forEach(id=>{cDefaults[id]=g(id)});
-
-function calcLink(){
- const f=g('c_freq'), d=g('c_dist'), Ptx=g('c_ptx'), Gtx=g('c_gtx'), Lsys=g('c_Lsys');
- const Grx=g('c_grx'), Latm=g('c_Latm'), Lpoint=g('c_Lpoint'), Tsys=g('c_Tsys');
- const EbN0=g('c_EbN0'), Gcode=g('c_Gcode'), Rreq=g('c_Rreq');
- const EIRP=Ptx+Gtx-Lsys;
- const FSL=32.4+20*Math.log10(f)+20*Math.log10(d);
- const Prx_dBm=EIRP+Grx-FSL-Latm-Lpoint;
- const Prx_dBW=Prx_dBm-30;
- const CN0=Prx_dBW+228.6-10*Math.log10(Tsys);
- const Rmax_kbps=Math.pow(10,(CN0-EbN0+Gcode)/10)/1000;
- const margin=CN0-EbN0+Gcode-10*Math.log10(Rreq*1000);
- s('c_subEIRP',Ptx+' + '+Gtx+' − '+Lsys);
- s('c_subFSL','32.4 + 20·log('+f+') + 20·log('+d+')');
- s('c_subPrx',EIRP.toFixed(1)+' + '+Grx+' − '+FSL.toFixed(1)+' − '+Latm+' − '+Lpoint);
- s('c_subCN0',Prx_dBW.toFixed(1)+' + 228.6 − 10·log('+Tsys+')');
- s('c_subRmax','10^(('+CN0.toFixed(1)+' − '+EbN0+' + '+Gcode+')/10) / 1000');
- s('c_subMargin',CN0.toFixed(1)+' − '+EbN0+' + '+Gcode+' − 10·log('+(Rreq*1000)+')');
- s('c_outEIRP',EIRP.toFixed(1)+' dBm');
- s('c_outFSL',FSL.toFixed(1)+' dB');
- s('c_outPrx',Prx_dBm.toFixed(1)+' dBm');
- s('c_outCN0',CN0.toFixed(1)+' dB·Hz');
- s('c_outRmax',Rmax_kbps.toFixed(1)+' kbps');
- s('c_outMargin',margin.toFixed(1)+' dB');
-}
-
-document.querySelectorAll('#c_freq,#c_dist,#c_ptx,#c_gtx,#c_Lsys,#c_grx,#c_Latm,#c_Lpoint,#c_Tsys,#c_EbN0,#c_Gcode,#c_Rreq').forEach(el=>el.addEventListener('input',calcLink));
-document.getElementById('c_reset').addEventListener('click',()=>{
- Object.keys(cDefaults).forEach(id=>document.getElementById(id).value=cDefaults[id]);
- calcLink();
-});
-calcLink();
+(function(){let c=document.getElementById('particles');if(!c){c=document.createElement('div');c.id='particles';document.body.prepend(c)}for(let i=32;i--;){let s=document.createElement('div');s.className='p-star';let sz=2+Math.random()*4;s.style.cssText='left:'+(Math.random()*100)+'%;width:'+sz+'px;height:'+sz+'px;background:rgba(255,255,255,'+(.2+Math.random()*.4)+');animation-duration:'+(10+Math.random()*20)+'s;animation-delay:'+(Math.random()*20)+'s';c.appendChild(s)}
+const btn=document.getElementById('toggle-theme');const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='\u2606 Light'}
+btn.onclick=()=>{document.body.classList.toggle('dark');const isDark=document.body.classList.contains('dark');localStorage.setItem('theme',isDark?'dark':'light');btn.textContent=isDark?'\u2606 Light':'\u2605 Dark'};
 </script>
 </body>
 </html>
