@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Engineering Notes</title>
+<style>
+:root{--bg:#f5f5f5;--card-bg:white;--text:#1e293b;--link:#2563eb;--shadow:rgba(0,0,0,.1)}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--text:#e2e8f0;--link:#60a5fa;--shadow:rgba(0,0,0,.4)}
+body{font-family:Arial,sans-serif;max-width:900px;margin:auto;padding:40px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+.card{background:var(--card-bg);padding:20px;border-radius:10px;box-shadow:0 2px 6px var(--shadow);margin-top:20px}
+a.button{display:inline-block;padding:10px 15px;background:#2563eb;color:white;text-decoration:none;border-radius:6px;transition:opacity .2s}
+a.button:hover{opacity:.8}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100;transition:background .3s}
+#toggle-theme:hover{opacity:.8}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+
+<div style="text-align:center;margin:0 0 10px 0">
+<svg viewBox="0 0 600 240" width="100%" style="max-width:600px">
+  <defs>
+    <radialGradient id="glow-orbit" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2563eb" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="sat-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569"/><stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="panel-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="obc-chip" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="com-link" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="sens-link" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background orbit glow -->
+  <circle cx="300" cy="130" r="110" fill="url(#glow-orbit)"/>
+
+  <!-- Solar panels -->
+  <rect x="20" y="80" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.9"/>
+  <rect x="20" y="100" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.7"/>
+  <rect x="20" y="120" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.5"/>
+  <rect x="520" y="80" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.9"/>
+  <rect x="520" y="100" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.7"/>
+  <rect x="520" y="120" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.5"/>
+
+  <!-- Satellite bus body -->
+  <rect x="100" y="90" width="400" height="60" rx="6" fill="url(#sat-body)" stroke="#64748b" stroke-width="1"/>
+
+  <!-- Antenna -->
+  <line x1="300" y1="90" x2="300" y2="40" stroke="#94a3b8" stroke-width="2"/>
+  <line x1="290" y1="50" x2="310" y2="50" stroke="#cbd5e1" stroke-width="1.5"/>
+  <line x1="285" y1="60" x2="315" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
+  <line x1="280" y1="70" x2="320" y2="70" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="300" y="28" text-anchor="middle" fill="var(--text)" font-size="9">Antenna</text>
+
+  <!-- OBC Chip (center) -->
+  <rect x="230" y="100" width="60" height="40" rx="4" fill="url(#obc-chip)"/>
+  <text x="260" y="120" text-anchor="middle" fill="white" font-size="10" font-weight="bold">OBC</text>
+  <text x="260" y="132" text-anchor="middle" fill="#a7f3d0" font-size="8">Computer</text>
+
+  <!-- Pins on OBC chip -->
+  <line x1="230" y1="108" x2="220" y2="108" stroke="#64748b" stroke-width="2"/>
+  <line x1="230" y1="118" x2="220" y2="118" stroke="#64748b" stroke-width="2"/>
+  <line x1="230" y1="128" x2="220" y2="128" stroke="#64748b" stroke-width="2"/>
+  <line x1="290" y1="108" x2="300" y2="108" stroke="#64748b" stroke-width="2"/>
+  <line x1="290" y1="118" x2="300" y2="118" stroke="#64748b" stroke-width="2"/>
+  <line x1="290" y1="128" x2="300" y2="128" stroke="#64748b" stroke-width="2"/>
+
+  <!-- Connected subsystems -->
+  <!-- Power subsystem -->
+  <rect x="120" y="100" width="40" height="40" rx="4" fill="#dc2626" opacity="0.8"/>
+  <text x="140" y="120" text-anchor="middle" fill="white" font-size="8">Power</text>
+  <text x="140" y="130" text-anchor="middle" fill="#fee2e2" font-size="7">EPS</text>
+  <line x1="160" y1="120" x2="218" y2="120" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle r="3" fill="#ef4444"><animateMotion dur="3s" repeatCount="indefinite" path="M160,120 L218,120"/></circle>
+
+  <!-- Comms subsystem -->
+  <rect x="370" y="98" width="40" height="20" rx="3" fill="url(#com-link)"/>
+  <text x="390" y="111" text-anchor="middle" fill="white" font-size="7">Comms</text>
+  <rect x="370" y="122" width="40" height="20" rx="3" fill="url(#com-link)"/>
+  <text x="390" y="135" text-anchor="middle" fill="white" font-size="7">Telemetry</text>
+  <line x1="300" y1="110" x2="368" y2="110" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <line x1="300" y1="130" x2="368" y2="130" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle r="3" fill="#fbbf24"><animateMotion dur="2.5s" repeatCount="indefinite" path="M300,110 L368,110"/></circle>
+  <circle r="3" fill="#fbbf24"><animateMotion dur="3.5s" repeatCount="indefinite" path="M368,130 L300,130"/></circle>
+
+  <!-- Sensor subsystem -->
+  <rect x="440" y="100" width="40" height="40" rx="4" fill="url(#sens-link)" opacity="0.8"/>
+  <text x="460" y="118" text-anchor="middle" fill="white" font-size="7">Sensors</text>
+  <text x="460" y="130" text-anchor="middle" fill="#ddd6fe" font-size="7">IMU/GPS</text>
+  <line x1="410" y1="120" x2="438" y2="120" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <circle r="3" fill="#a78bfa"><animateMotion dur="2.8s" repeatCount="indefinite" path="M410,120 L438,120"/></circle>
+
+  <!-- On-board data bus labels -->
+  <text x="190" y="158" text-anchor="middle" fill="var(--text)" font-size="8" opacity="0.6">Internal Bus</text>
+  <text x="340" y="158" text-anchor="middle" fill="var(--text)" font-size="8" opacity="0.6">Data Bus</text>
+  <text x="426" y="158" text-anchor="middle" fill="var(--text)" font-size="8" opacity="0.6">Sensor Bus</text>
+
+  <!-- Pulsing orbit ring -->
+  <ellipse cx="300" cy="145" rx="200" ry="15" fill="none" stroke="#2563eb" stroke-width="1" stroke-dasharray="8,12" opacity="0.4">
+    <animateTransform attributeName="transform" type="rotate" values="0 300 145;360 300 145" dur="20s" repeatCount="indefinite"/>
+  </ellipse>
+  <ellipse cx="300" cy="145" rx="180" ry="12" fill="none" stroke="#2563eb" stroke-width="0.5" stroke-dasharray="4,16" opacity="0.3">
+    <animateTransform attributeName="transform" type="rotate" values="360 300 145;0 300 145" dur="15s" repeatCount="indefinite"/>
+  </ellipse>
+</svg>
+</div>
+
+<div class="card">
+<h1>Engineering Knowledge Base</h1>
+<p>A personal website documenting things I've learned, taught, and worked on.</p>
+<h2>Topics</h2>
+<ul>
+<li><a href="obc.html">Command &amp; Data Handling (CDH)</a></li>
+</ul>
+</div>
+
+<script>
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+ document.body.classList.toggle('dark');
+ const isDark=document.body.classList.contains('dark');
+ localStorage.setItem('theme',isDark?'dark':'light');
+ btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+</script>
+</body>
+</html>
