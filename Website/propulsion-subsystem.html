@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Propulsion Subsystem</title>
+<style>
+:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
+body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
+summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+details details summary{font-size:1em}
+a{color:var(--link)}
+h2{margin-top:24px}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--th-bg);font-weight:bold}
+.note{color:var(--note);font-style:italic;font-size:0.9em}
+.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
+.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
+.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
+.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+.calc-out div{font-size:0.95em}
+.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
+.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
+.calc-reset:hover{opacity:.8}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
+#toggle-theme:hover{opacity:.8}
+hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+<a href="index.html">← Home</a>
+<h1>Propulsion Subsystem</h1>
+<p>The <strong>Propulsion subsystem</strong> provides the thrust needed for orbit insertion, station-keeping, attitude control (through thrusters), and end-of-life disposal. Propulsion is one of the highest-risk subsystems — a failure can mean losing the mission — and one of the most tightly coupled to the spacecraft mass budget, as propellant is often a significant fraction of total wet mass.</p>
+
+<nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1em">Contents</h2>
+<ul style="margin:4px 0;padding-left:20px">
+<li><a href="#s1">1. Propulsion Fundamentals</a></li>
+<li><a href="#s2">2. Propellant Types</a></li>
+<li><a href="#s3">3. System Architecture</a></li>
+<li><a href="#s4">4. Mission Planning</a></li>
+<li><a href="#s5">5. Integration &amp; Testing</a></li>
+<li><a href="#s6">6. Propulsion Design Walkthrough</a></li>
+</ul>
+</nav>
+
+<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1.1em">Before You Dive In — The Big Picture</h2>
+<p style="margin:8px 0">The <strong>Propulsion subsystem</strong> provides the delta-v (Δv) that changes the spacecraft's velocity — for orbit insertion, station-keeping, momentum management, and disposal. It is unique among subsystems because it consumes its own mass (propellant) to produce thrust, making every kilogram of propellant a direct trade against payload mass.</p>
+<p style="margin:8px 0">Every propulsion subsystem is defined by five core elements:</p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0">
+<tr><th style="width:130px;text-align:left;padding:4px 8px">Element</th><th style="text-align:left;padding:4px 8px">What it does</th></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Propellant</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">The reaction mass expelled to produce thrust. Type determines Isp, storage temperature, tank material compatibility, and handling safety.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Tank</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Stores the propellant under pressure. Material, shape, and diaphragm/bladder type depend on propellant and mission duration.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Feed System</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Pipes, valves, regulators, and filters that deliver propellant from tank to thruster at the right pressure and flow rate.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Thruster</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">The device that expands and expels the propellant to produce thrust. Nozzle design, thrust level, and specific impulse vary by type.</td></tr>
+<tr><td style="padding:4px 8px"><strong>Pressurization</strong></td><td style="padding:4px 8px">The system (regulator, pressurant tank, or blowdown) that maintains propellant tank pressure as propellant is consumed.</td></tr>
+</table>
+<p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These elements are tightly coupled: propellant type drives tank material and pressurization method, feed system design determines minimum impulse bit, and thruster placement defines the spacecraft torque and delta-v capability in each axis.</p>
+</div>
+
+<section class="section-card" id="s1">
+<h2 style="margin-top:0">1. Propulsion Fundamentals</h2>
+<p>Specific impulse, thrust, total impulse, and delta-v are the fundamental parameters that define any propulsion system. These fundamentals connect the propulsion subsystem to the broader mission design.</p>
+
+<details>
+<summary>Key Parameters</summary>
+<table>
+<tr><th>Parameter</th><th>Symbol</th><th>Definition</th></tr>
+<tr><td><strong>Specific impulse</strong></td><td>Isp (seconds)</td><td>Thrust per unit propellant mass flow rate; higher Isp = more efficient propellant use</td></tr>
+<tr><td><strong>Thrust</strong></td><td>F (N)</td><td>Force produced by the thruster; determines acceleration and maneuver duration</td></tr>
+<tr><td><strong>Total impulse</strong></td><td>I<sub>tot</sub> (N·s)</td><td>Integral of thrust over total burn time; product of Isp × propellant mass × g₀</td></tr>
+<tr><td><strong>Delta-v</strong></td><td>Δv (m/s)</td><td>Change in velocity the propulsion system can deliver; calculated from Tsiolkovsky rocket equation</td></tr>
+<tr><td><strong>Minimum impulse bit</strong></td><td>Min I<sub>bit</sub> (N·s)</td><td>Smallest impulse the thruster can deliver; drives fine attitude control capability</td></tr>
+</table>
+</details>
+
+<details>
+<summary>The Rocket Equation</summary>
+<p class="formula">
+Δv = Isp × g₀ × ln(m₀ / m<sub>f</sub>)
+</p>
+<p>Where m₀ is initial mass (wet), m<sub>f</sub> is final mass (dry), and g₀ = 9.80665 m/s². The equation shows that achieving higher Δv requires either higher Isp (better propellant efficiency) or more propellant mass fraction. A propellant mass fraction of 50% gives Δv ≈ 0.69 × Isp × g₀.</p>
+
+<details>
+<summary>Interactive Rocket Equation Calculator</summary>
+<div class="calculator">
+ <div class="calc-grid">
+  <label>Dry mass (kg): <input type="number" id="p_mf" value="8" step="0.5" min="0.1" max="100000"></label>
+  <label>Propellant mass (kg): <input type="number" id="p_mp" value="2" step="0.1" min="0" max="100000"></label>
+  <label>Isp (seconds): <input type="number" id="p_Isp" value="220" step="10" min="10" max="5000"></label>
+  <label>Or look up: Δv target (m/s): <input type="number" id="p_dv" value="120" step="10" min="0" max="20000"></label>
+ </div>
+ <div class="calc-out">
+  <div>Mass ratio (m₀/m<sub>f</sub>): <span id="p_outMR">--</span></div>
+  <div>Δv delivered: <span id="p_outDv">--</span></div>
+  <div>Propellant fraction: <span id="p_outFrac">--</span></div>
+  <div>Propellant needed for Δv target: <span id="p_outMp">--</span></div>
+ </div>
+ <button class="calc-reset" id="p_reset">Reset to Defaults</button>
+</div>
+</details>
+</details>
+
+<details>
+<summary>Thrust vs Isp Trade</summary>
+<table>
+<tr><th>Type</th><th>Thrust</th><th>Isp (s)</th><th>Burn Duration</th><th>Use Case</th></tr>
+<tr><td><strong>Chemical (high thrust)</strong></td><td>0.1–500 N</td><td>150–320</td><td>Seconds to minutes</td><td>Orbit insertion, large maneuvers, launch escape</td></tr>
+<tr><td><strong>Electric (low thrust)</strong></td><td>0.001–1 N</td><td>1,000–5,000</td><td>Days to months</td><td>Station-keeping, orbit raising, deep space</td></tr>
+<tr><td><strong>Cold gas</strong></td><td>0.01–10 N</td><td>40–75</td><td>Pulse mode</td><td>Fine attitude control, deorbit, simple missions</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s2">
+<h2 style="margin-top:0">2. Propellant Types</h2>
+<p>Propellant selection is one of the most consequential design decisions for a spacecraft, affecting tank mass, thermal control, safety, and mission capabilities.</p>
+
+<details>
+<summary>Chemical Propellants</summary>
+<table>
+<tr><th>Propellant</th><th>Isp (vacuum, s)</th><th>Storage Temp</th><th>Notes</th></tr>
+<tr><td><strong>Cold gas (N₂, He, Xe, butane)</strong></td><td>40–75</td><td>Ambient / cryo</td><td>Simplest system; low Isp; non-toxic; used for fine attitude control or deorbit</td></tr>
+<tr><td><strong>Monopropellant (hydrazine)</strong></td><td>200–240</td><td>Ambient</td><td>Catalytically decomposed; heritage; toxic; requires careful handling; widely used</td></tr>
+<tr><td><strong>Green monopropellant (LMP-103S, AF-M315E)</strong></td><td>220–255</td><td>Ambient</td><td>Lower toxicity than hydrazine; higher Isp; emerging standard for new missions</td></tr>
+<tr><td><strong>Bipropellant (MMH/NTO, N₂H₄/NTO)</strong></td><td>290–320</td><td>Ambient</td><td>Highest chemical Isp; hypergolic (ignites on contact); most complex; large spacecraft</td></tr>
+<tr><td><strong>Solid (HTPB/AP, composite)</strong></td><td>240–300</td><td>Ambient</td><td>Not throttleable; cannot be stopped once ignited; used for solid rocket motors (boosters, apogee motors)</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Electric Propellants</summary>
+<table>
+<tr><th>Propellant</th><th>Isp (s)</th><th>Thrust</th><th>Power Needed</th><th>Notes</th></tr>
+<tr><td><strong>Xenon (Hall / ion)</strong></td><td>1,500–3,500</td><td>0.01–1 N</td><td>100 W – 10 kW</td><td>Most common for electric propulsion; high Isp; expensive</td></tr>
+<tr><td><strong>Krypton (Hall / ion)</strong></td><td>1,200–2,500</td><td>0.01–0.5 N</td><td>100 W – 5 kW</td><td>Lower Isp than Xe but much cheaper; used on Starlink and small sats</td></tr>
+<tr><td><strong>Iodine (Hall)</strong></td><td>1,500–2,500</td><td>0.01–0.5 N</td><td>100 W – 1 kW</td><td>Solid storage (high density); corrosiveness is a challenge; emerging</td></tr>
+<tr><td><strong>Ammonia (resistojet / arcjet)</strong></td><td>200–600</td><td>0.1–1 N</td><td>100 W – 2 kW</td><td>Electrothermal; low cost; moderate Isp</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Propellant Selection Criteria</summary>
+<table>
+<tr><th>Criterion</th><th>Consideration</th></tr>
+<tr><td><strong>Isp requirement</strong></td><td>Higher Isp reduces propellant mass but may increase power, cost, or complexity</td></tr>
+<tr><td><strong>Thrust requirement</strong></td><td>Orbit insertion needs high thrust (chemical); station-keeping can use low thrust (electric)</td></tr>
+<tr><td><strong>Storage density</strong></td><td>Higher density = smaller tank = less structural mass</td></tr>
+<tr><td><strong>Handling &amp; safety</strong></td><td>Hydrazine requires hazmat facilities; green propellants reduce cost and schedule risk</td></tr>
+<tr><td><strong>Power availability</strong></td><td>Electric propulsion needs large arrays; may drive solar array size and battery capacity</td></tr>
+<tr><td><strong>Mission timeline</strong></td><td>Electric propulsion requires long burn durations; not suitable for time-critical maneuvers</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s3">
+<h2 style="margin-top:0">3. System Architecture</h2>
+<p>The propulsion system architecture defines how propellant flows from tank to thruster, how pressure is managed, and how redundancy and isolation are implemented.</p>
+
+<details>
+<summary>Feed System Types</summary>
+<table>
+<tr><th>Type</th><th>Description</th><th>When Used</th></tr>
+<tr><td><strong>Blowdown</strong></td><td>Pressurant gas in same tank as propellant; pressure drops as propellant is consumed</td><td>Simple systems, small spacecraft, low total impulse</td></tr>
+<tr><td><strong>Regulated</strong></td><td>Separate pressurant tank + regulator maintains constant feed pressure</td><td>High total impulse, precision maneuvers, bipropellant systems</td></tr>
+<tr><td><strong>Pressure-fed</strong></td><td>High-pressure pressurant forces propellant to thruster; no pump</td><td>Most spacecraft (simpler than turbopump)</td></tr>
+<tr><td><strong>Pump-fed (turbopump / electric)</strong></td><td>Pump boosts propellant pressure; used in launch vehicles and some large spacecraft</td><td>High-thrust, high-pressure applications</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Tank Types</summary>
+<table>
+<tr><th>Type</th><th>Configuration</th><th>Pros</th><th>Cons</th></tr>
+<tr><td><strong>Diaphragm</strong></td><td>Elastomeric diaphragm separates propellant from pressurant</td><td>Positive propellant expulsion; reliable; zero-g compatible</td><td>Limited cycle life; material compatibility limits</td></tr>
+<tr><td><strong>Bladder</strong></td><td>Flexible bladder inside tank (propellant inside bladder)</td><td>Positive expulsion; well-proven heritage</td><td>Bladder material limits temperature and propellant</td></tr>
+<tr><td><strong>Surface tension (PMD)</strong></td><td>Propellant management device uses capillary forces</td><td>No moving parts; long life; zero-g compatible</td><td>More complex design; higher cost</td></tr>
+<tr><td><strong>Piston / positive displacement</strong></td><td>Mechanical piston pushes propellant out</td><td>Very reliable expulsion; simple</td><td>Adds moving part; heavier</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Architecture Diagram (Typical)</summary>
+<p>A typical monopropellant blowdown system: Pressurant (He) → Propellant tank (with diaphragm) → Filter → Latching valve → Thruster. A regulated system adds: High-pressure pressurant tank → Regulator → Propellant tank → Filter → Latching valves → Thruster bank. Electric propulsion adds: Power processing unit (PPU) → Flow controller → Thruster. Redundant valves and isolation pyros are included for fault tolerance.</p>
+</details>
+</section>
+
+<section class="section-card" id="s4">
+<h2 style="margin-top:0">4. Mission Planning</h2>
+<p>Mission planning determines how much propellant is needed, how burns are scheduled, and how the system is managed over the mission lifetime to ensure sufficient delta-v remains for disposal.</p>
+
+<details>
+<summary>Delta-v Budget</summary>
+<table>
+<tr><th>Category</th><th>Typical Δv (m/s, LEO)</th><th>Notes</th></tr>
+<tr><td><strong>Orbit insertion error correction</strong></td><td>10–50</td><td>Corrects launcher injection errors</td></tr>
+<tr><td><strong>Orbit maintenance / drag makeup</strong></td><td>10–100 per year</td><td>LEO atmospheric drag; depends on altitude and solar activity</td></tr>
+<tr><td><strong>Station-keeping (GEO)</strong></td><td>50–100 per year</td><td>North-south + east-west station-keeping</td></tr>
+<tr><td><strong>Momentum management</strong></td><td>5–20 per year</td><td>Reaction wheel desaturation; depends on disturbance torques</td></tr>
+<tr><td><strong>Constellation phasing / maneuvering</strong></td><td>10–100 total</td><td>Relative drift, plane changes, collision avoidance</td></tr>
+<tr><td><strong>End-of-life disposal</strong></td><td>10–200</td><td>Deorbit (LEO) or graveyard orbit raise (GEO)</td></tr>
+<tr><td><strong>Reserve / margin</strong></td><td>10–20% of total</td><td>Contingency for missed burns, anomalies, extended mission</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Maneuver Planning</summary>
+<table>
+<tr><th>Maneuver Type</th><th>Description</th></tr>
+<tr><td><strong>Apoapsis / periapsis burn</strong></td><td>Hohmann transfer; thrust at apsis to raise or lower opposite apsis</td></tr>
+<tr><td><strong>Inclination change</strong></td><td>Out-of-plane burn; requires significant delta-v (plane changes are expensive)</td></tr>
+<tr><td><strong>Phase change</strong></td><td>Slight orbit period change to drift spacecraft to desired position in constellation</td></tr>
+<tr><td><strong>Collision avoidance</strong></td><td>Small delta-v (1–10 m/s) to avoid conjunction with debris or other spacecraft</td></tr>
+<tr><td><strong>Disposal burn</strong></td><td>Final burn to deorbit (raise perigee into atmosphere) or move to graveyard orbit</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Propellant Budgeting</summary>
+<p>Propellant mass is calculated from the delta-v budget using the rocket equation. Key considerations: pressurant mass (for blowdown or regulated systems must be included), residuals (unusable propellant left in tank due to slosh, PMD limits, or pressurant blowdown), and boil-off (for cryogenic propellants). Typical usable propellant fraction is 90–98% of loaded mass.</p>
+</details>
+</section>
+
+<section class="section-card" id="s5">
+<h2 style="margin-top:0">5. Integration &amp; Testing</h2>
+<p>Propulsion is one of the most hazardous subsystems to integrate and test. Propellant loading, leak checking, and safe handling procedures are critical program activities.</p>
+
+<details>
+<summary>Integration Activities</summary>
+<table>
+<tr><th>Activity</th><th>Description</th></tr>
+<tr><td><strong>Component-level acceptance</strong></td><td>Proof pressure, burst pressure, leak testing of tank; functional test of valves, regulators, transducers</td></tr>
+<tr><td><strong>System-level leak check</strong></td><td>Helium mass spectrometer leak test of all welded joints and fittings; typically < 1×10⁻⁶ scc/s He</td></tr>
+<tr><td><strong>Propellant loading</strong></td><td>Performed at launch site; hydrazine loading requires full hazmat PPE; green propellants reduce safety burden</td></tr>
+<tr><td><strong>Pressurization</strong></td><td>Pressurant tank filled to operating pressure; regulator set points verified</td></tr>
+<tr><td><strong>End-to-end functional test</strong></td><td>Valve cycling, thruster fire test (if permitted), heater checkout, temperature sensor verification</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Testing Sequence</summary>
+<table>
+<tr><th>Test</th><th>Purpose</th></tr>
+<tr><td><strong>Proof pressure test</strong></td><td>Verify tank and tubing can withstand 1.5× operating pressure without permanent deformation</td></tr>
+<tr><td><strong>Burst pressure test (qualification only)</strong></td><td>Destructive test on qualification unit to verify 4× safety factor</td></tr>
+<tr><td><strong>Leak test (external and internal)</strong></td><td>Verify all seals hold; internal leak test checks valve seat leakage</td></tr>
+<tr><td><strong>Flow test</strong></td><td>Measure pressure drop at expected flow rates; verify feed system delivers required mass flow</td></tr>
+<tr><td><strong>Vibration test</strong></td><td>Verify structural integrity under launch vibration; propellant is simulated with water or non-toxic simulant</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Safety &amp; Handling</summary>
+<ul>
+<li>Hydrazine is toxic, carcinogenic, and flammable — requires hazmat suits, double-walled piping, and scrubbers.</li>
+<li>Green propellants (LMP-103S, AF-M315E) are less toxic but may still require special handling due to high temperature exhaust.</li>
+<li>High-pressure gas operations follow strict procedures: pressure relief devices, burst disks, remote fill/vent.</li>
+<li>Propulsion integration is typically the last major activity before spacecraft mate to launcher — delays here impact the entire launch campaign.</li>
+<li>End-of-life passivation: venting remaining propellant and pressurant to prevent explosions during disposal.</li>
+</ul>
+</details>
+</section>
+
+<section class="section-card" id="s6">
+<h2 style="margin-top:0">6. Propulsion Design Walkthrough</h2>
+<p>This walkthrough goes from mission requirements to a sized propulsion system for a 6U cubesat. The same process applies to any spacecraft — only the numbers change.</p>
+
+<details>
+<summary>Step 1: Mission Requirements &amp; Δv Budget</summary>
+<p><strong>Scenario:</strong> A 6U Earth observation cubesat at 400 km LEO, dry mass 8 kg. The mission requires controlled deorbit at end of life and station-keeping for 3 years.</p>
+<table>
+<tr><th>Maneuver</th><th>Δv (m/s)</th><th>Notes</th></tr>
+<tr><td>Drag makeup (3 years)</td><td>~30</td><td>At 400 km, atmospheric drag is moderate; ~10 m/s/year</td></tr>
+<tr><td>Collision avoidance (3 × 2 m/s)</td><td>6</td><td>Typical smallsat allocation</td></tr>
+<tr><td>End-of-life deorbit</td><td>~80</td><td>Lower perigee to < 200 km for < 25-year decay</td></tr>
+<tr><td>Reserve / margin (20%)</td><td>~24</td><td>Contingency for anomalies and extended mission</td></tr>
+<tr><td><strong>Total Δv</strong></td><td><strong>~140 m/s</strong></td><td></td></tr>
+</table>
+<p>The key trade: <strong>cold gas</strong> (low Isp ~60 s, very simple, no power draw) vs <strong>green monopropellant</strong> (Isp ~235 s, more complex, heater power) vs <strong>electric propulsion</strong> (Isp ~1500 s, needs significant power, long burn times).</p>
+</details>
+
+<details>
+<summary>Step 2: Trade — Choose Thruster Type</summary>
+<table>
+<tr><th>Option</th><th>Isp (s)</th><th>Propellant Mass Needed</th><th>Pros</th><th>Cons</th></tr>
+<tr><td><strong>Cold gas (N₂)</strong></td><td>65</td><td>~18.0 kg (impossible — exceeds total mass)</td><td>Simple, safe, no power</td><td>Isp too low for this Δv; needs huge tank</td></tr>
+<tr><td><strong>Cold gas (butane)</strong></td><td>72</td><td>~14.5 kg (still too much)</td><td>Self-pressurizing, stores as liquid</td><td>Still very heavy</td></tr>
+<tr><td><strong>Green monopropellant</strong></td><td>235</td><td>~0.65 kg</td><td>High Isp, good heritage, moderate complexity</td><td>Heater power, hazmat handling</td></tr>
+<tr><td><strong>Xenon Hall effect</strong></td><td>1500</td><td>~0.08 kg</td><td>Minimal propellant mass</td><td>100 W+ power, long burn times, complex PPU</td></tr>
+</table>
+<p>For a 6U cubesat, <strong>green monopropellant (LMP-103S, ~235 s Isp)</strong> is the pragmatic choice — modest propellant mass (~0.65 kg), reasonable heater power (~10–20 W for thruster warm-up), and flight-proven hardware exists in small form factors. Electric propulsion is attractive for the propellant mass savings but its power requirement (100+ W) would dominate the EPS budget.</p>
+</details>
+
+<details>
+<summary>Step 3: Calculate Propellant Mass</summary>
+<p>Using the rocket equation to solve for propellant mass:</p>
+<p class="formula">m<sub>p</sub> = m<sub>f</sub> × (e<sup>Δv / (Isp × g₀)</sup> − 1)</p>
+<p>With m<sub>f</sub> = 8 kg, Isp = 235 s, Δv = 140 m/s:</p>
+<p>m₀ = 8 × e<sup>140 / (235 × 9.80665)</sup> = 8 × e<sup>0.0608</sup> = 8 × 1.063 = 8.50 kg</p>
+<p>Propellant mass m<sub>p</sub> = m₀ − m<sub>f</sub> = 0.50 kg</p>
+<p>Adding 30% for residuals and margin: 0.50 × 1.3 = <strong>~0.65 kg loaded propellant</strong>.</p>
+</details>
+
+<details>
+<summary>Step 4: Tank Sizing and System Configuration</summary>
+<p>LMP-103S has a density of ~1,240 kg/m³. Volume needed:</p>
+<p class="formula">V = m / ρ = 0.65 kg / 1,240 kg/m³ = 0.00052 m³ = 0.52 L</p>
+<p>A spherical tank with a 20% ullage volume: total internal volume ~0.62 L. Radius of a sphere:</p>
+<p class="formula">r = (3V / 4π)<sup>1/3</sup> = (3 × 0.00062 / 4π)<sup>1/3</sup> ≈ 0.053 m = 53 mm</p>
+<p>A 106 mm diameter titanium tank fits comfortably in a 6U chassis (typically 100 × 200 × 300 mm). Add a thruster, filter, latching valve, fill/drain valve, and a heater with temperature sensor — the total propulsion subsystem dry mass including mounting bracket is ~0.5–0.8 kg.</p>
+<p>The configuration: <strong>Blowdown feed, single thruster, 1/4″ tubing, surface-tension PMD tank, 0.65 kg LMP-103S, 1 N thruster</strong>.</p>
+</details>
+
+<details>
+<summary>Step 5: Convergence</summary>
+<p>The preliminary design closes: 0.65 kg propellant, 0.5 kg dry propulsion mass, total wet mass ~1.15 kg within a 6U cubesat (~10–12 kg total).</p>
+<p>Now iterate:</p>
+<ul>
+<li>Could you use <strong>electric propulsion</strong> if the spacecraft has 150 W of array power and the mission can tolerate months-long burns? Propellant mass drops to ~0.08 kg, freeing mass for payload, but the PPU and tankage adds cost and complexity.</li>
+<li>Could <strong>cold gas</strong> work for a reduced mission? If the Δv requirement were only 30 m/s (station-keeping only, no deorbit), cold gas would need ~0.45 kg — viable and much simpler.</li>
+<li>Is the <strong>Isp estimate</strong> optimistic? If actual Isp is 220 s instead of 235 s, propellant mass increases to ~0.57 kg (still within margin).</li>
+<li>Could you <strong>share propellant</strong> with an ADCS cold-gas system? Some missions use a single propellant tank for both propulsion and attitude control, saving system mass.</li>
+</ul>
+<p>Each iteration tightens the design. The converged answer is never the first one — it's the result of working the trades against the real constraints.</p>
+</details>
+</section>
+
+<script>
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+ document.body.classList.toggle('dark');
+ const isDark=document.body.classList.contains('dark');
+ localStorage.setItem('theme',isDark?'dark':'light');
+ btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+
+function g(id){return +document.getElementById(id).value}
+function s(id,v){document.getElementById(id).textContent=v}
+
+const pDefs={};['p_mf','p_mp','p_Isp','p_dv'].forEach(id=>{pDefs[id]=g(id)});
+function calcProp(){
+ const mf=g('p_mf'), mp=g('p_mp'), Isp=g('p_Isp'), dv=g('p_dv');
+ const g0=9.80665;
+ const ratio=(mf+mp)/mf;
+ const dv_del=Isp*g0*Math.log(ratio);
+ const frac=mp/(mf+mp);
+ const mp_needed=mf*(Math.exp(dv/(Isp*g0))-1);
+ s('p_outMR',ratio.toFixed(3));
+ s('p_outDv',dv_del.toFixed(1)+' m/s');
+ s('p_outFrac',(frac*100).toFixed(1)+'%');
+ s('p_outMp',mp_needed.toFixed(3)+' kg');
+}
+document.querySelectorAll('#p_mf,#p_mp,#p_Isp,#p_dv').forEach(el=>el.addEventListener('input',calcProp));
+document.getElementById('p_reset').addEventListener('click',()=>{Object.keys(pDefs).forEach(id=>document.getElementById(id).value=pDefs[id]);calcProp()});
+calcProp();
+</script>
+</body>
+</html>

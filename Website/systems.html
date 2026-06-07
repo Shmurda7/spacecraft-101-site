@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Systems Engineering</title>
+<style>
+:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
+body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
+summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+details details summary{font-size:1em}
+a{color:var(--link)}
+h2{margin-top:24px}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--th-bg);font-weight:bold}
+.note{color:var(--note);font-style:italic;font-size:0.9em}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
+#toggle-theme:hover{opacity:.8}
+hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+<a href="index.html">← Home</a>
+<h1>Systems Engineering</h1>
+<p><strong>Systems engineering</strong> is the interdisciplinary process that ties every spacecraft subsystem together — translating mission goals into a real, flyable vehicle. It covers the budgets that constrain every design, the requirements that define what must be built, the verification proving it works, the trade studies that balance competing options, the concept of operations describing how it will be used, and the interface control documents that keep everyone aligned.</p>
+
+<nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1em">Contents</h2>
+<ul style="margin:4px 0;padding-left:20px">
+<li><a href="#s1">1. Budgets</a></li>
+<li><a href="#s2">2. Requirements</a></li>
+<li><a href="#s3">3. Verification &amp; Validation</a></li>
+<li><a href="#s4">4. Trade Spaces</a></li>
+<li><a href="#s5">5. Concept of Operations (CONOPS)</a></li>
+<li><a href="#s6">6. Interface Control Documents (ICDs)</a></li>
+</ul>
+</nav>
+
+<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1.1em">Before You Dive In — The Big Picture</h2>
+<p style="margin:8px 0"><strong>Systems engineering</strong> is what makes a spacecraft more than a pile of components. It ensures that the power subsystem delivers enough energy, the comms link closes with margin, the structure stays within mass, and every interface between subsystems agrees on voltage levels, data formats, connector pinouts, and protocol timing.</p>
+<p style="margin:8px 0">Every spacecraft program is built on six systems engineering foundations:</p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0">
+<tr><th style="width:130px;text-align:left;padding:4px 8px">Foundation</th><th style="text-align:left;padding:4px 8px">What it does</th></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Budgets</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Track every constrained resource — mass, power, data rate, link margin, pointing error, delta-v — against allocations. A budget is a living spreadsheet that tells you whether the spacecraft still works as the design evolves.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Requirements</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">The contract between the mission and the design. Requirements cascade from mission objectives → system → subsystem → component, each level adding specificity and verifiability.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Verification &amp; Validation</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Proving that the spacecraft meets its requirements. Verification (did we build it right?) uses test, analysis, inspection, or demonstration. Validation (did we build the right thing?) asks whether the system satisfies the mission need.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Trade Spaces</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Every design decision involves trading competing options against cost, schedule, performance, and risk. Trade studies provide a structured framework to compare and decide.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>CONOPS</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">The story of how the spacecraft operates from launch through end of life — describing each phase, who does what, data flows, timelines, and critical events.</td></tr>
+<tr><td style="padding:4px 8px"><strong>ICDs</strong></td><td style="padding:4px 8px">The official record of every interface between subsystems, between spacecraft and launch vehicle, and between spacecraft and ground. An ICD leaves no ambiguity about pin assignments, protocol timing, or mechanical envelope.</td></tr>
+</table>
+<p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These six foundations interact constantly: a CONOPS drives requirements, requirements set budget targets, budgets constrain trade studies, and ICDs document the results — all verified before launch.</p>
+</div>
+
+<!-- ==================== SECTION 1: BUDGETS ==================== -->
+<section class="section-card" id="s1">
+<h2 style="margin-top:0">1. Budgets</h2>
+<p><strong>Budgets</strong> are the tracking mechanism that ensures every spacecraft resource stays within what's available. Each budget is a top-down allocation from system-level targets down to subsystem and component limits, tracked throughout the design lifecycle with margin held at each level.</p>
+
+<details>
+<summary>Mass Budget</summary>
+<table>
+<tr><th>Category</th><th>Description</th></tr>
+<tr><td><strong>Subsystem mass</strong></td><td>Dry mass of each subsystem (CDH, EPS, ADCS, COMMS, Thermal, Propulsion, Structures, Payload)</td></tr>
+<tr><td><strong>Harness mass</strong></td><td>Cabling between subsystems, including connectors and brackets</td></tr>
+<tr><td><strong>Propellant mass</strong></td><td>Fuel + oxidizer for orbit insertion, station-keeping, disposal</td></tr>
+<tr><td><strong>Margin philosophy</strong></td><td>Growth margin held at each design phase (typical: 20% at PDR, 10% at CDR, 5% at manufacturing)</td></tr>
+<tr><td><strong>Dry vs wet mass</strong></td><td>Dry mass = spacecraft without propellant; wet mass = dry + propellant (used for launcher compatibility)</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Power Budget</summary>
+<table>
+<tr><th>Category</th><th>Description</th></tr>
+<tr><td><strong>Subsystem power draw</strong></td><td>Peak and average power consumption per subsystem in each operational mode</td></tr>
+<tr><td><strong>Power generation</strong></td><td>Solar array output at beginning of life (BOL) and end of life (EOL), accounting for radiation degradation and seasonal variation</td></tr>
+<tr><td><strong>Energy storage</strong></td><td>Battery capacity, depth of discharge (DoD), eclipse duration, cycle life</td></tr>
+<tr><td><strong>Power modes</strong></td><td>Sun-point, eclipse, safe hold, thrusting, payload operation — each with a distinct load profile</td></tr>
+<tr><td><strong>Margin</strong></td><td>Typical 15–25% margin on generation and storage at system level, 10–15% on consumption</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Link Budget</summary>
+<table>
+<tr><th>Category</th><th>Description</th></tr>
+<tr><td><strong>Uplink (command)</strong></td><td>Ground transmitter power → space loss → antenna gains → receiver sensitivity → data rate → margin</td></tr>
+<tr><td><strong>Downlink (telemetry)</strong></td><td>Spacecraft transmitter power → space loss → antenna gains → ground receiver sensitivity → data rate → margin</td></tr>
+<tr><td><strong>Cross-link</strong></td><td>Relative geometry, range, and frequency plan between spacecraft in a constellation</td></tr>
+<tr><td><strong>Fade margins</strong></td><td>Atmospheric attenuation, rain fade (for low elevation passes), polarization mismatch, pointing losses</td></tr>
+<tr><td><strong>Bit error rate</strong></td><td>Required BER (typically 10⁻⁵ to 10⁻⁷ for telemetry, 10⁻⁹ for commanding) drives coding scheme and required Eb/N₀</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Data Budget</summary>
+<table>
+<tr><th>Category</th><th>Description</th></tr>
+<tr><td><strong>Science data volume</strong></td><td>Data generated per orbit/observation cycle, compression ratio, storage requirement</td></tr>
+<tr><td><strong>Telemetry generation</strong></td><td>Housekeeping telemetry rate — temperature, voltage, current, status words per second per subsystem</td></tr>
+<tr><td><strong>Ground contact window</strong></td><td>Pass duration, frequency of passes, data rate achievable at maximum slant range</td></tr>
+<tr><td><strong>Onboard storage sizing</strong></td><td>NVM needed to store data between downlink opportunities, including margin for contingency</td></tr>
+<tr><td><strong>Command volume</strong></td><td>Uplink capacity for time-tagged commands, software patches, and database updates</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Other Budgets</summary>
+<table>
+<tr><th>Budget</th><th>Description</th></tr>
+<tr><td><strong>Pointing budget</strong></td><td>Allocation of pointing error among sensors, actuators, structural misalignment, thermal distortion, and control accuracy</td></tr>
+<tr><td><strong>Delta-v budget</strong></td><td>Total velocity change needed for mission phases (insertion, station-keeping, disposal) + margins + dispersions</td></tr>
+<tr><td><strong>Timing budget</strong></td><td>End-to-end latency from sensor measurement to onboard response, ground-in-the-loop delay, and on-time accuracy</td></tr>
+<tr><td><strong>Thermal budget</strong></td><td>Heat generated by each unit, radiator area, heater power, and allowable temperature ranges per component</td></tr>
+</table>
+</details>
+</section>
+
+<!-- ==================== SECTION 2: REQUIREMENTS ==================== -->
+<section class="section-card" id="s2">
+<h2 style="margin-top:0">2. Requirements</h2>
+<p><strong>Requirements</strong> define what the spacecraft must do, how well it must do it, and under what conditions. They flow from the mission statement down through system, subsystem, and component levels, with traceability maintained throughout the program.</p>
+
+<details>
+<summary>Requirements Hierarchy</summary>
+<table>
+<tr><th>Level</th><th>Example</th></tr>
+<tr><td><strong>Mission-level</strong></td><td>"Measure ocean color at 500 m GSD over 90% of global oceans every 2 days for 5 years"</td></tr>
+<tr><td><strong>System-level</strong></td><td>"The spacecraft shall provide ≤300 W orbit-average power to payload"</td></tr>
+<tr><td><strong>Subsystem-level</strong></td><td>"The EPS shall deliver 28 V ± 2% regulated bus at 150 W continuous"</td></tr>
+<tr><td><strong>Component-level</strong></td><td>"The battery shall provide 100 Ah at 28 V with ≤30% DoD over 30,000 cycles"</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Types of Requirements</summary>
+<table>
+<tr><th>Type</th><th>Description</th></tr>
+<tr><td><strong>Functional</strong></td><td>What the system must do (e.g., "The CDH shall execute time-tagged commands with 1 ms resolution")</td></tr>
+<tr><td><strong>Performance</strong></td><td>How well it must do it (e.g., "The pointing control system shall maintain 0.05° accuracy, 3σ")</td></tr>
+<tr><td><strong>Interface</strong></td><td>How it connects to other systems (e.g., "The OBC shall communicate with the EPS via CAN bus at 500 kbps")</td></tr>
+<tr><td><strong>Environmental</strong></td><td>Conditions it must survive (e.g., "All electronics shall operate after 50 krad TID")</td></tr>
+<tr><td><strong>Operational</strong></td><td>How it is used (e.g., "The spacecraft shall support autonomous safe hold for 72 hours without ground contact")</td></tr>
+<tr><td><strong>Constraint</strong></td><td>Design limits (e.g., "Total spacecraft dry mass shall not exceed 400 kg")</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Good Requirements (SMART)</summary>
+<table>
+<tr><th>Criterion</th><th>Meaning</th></tr>
+<tr><td><strong>Specific</strong></td><td>One clear subject and one testable condition — avoid "and," "or," compound statements</td></tr>
+<tr><td><strong>Measurable</strong></td><td>Quantifiable with a pass/fail criterion (time, accuracy, probability, etc.)</td></tr>
+<tr><td><strong>Attainable</strong></td><td>Feasible within budget, schedule, and technology readiness</td></tr>
+<tr><td><strong>Relevant</strong></td><td>Directly supports a higher-level requirement or mission need</td></tr>
+<tr><td><strong>Traceable</strong></td><td>Linked to a parent requirement and to its verification method</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Requirements Management</summary>
+<table>
+<tr><th>Activity</th><th>Description</th></tr>
+<tr><td><strong>Elicitation</strong></td><td>Gathering needs from stakeholders — science team, operations, propulsion, bus engineers, launch provider</td></tr>
+<tr><td><strong>Allocation</strong></td><td>Distributing system requirements to subsystems with clear responsibility and numeric targets</td></tr>
+<tr><td><strong>Traceability</strong></td><td>Parent-child links up and down the hierarchy; every requirement justified and verifiable</td></tr>
+<tr><td><strong>Change control</strong></td><td>Formal process for adding, modifying, or deleting requirements — each change assessed for cost/schedule/performance impact</td></tr>
+</table>
+</details>
+</section>
+
+<!-- ==================== SECTION 3: VERIFICATION & VALIDATION ==================== -->
+<section class="section-card" id="s3">
+<h2 style="margin-top:0">3. Verification &amp; Validation</h2>
+<p><strong>Verification</strong> confirms the spacecraft was built to its requirements (did we build it right?). <strong>Validation</strong> confirms it meets the mission need (did we build the right thing?). Both are planned early and executed through each assembly and test phase.</p>
+
+<details>
+<summary>Verification Methods</summary>
+<table>
+<tr><th>Method</th><th>When Used</th><th>Example</th></tr>
+<tr><td><strong>Test</strong></td><td>Functional performance measured under simulated or flight-like conditions</td><td>Thermal vacuum test, vibration test, RF link test</td></tr>
+<tr><td><strong>Analysis</strong></td><td>Mathematical modeling or simulation where physical test is impractical</td><td>Finite element model for structural margin, orbital debris risk analysis</td></tr>
+<tr><td><strong>Inspection</strong></td><td>Visual or physical check of workmanship, dimensions, or configuration</td><td>Connector pin verification, torque-strip inspection, fit check</td></tr>
+<tr><td><strong>Demonstration</strong></td><td>Operational function shown without quantitative measurement</td><td>Deployment mechanism actuation, software boot sequence</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Verification Levels</summary>
+<table>
+<tr><th>Level</th><th>Scope</th></tr>
+<tr><td><strong>Component / unit-level</strong></td><td>Each box (OBC, power supply, star tracker, valve) tested to its own specification before integration</td></tr>
+<tr><td><strong>Subsystem-level</strong></td><td>Integrated units within a subsystem tested together (e.g., CDH + FSW test bench)</td></tr>
+<tr><td><strong>System-level</strong></td><td>Full spacecraft tested as a single system — functional, environmental, EMC, end-to-end RF</td></tr>
+<tr><td><strong>Launch &amp; mission rehearsal</strong></td><td>End-to-end timeline simulation with ground segment, including nominal and contingency scenarios</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Verification Planning</summary>
+<table>
+<tr><th>Document</th><th>Content</th></tr>
+<tr><td><strong>VCD (Verification Cross-Reference Matrix)</strong></td><td>Every requirement mapped to its verification method, level, and pass/fail criteria</td></tr>
+<tr><td><strong>VAP (Verification and Acceptance Plan)</strong></td><td>Overall strategy — what tests are performed, in what order, by whom, with what facilities</td></tr>
+<tr><td><strong>VCR (Verification Compliance Record)</strong></td><td>Close-out report for each requirement showing the evidence that it was met</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Validation Activities</summary>
+<table>
+<tr><th>Activity</th><th>Description</th></tr>
+<tr><td><strong>End-to-end simulations</strong></td><td>Running mission scenarios with the ground system to confirm operations work as expected</td></tr>
+<tr><td><strong>Prototyping &amp; demonstration missions</strong></td><td>Risk-reduction flights or engineering models to prove critical technologies before the main build</td></tr>
+<tr><td><strong>Stakeholder reviews</strong></td><td>Science team and operations team sign off that the spacecraft meets their needs at PDR, CDR, and pre-ship review</td></tr>
+</table>
+</details>
+</section>
+
+<!-- ==================== SECTION 4: TRADE SPACES ==================== -->
+<section class="section-card" id="s4">
+<h2 style="margin-top:0">4. Trade Spaces</h2>
+<p><strong>Trade studies</strong> are the structured process of comparing design alternatives against weighted criteria — cost, performance, risk, schedule, mass, power. They prevent decisions based on gut feel and provide an auditable record of why choices were made.</p>
+
+<details>
+<summary>Trade Study Process</summary>
+<table>
+<tr><th>Step</th><th>Description</th></tr>
+<tr><td><strong>1. Define the decision</strong></td><td>What is being traded and what constraints are fixed</td></tr>
+<tr><td><strong>2. Identify alternatives</strong></td><td>List all feasible options, including a baseline/reference</td></tr>
+<tr><td><strong>3. Select criteria &amp; weights</strong></td><td>Criteria relevant to the decision, weighted by importance (e.g., cost 30%, performance 40%, risk 20%, schedule 10%)</td></tr>
+<tr><td><strong>4. Score alternatives</strong></td><td>Each alternative scored against each criterion (1–5 or 1–10 scale)</td></tr>
+<tr><td><strong>5. Sensitivity analysis</strong></td><td>How do the rankings change if weights shift? Which alternatives are robust?</td></tr>
+<tr><td><strong>6. Recommend &amp; document</strong></td><td>Selected option with rationale, key discriminators, and risks carried forward</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Common System-Level Trades</summary>
+<table>
+<tr><th>Trade</th><th>Options</th><th>Key Drivers</th></tr>
+<tr><td><strong>Bus architecture</strong></td><td>Integrated bus with shared subsystems · Separate service module + payload module · Distributed vs centralized</td><td>Mass, cost, reuse across missions, integration complexity</td></tr>
+<tr><td><strong>Propulsion type</strong></td><td>Cold gas · Monopropellant (hydrazine) · Bipropellant · Electric (ion/Hall) · Green propellants</td><td>Delta-v requirement, power available, cost, contamination, schedule</td></tr>
+<tr><td><strong>Orbit selection</strong></td><td>LEO · SSO · GEO · HEO · L1/L2 · Molniya · Tundra</td><td>Mission objective, ground contact frequency, radiation environment, launch cost</td></tr>
+<tr><td><strong>Attitude control method</strong></td><td>Spin-stabilized · 3-axis stabilized · Gravity-gradient · Solar sail</td><td>Pointing accuracy, agility requirement, power generation, cost</td></tr>
+<tr><td><strong>Communication frequency band</strong></td><td>UHF · S-band · X-band · Ka-band · Optical</td><td>Data rate vs atmospheric effects vs antenna size vs power vs regulation</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Common Subsystem-Level Trades</summary>
+<table>
+<tr><th>Trade</th><th>Options</th><th>Key Drivers</th></tr>
+<tr><td><strong>Solar array type</strong></td><td>Body-mounted · Deployable (single/dual/multi-panel) · Concentrator · Flexible blanket</td><td>Power requirement, orbit, stowed volume, cost, pointing requirement</td></tr>
+<tr><td><strong>Battery chemistry</strong></td><td>Li-ion (highest density) · NiCd (heritage) · NiH₂ (long life, heavy) · LiFePO₄ (safe, less dense)</td><td>Energy density, cycle life, safety, thermal range, heritage</td></tr>
+<tr><td><strong>Star tracker vs sun sensor vs magnetometer</strong></td><td>Accuracy vs cost vs environment vs processing</td><td>Pointing requirement, sun vs eclipse duration, magnetic field knowledge</td></tr>
+<tr><td><strong>Thermal control approach</strong></td><td>Passive (coatings, MLI, radiators) · Heater-controlled · Active (loop heat pipe, mechanical cooler)</td><td>Temperature stability requirement, power available, cost, complexity</td></tr>
+<tr><td><strong>Structural material</strong></td><td>Aluminum (conventional) · Aluminum honeycomb · Carbon fiber composite · Titanium (for fittings)</td><td>Mass vs stiffness vs thermal expansion vs cost vs manufacturing</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Cost &amp; Schedule Trades</summary>
+<table>
+<tr><th>Trade</th><th>Options</th><th>Key Drivers</th></tr>
+<tr><td><strong>Make vs buy</strong></td><td>In-house development · COTS with qualification · Heritage with modifications · Fully custom</td><td>Cost, schedule, IP control, system integration risk</td></tr>
+<tr><td><strong>Parts quality level</strong></td><td>Space-grade (QML V/Q) · Mil-grade (JANTX) · Automotive (AEC-Q) · Commercial + upscreen</td><td>Reliability vs cost vs lead time vs radiation tolerance</td></tr>
+<tr><td><strong>Test philosophy</strong></td><td>Protoflight · Qualification model + flight model · Full engineering model + flight model</td><td>Cost vs risk vs heritage vs schedule</td></tr>
+</table>
+</details>
+</section>
+
+<!-- ==================== SECTION 5: CONOPS ==================== -->
+<section class="section-card" id="s5">
+<h2 style="margin-top:0">5. Concept of Operations (CONOPS)</h2>
+<p><strong>CONOPS</strong> describes how the spacecraft will be operated from launch through end of life. It covers each mission phase, the actors involved, the data flows, and the key decisions or events that transition between phases. CONOPS drives requirements — you can't write good requirements without knowing how the system will be used.</p>
+
+<details>
+<summary>Mission Phases</summary>
+<table>
+<tr><th>Phase</th><th>Activities</th></tr>
+<tr><td><strong>Launch &amp; ascent</strong></td><td>Spacecraft is powered off (or on battery), inside the fairing, experiencing vibration and acoustic loads. Separation from launcher is the first critical event.</td></tr>
+<tr><td><strong>Orbit insertion</strong></td><td>First burn(s) to reach operational orbit. May involve propulsion system checkout, de-spin, Sun acquisition, and deployment of solar arrays and antennas.</td></tr>
+<tr><td><strong>Commissioning</strong></td><td>Subsystem checkout in sequence — EPS, COMMS, CDH, ADCS, Thermal, then payload. Calibration of sensors and instruments. Typically 2–12 weeks.</td></tr>
+<tr><td><strong>Nominal operations</strong></td><td>Science data collection, payload operation, station-keeping maneuvers, routine downlink passes, command uploads. The longest phase.</td></tr>
+<tr><td><strong>Contingency operations</strong></td><td>Anomaly response — safe hold entry, fault diagnosis, recovery procedure execution, ground-in-the-loop troubleshooting.</td></tr>
+<tr><td><strong>End of life</strong></td><td>Disposal — deorbit burn (LEO) or graveyard orbit (GEO). Passivation of batteries and propulsion tanks. Final telemetry pass.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>CONOPS Content</summary>
+<table>
+<tr><th>Element</th><th>Description</th></tr>
+<tr><td><strong>Operational scenarios</strong></td><td>Nominal timeline (typical orbit), safe hold entry/recovery, eclipse operations, station-keeping, anomaly response</td></tr>
+<tr><td><strong>Ground segment interaction</strong></td><td>Pass schedule, contact duration, command latency, telemetry dump strategy, ground station network</td></tr>
+<tr><td><strong>Autonomy level</strong></td><td>Ground commanding vs onboard autonomy — time-tagged command load, autonomous FDIR, target tracking, on-board scheduling</td></tr>
+<tr><td><strong>Data flow</strong></td><td>Science data path (instrument → storage → downlink → ground processing), housekeeping telemetry flow, command path</td></tr>
+<tr><td><strong>Operational constraints</strong></td><td>Sun angle limits, thermal constraints, momentum management, ground station visibility, RF interference zones</td></tr>
+</table>
+</details>
+
+<details>
+<summary>CONOPS Timelines</summary>
+<table>
+<tr><th>Timeline</th><th>Content</th></tr>
+<tr><td><strong>Single-orbit timeline</strong></td><td>Sun-point, eclipse, payload operation, downlink pass, station-keeping (if any), calibrated against orbit period</td></tr>
+<tr><td><strong>Weekly/monthly timeline</strong></td><td>Science planning cycles, propulsive maneuver scheduling, ground contact scheduling, calibration cycles</td></tr>
+<tr><td><strong>Mission-long timeline</strong></td><td>Phase transitions from launch through disposal, key milestones, seasonal variations (beta angle, eclipses)</td></tr>
+</table>
+</details>
+</section>
+
+<!-- ==================== SECTION 6: ICD ==================== -->
+<section class="section-card" id="s6">
+<h2 style="margin-top:0">6. Interface Control Documents (ICDs)</h2>
+<p><strong>ICDs</strong> are the official, controlled documents that define every interface between two systems. They eliminate ambiguity during integration — if two teams disagree about a pin assignment, protocol timing, or mechanical dimension, the ICD is the authority.</p>
+
+<details>
+<summary>Types of ICDs</summary>
+<table>
+<tr><th>Type</th><th>Between</th></tr>
+<tr><td><strong>Subsystem-to-subsystem ICD</strong></td><td>Every pair of subsystems that share an interface (e.g., CDH ↔ EPS for power and data)</td></tr>
+<tr><td><strong>Spacecraft-to-launch-vehicle ICD</strong></td><td>Mechanical envelope, separation system, vibration environment, electrical interface, fairing accommodation, mass properties</td></tr>
+<tr><td><strong>Spacecraft-to-ground ICD</strong></td><td>RF link parameters, modulation, coding, protocol, command &amp; telemetry frame formats, ranging scheme</td></tr>
+<tr><td><strong>Internal ICD</strong></td><td>Between units within a subsystem (e.g., OBC ↔ memory daughterboard, star tracker ↔ ADCS controller)</td></tr>
+</table>
+</details>
+
+<details>
+<summary>ICD Content (Typical)</summary>
+<table>
+<tr><th>Interface Type</th><th>Content</th></tr>
+<tr><td><strong>Mechanical</strong></td><td>Mounting hole pattern, envelope dimensions, connector locations, mass, CG, stiffness, thermal contact conductance</td></tr>
+<tr><td><strong>Electrical</strong></td><td>Supply voltage, current limits, inrush, ripple, isolation, grounding scheme, power-on sequencing</td></tr>
+<tr><td><strong>Data / signal</strong></td><td>Bus type (CAN, SpaceWire, LVDS), data rate, protocol version, message format, timing diagrams, connector pin assignments</td></tr>
+<tr><td><strong>RF</strong></td><td>Frequency, bandwidth, polarization, EIRP, G/T, maximum input power, spurious emissions, connector type</td></tr>
+<tr><td><strong>Thermal</strong></td><td>Heat rejection path, allowable temperature range, heater power, radiator surface finish, MLI cutouts</td></tr>
+<tr><td><strong>Fluid</strong></td><td>Propellant type, pressure, flow rate, fitting type, leak rate requirement, material compatibility</td></tr>
+</table>
+</details>
+
+<details>
+<summary>ICD Process</summary>
+<table>
+<tr><th>Step</th><th>Description</th></tr>
+<tr><td><strong>Draft</strong></td><td>Developed by the system engineer with input from both interface owners; identifies all interface points and parameters</td></tr>
+<tr><td><strong>Review</strong></td><td>Reviewed and signed by responsible engineers from both sides of the interface</td></tr>
+<tr><td><strong>Version control</strong></td><td>Every change tracked, dated, and approved; deviations require formal waiver</td></tr>
+<tr><td><strong>Verification</strong></td><td>Each interface parameter verified by test, inspection, or analysis before integration</td></tr>
+<tr><td><strong>Maintenance</strong></td><td>Updated when design changes affect an interface; superseded versions archived</td></tr>
+</table>
+</details>
+
+<details>
+<summary>ICD Best Practices</summary>
+<ul>
+<li>Every interface parameter has a <strong>single owner</strong> responsible for its definition.</li>
+<li>Use <strong>tables and diagrams</strong> — avoid prose descriptions of pin assignments or timing.</li>
+<li>Define <strong>worst-case limits</strong> (min/max), not just nominal values.</li>
+<li>Include <strong>verification method</strong> for each parameter (test, analysis, inspection).</li>
+<li>Keep ICDs at the <strong>appropriate level of detail</strong> — enough for independent design, not a full schematic.</li>
+<li>Use <strong>controlled distribution</strong> — everyone working on the interface must have the current version.</li>
+</ul>
+</details>
+</section>
+
+<script>
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+ document.body.classList.toggle('dark');
+ const isDark=document.body.classList.contains('dark');
+ localStorage.setItem('theme',isDark?'dark':'light');
+ btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+</script>
+</body>
+</html>

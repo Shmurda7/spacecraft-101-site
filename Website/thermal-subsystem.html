@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Thermal Control Subsystem</title>
+<style>
+:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
+body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
+summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+details details summary{font-size:1em}
+a{color:var(--link)}
+h2{margin-top:24px}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--th-bg);font-weight:bold}
+.note{color:var(--note);font-style:italic;font-size:0.9em}
+.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
+.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
+.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
+.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+.calc-out div{font-size:0.95em}
+.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
+.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
+.calc-reset:hover{opacity:.8}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
+#toggle-theme:hover{opacity:.8}
+hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+<a href="index.html">← Home</a>
+<h1>Thermal Control Subsystem</h1>
+<p>The <strong>Thermal Control subsystem</strong> maintains all spacecraft components within their allowable temperature ranges throughout the mission. In the vacuum of space, the only heat transfer mechanisms are radiation and conduction — there is no convection. The thermal design must simultaneously reject excess heat from electronics and absorb enough heat to keep cold components (batteries, propellant lines) above their minimum temperatures.</p>
+
+<nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1em">Contents</h2>
+<ul style="margin:4px 0;padding-left:20px">
+<li><a href="#s1">1. Thermal Environment</a></li>
+<li><a href="#s2">2. Heat Transfer Fundamentals</a></li>
+<li><a href="#s3">3. Passive Thermal Control</a></li>
+<li><a href="#s4">4. Active Thermal Control</a></li>
+<li><a href="#s5">5. Thermal Analysis &amp; Testing</a></li>
+<li><a href="#s6">6. Thermal Design Walkthrough</a></li>
+</ul>
+</nav>
+
+<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1.1em">Before You Dive In — The Big Picture</h2>
+<p style="margin:8px 0">The <strong>Thermal subsystem</strong> is the spacecraft's skin and metabolism — it controls how heat flows in and out. Without it, electronics would overheat in the sun and freeze in eclipse, propellant lines would burst, and batteries would fail. Thermal design is always a balancing act between rejecting waste heat and retaining enough warmth during cold periods.</p>
+<p style="margin:8px 0">Every thermal control system uses five fundamental techniques:</p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0">
+<tr><th style="width:140px;text-align:left;padding:4px 8px">Technique</th><th style="text-align:left;padding:4px 8px">What it does</th></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Surface coatings</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Control solar absorptance (α) and infrared emittance (ε). The α/ε ratio determines whether a surface heats up or cools down in sunlight.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Multi-layer insulation (MLI)</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Blankets of alternating reflective and spacer layers that reduce radiative heat transfer to/from the spacecraft.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Radiators</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Surfaces designed to reject heat to space. Sized to dissipate the maximum waste heat from electronics and payloads.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Heat pipes</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Passive devices that transport heat from hot components to radiators using phase-change (evaporation/condensation).</td></tr>
+<tr><td style="padding:4px 8px"><strong>Heaters &amp; coolers</strong></td><td style="padding:4px 8px">Active elements: electrical heaters warm cold components; thermoelectric coolers (TECs) or mechanical cryocoolers provide active refrigeration.</td></tr>
+</table>
+<p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These techniques are combined into a thermal design that balances every heat source (electronics, Sun, Earth IR, albedo) against every heat sink (space at 2.7 K, radiator surfaces) across all mission phases.</p>
+</div>
+
+<section class="section-card" id="s1">
+<h2 style="margin-top:0">1. Thermal Environment</h2>
+<p>The space environment is the driving input to thermal design. Unlike on Earth, heat is exchanged only through radiation, and the boundary conditions vary dramatically between sunlight and shadow, and with orbit type and attitude.</p>
+
+<details>
+<summary>Environmental Heat Sources</summary>
+<table>
+<tr><th>Source</th><th>Magnitude</th><th>Description</th></tr>
+<tr><td><strong>Direct solar flux</strong></td><td>~1,367 W/m² (solar constant at 1 AU)</td><td>Primary heat input; varies with distance from Sun; Earth's albedo reflects ~30% back to spacecraft</td></tr>
+<tr><td><strong>Earth IR emission</strong></td><td>~240 W/m²</td><td>Earth's thermal radiation; always present when spacecraft is below the horizon; does not vary with day/night</td></tr>
+<tr><td><strong>Earth albedo</strong></td><td>0–500 W/m² (varies)</td><td>Sunlight reflected from Earth; depends on surface (ocean vs cloud vs ice), sun angle, and spacecraft position</td></tr>
+<tr><td><strong>Deep space (cold sink)</strong></td><td>~2.7 K (near 0 W/m²)</td><td>Ultimate heat sink for all radiator surfaces; the temperature all waste heat seeks to reach</td></tr>
+<tr><td><strong>Internal heat dissipation</strong></td><td>10–1,000+ W</td><td>Waste heat from electronics, motors, actuators; must be conducted to radiators and rejected</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Orbit Thermal Effects</summary>
+<table>
+<tr><th>Orbit Type</th><th>Thermal Characteristics</th></tr>
+<tr><td><strong>LEO (Low Earth Orbit)</strong></td><td>Rapid cycling: 60 min sun / 30 min eclipse typical; large temperature swings (100+ °C per orbit); frequent thermal transients</td></tr>
+<tr><td><strong>SSO (Sun-Synchronous)</strong></td><td>Similar to LEO but beta angle varies over the year; worst-case hot and cold seasons depending on Sun angle</td></tr>
+<tr><td><strong>GEO (Geostationary)</strong></td><td>No significant eclipse except 2× 45-day eclipse seasons; long sun exposure; radiator sizing driven by steady-state heat rejection</td></tr>
+<tr><td><strong>Molniya / HEO</strong></td><td>Long apogee dwell in high radiation; severe thermal gradients between hot (Sun) and cold (space-facing) sides</td></tr>
+<tr><td><strong>Deep space / interplanetary</strong></td><td>Solar flux varies with 1/R²; no Earth IR/albedo; may need radioisotope heater units (RHUs) for warmth at large heliocentric distances</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s2">
+<h2 style="margin-top:0">2. Heat Transfer Fundamentals</h2>
+<p>Thermal design is built on the physics of heat transfer. In space, conduction and radiation dominate; convection is absent. Understanding these mechanisms is essential for sizing radiators, heat pipes, and insulation.</p>
+
+<details>
+<summary>Conduction</summary>
+<p>Heat flow through solid materials: Q = k·A·ΔT / L, where k is thermal conductivity (W/m·K), A is cross-sectional area, ΔT is temperature difference, L is path length. Key materials: aluminum (~200 W/m·K) for heat spreading; copper (~400 W/m·K) for high-flux straps; pyrolytic graphite (up to 1,500+ W/m·K in-plane) for space-limited paths. Thermal interface materials (TIMs) like gap fillers or thermal greases reduce contact resistance between bolted joints.</p>
+</details>
+
+<details>
+<summary>Radiation</summary>
+<p>Heat radiated from a surface: Q = ε·σ·A·(T⁴ − T<sub>space</sub>⁴), where ε is emittance, σ = 5.67×10⁻⁸ W/m²·K⁴ is Stefan-Boltzmann constant, T is surface temperature. Radiated power scales with T⁴ — a small temperature increase greatly increases heat rejection. Surface finish dominates radiative properties: white paint (α~0.2, ε~0.9) stays cool; black paint (α~0.9, ε~0.9) absorbs heat; silvered Teflon (α~0.1, ε~0.8) is used for radiators.</p>
+</details>
+
+<details>
+<summary>Key Thermal Parameters</summary>
+<table>
+<tr><th>Parameter</th><th>Symbol</th><th>Typical Values</th></tr>
+<tr><td><strong>Solar absorptance</strong></td><td>α</td><td>0.1 (white paint, silver Teflon) to 0.95 (black paint, carbon composite)</td></tr>
+<tr><td><strong>Infrared emittance</strong></td><td>ε</td><td>0.03 (polished metal) to 0.92 (black paint, anodize)</td></tr>
+<tr><td><strong>Thermal conductivity</strong></td><td>k (W/m·K)</td><td>0.02 (MLI) to 400+ (copper, pyrolytic graphite)</td></tr>
+<tr><td><strong>Specific heat capacity</strong></td><td>c<sub>p</sub> (J/kg·K)</td><td>~900 (Al) to ~1,300 (PCBs, composites)</td></tr>
+<tr><td><strong>CTE (coefficient of thermal expansion)</strong></td><td>α<sub>CTE</sub> (ppm/K)</td><td>~23 (Al) to ~2 (carbon fiber) — mismatches cause thermal stress</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s3">
+<h2 style="margin-top:0">3. Passive Thermal Control</h2>
+<p>Passive thermal control requires no power or moving parts. It relies on surface finishes, insulation, conduction paths, and phase-change materials to maintain temperatures within limits.</p>
+
+<details>
+<summary>Surface Finishes &amp; Coatings</summary>
+<table>
+<tr><th>Coating</th><th>α (solar)</th><th>ε (IR)</th><th>α/ε</th><th>Use</th></tr>
+<tr><td><strong>White paint (e.g., AZ-93, MAP SG-121FD)</strong></td><td>0.15–0.25</td><td>0.85–0.92</td><td>~0.2</td><td>Radiator surfaces; stays cool in sunlight</td></tr>
+<tr><td><strong>Silver Teflon (Ag/FEP)</strong></td><td>0.08–0.15</td><td>0.75–0.85</td><td>~0.1</td><td>High-performance radiators; low α degrades slowly</td></tr>
+<tr><td><strong>Black paint (Z-306, Aeroglaze)</strong></td><td>0.90–0.95</td><td>0.88–0.92</td><td>~1.0</td><td>Non-radiator surfaces, interior cavity baffles</td></tr>
+<tr><td><strong>Second-surface mirror (OSR)</strong></td><td>0.08–0.12</td><td>0.80–0.85</td><td>~0.1</td><td>Optical solar reflector; best α/ε; used on GEO (quartz or CMG)</td></tr>
+<tr><td><strong>Alodine / chromate conversion</strong></td><td>0.20–0.40</td><td>0.10–0.30</td><td>~1.5</td><td>Corrosion protection; moderate thermal properties</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Multi-Layer Insulation (MLI)</summary>
+<p>MLI blankets consist of alternating layers of reflective material (aluminized Kapton or Mylar) separated by low-conductivity netting (Dacron or Nomex). A typical 10–20 layer blanket has an effective emittance of 0.005–0.02. MLI covers most of the spacecraft exterior to minimize heat loss to space in eclipse and heat gain from the Sun in sunlight. Cutouts are provided for radiators, sensors, antennas, and thermal interfaces.</p>
+</details>
+
+<details>
+<summary>Radiator Sizing</summary>
+<p>Radiator area required: A = Q / (ε·σ·(T⁴ − T<sub>space</sub>⁴)). For typical electronics at 40 °C: ~0.03–0.05 m² per 10 W rejected. Radiators face away from the Sun (usually the anti-nadir or anti-velocity face in LEO) and are coated with low-α/high-ε finishes. Variable-emittance radiators can passively adjust heat rejection as temperature changes. Radiator must be over-sized for EOL when degradation increases α.</p>
+</details>
+
+<details>
+<summary>Heat Pipes</summary>
+<table>
+<tr><th>Type</th><th>Working Fluid</th><th>Temp Range</th><th>Power Capacity</th></tr>
+<tr><td><strong>Constant-conductance heat pipe (CCHP)</strong></td><td>Ammonia, propylene, water</td><td>−60 to +80 °C</td><td>10–500 W per pipe</td></tr>
+<tr><td><strong>Variable-conductance heat pipe (VCHP)</strong></td><td>Ammonia + non-condensable gas</td><td>−40 to +60 °C</td><td>10–200 W (temperature-controlled)</td></tr>
+<tr><td><strong>Loop heat pipe (LHP)</strong></td><td>Ammonia, propylene</td><td>−60 to +80 °C</td><td>Up to 1,000+ W; longer transport distances</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Phase-Change Materials (PCMs)</summary>
+<p>PCMs absorb heat during melting and release it during freezing, acting as thermal flywheels. Common materials: paraffin wax (latent heat ~200 J/g, melt point 20–70 °C) and salt hydrates. Used to buffer transient heat loads or maintain components above minimum temperature during eclipse.</p>
+</details>
+</section>
+
+<section class="section-card" id="s4">
+<h2 style="margin-top:0">4. Active Thermal Control</h2>
+<p>Active thermal control uses electrical power to heat or cool components. It provides precise temperature regulation but consumes power and adds mass.</p>
+
+<details>
+<summary>Heaters</summary>
+<table>
+<tr><th>Type</th><th>Description</th><th>When Used</th></tr>
+<tr><td><strong>Kapton-foil patch heaters</strong></td><td>Etched foil or wire-wound resistive elements laminated in Kapton; bonded to component or bracket</td><td>Standard for most spacecraft; can be custom-shaped; 1–50 W typical</td></tr>
+<tr><td><strong>Thermostat-controlled (bang-bang)</strong></td><td>Heater turns on below setpoint, off above; simple, reliable, but temperature oscillates</td><td>Propellant lines, battery heaters, survival heaters</td></tr>
+<tr><td><strong>PID-controlled (proportional)</strong></td><td>Heater power modulated to maintain constant temperature; more precise but needs controller</td><td>Optical instruments, science detectors, frequency-sensitive electronics</td></tr>
+<tr><td><strong>RHU (Radioisotope Heater Unit)</strong></td><td>Decay heat from Pu-238 (~1 W per unit); no power needed; heavy and expensive</td><td>Deep space missions where electrical power is insufficient for heating</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Active Coolers</summary>
+<table>
+<tr><th>Type</th><th>Temperature</th><th>Power</th><th>Notes</th></tr>
+<tr><td><strong>Thermoelectric cooler (TEC, Peltier)</strong></td><td>−40 to +20 °C (ΔT up to 70 °C)</td><td>1–100 W</td><td>Solid-state; no moving parts; COP (coefficient of performance) ~0.5–1.5</td></tr>
+<tr><td><strong>Stirling cryocooler</strong></td><td>40–80 K (for IR detectors)</td><td>50–300 W input</td><td>Mechanical compressor; vibration and EMI concerns; long-life designs exist</td></tr>
+<tr><td><strong>Pulse-tube cryocooler</strong></td><td>30–100 K</td><td>50–400 W input</td><td>Fewer moving parts than Stirling; lower vibration; emerging standard</td></tr>
+<tr><td><strong>Loop heat pipe with cold plate</strong></td><td>−30 to +30 °C</td><td>Passive (no power)</td><td>Transports heat from cold plate to radiator; no moving parts</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s5">
+<h2 style="margin-top:0">5. Thermal Analysis &amp; Testing</h2>
+<p>Thermal design is verified through analysis models (finite element/difference thermal math models) and environmental testing in thermal vacuum chambers. Correlation between model and test is essential for flight confidence.</p>
+
+<details>
+<summary>Thermal Analysis</summary>
+<table>
+<tr><th>Analysis Type</th><th>Purpose</th></tr>
+<tr><td><strong>Steady-state analysis</strong></td><td>Predicts equilibrium temperatures for each operational mode (hot case, cold case, survival mode)</td></tr>
+<tr><td><strong>Transient analysis</strong></td><td>Predicts temperature evolution through orbit: sun → eclipse → sun transitions; heater cycling</td></tr>
+<tr><td><strong>Hot / cold case definition</strong></td><td>Worst-case hot: max solar flux, min spacecraft age (best coatings), max internal dissipation. Cold case: min solar flux, max age, min dissipation</td></tr>
+<tr><td><strong>Margin philosophy</strong></td><td>Analysis typically includes 5–20 °C margin on predictions; component qualification limits include margin beyond allowable flight temperature</td></tr>
+<tr><td><strong>De-orbiting / end-of-life</strong></td><td>Thermal analysis for disposal phase: propellant freezing, battery thermal management after passivation</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Thermal Vacuum (TVAC) Testing</summary>
+<table>
+<tr><th>Test Type</th><th>Description</th></tr>
+<tr><td><strong>Thermal balance</strong></td><td>Stabilize at hot and cold cases; measure temperature distribution; correlate with thermal model</td></tr>
+<tr><td><strong>Thermal cycling</strong></td><td>Cycle through predicted temperature extremes (typically 4–12 cycles) for workmanship and margin verification</td></tr>
+<tr><td><strong>Burn-in / life test</strong></td><td>Extended hot operation (72–168 hours) to identify infant mortality in electronics</td></tr>
+<tr><td><strong>Survival / non-operating</strong></td><td>Verify components survive worst-case non-operating temperatures without damage</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Model Correlation</summary>
+<p>A thermal math model (TMM) is built before testing, then updated to match test data by adjusting uncertain parameters (contact conductances, coating properties, MLI effectiveness). Correlation targets: within ±3–5 °C for most nodes, ±2 °C for critical components. The correlated model becomes the flight prediction tool for on-orbit conditions.</p>
+</details>
+</section>
+
+<section class="section-card" id="s6">
+<h2 style="margin-top:0">6. Thermal Design Walkthrough</h2>
+<p>This walkthrough sizes a passive thermal control system for a 6U cubesat in LEO using the same design-thinking approach as the other subsystems.</p>
+
+<details>
+<summary>Step 1: Mission Requirements &amp; Thermal Environment</summary>
+<p><strong>Scenario:</strong> 6U Earth observation cubesat at 500 km SSO, 94-minute orbit (35 min eclipse). Components have the following dissipation and temperature limits:</p>
+<table>
+<tr><th>Component</th><th>Dissipation (W)</th><th>Operating Range (°C)</th><th>Survival Range (°C)</th></tr>
+<tr><td>OBC</td><td>2</td><td>−20 to +70</td><td>−30 to +85</td></tr>
+<tr><td>COMMS transceiver</td><td>10 (peak)</td><td>−10 to +55</td><td>−20 to +70</td></tr>
+<tr><td>Payload camera</td><td>15 (peak)</td><td>+10 to +40</td><td>−10 to +60</td></tr>
+<tr><td>Battery (Li-ion)</td><td>0 (passive)</td><td>+5 to +35</td><td>−5 to +45</td></tr>
+<tr><td>ADCS (reaction wheels)</td><td>2</td><td>−10 to +50</td><td>−20 to +65</td></tr>
+<tr><td>GPS receiver</td><td>0.5</td><td>−20 to +60</td><td>−30 to +75</td></tr>
+</table>
+<p>The most restrictive component is the <strong>battery</strong> (+5 to +35 °C operating), which drives the need for both heating (in eclipse) and cooling (in sunlight).</p>
+</details>
+
+<details>
+<summary>Step 2: Heat Balance — Hot Case</summary>
+<p>Worst-case hot: max internal dissipation, Sun at normal incidence, beginning of life (best coating α/ε). Average internal dissipation during sunlight operations: <strong>~15 W</strong> (baseline 8 W + intermittent payload/comms).</p>
+<p>The spacecraft is MLI-covered except for one radiator face. Solar input on the non-MLI radiator is minimized by pointing it away from the Sun (anti-nadir face in LEO). The radiator sees only Earth IR (~240 W/m²) and albedo (~150 W/m² reflected).</p>
+<p>Heat must be rejected from the radiator by radiation to space (2.7 K). The radiator is coated with silver Teflon (α = 0.12, ε = 0.82). Assuming the radiator is at 35 °C (308 K) at the hot case:</p>
+<p class="formula">Q<sub>rad</sub> = ε·σ·A·(T⁴ − T<sub>space</sub>⁴) − α·G<sub>absorbed</sub></p>
+<p>where G<sub>absorbed</sub> is the absorbed environmental flux (Earth IR + albedo) on the radiator face. For a first pass, assume the environmental absorption approximately cancels with parasitic heat leaks, so Q<sub>rad</sub> ≈ ε·σ·A·T⁴.</p>
+</details>
+
+<details>
+<summary>Step 3: Radiator Sizing</summary>
+<p>To reject 15 W internal dissipation with the radiator at 35 °C (308 K) and silver Teflon coating (ε = 0.82):</p>
+<p class="formula">A = Q / (ε·σ·T⁴) = 15 / (0.82 × 5.67×10⁻⁸ × 308⁴)</p>
+<p class="formula">= 15 / (0.82 × 5.67×10⁻⁸ × 9.00×10⁹) = 15 / 418 = 0.036 m²</p>
+<p>A 6U cubesat has faces of ~0.06 m² (10 × 30 cm = 0.03 m² per face, so two adjacent faces). A 0.036 m² radiator fits comfortably on a single 10 × 30 cm face (0.03 m²) with 20% margin, or across two partial faces. In practice, <strong>dedicate one full 10 × 30 cm face as the radiator</strong> (~0.03 m²) and use conductive strapping to spread heat to it.</p>
+</details>
+
+<details>
+<summary>Step 4: Heater Power — Cold Case</summary>
+<p>Worst-case cold: eclipse, minimum internal dissipation (~8 W from OBC + ADCS), end of life (coating degradation increases α, but in eclipse there's no solar input). The spacecraft loses heat through MLI and the radiator. MLI effective emittance is ~0.02; assume the non-radiator area (~0.5 m² for a 6U) loses heat at a rate:</p>
+<p class="formula">Q<sub>MLI</sub> = ε<sub>eff</sub>·σ·A·(T⁴ − T<sub>space</sub>⁴) ≈ 0.02 × 5.67×10⁻⁸ × 0.5 × (293⁴ − 3⁴) ≈ 4.2 W</p>
+<p>The radiator (ε = 0.82, A = 0.03 m²) loses:</p>
+<p class="formula">Q<sub>rad</sub> = 0.82 × 5.67×10⁻⁸ × 0.03 × (293⁴ − 3⁴) ≈ 10.3 W</p>
+<p>Total heat loss in eclipse ≈ 14.5 W. Internal dissipation ≈ 8 W. Shortfall = <strong>~6.5 W</strong> — this is the heater power needed to maintain battery temperature above +5 °C.</p>
+<p>A <strong>7 W heater</strong> on the battery with a thermostat set at +7 °C (turn-on) / +12 °C (turn-off) provides margin. Over 35 min eclipse: energy = 7 W × 35 min = 7 × 2,100 s = <strong>14.7 kJ = 4.1 Wh</strong>. This must be included in the EPS eclipse energy budget.</p>
+</details>
+
+<details>
+<summary>Step 5: Convergence &amp; Design Summary</summary>
+<p>The preliminary thermal design:</p>
+<ul>
+<li><strong>Radiator:</strong> One 10 × 30 cm face, silver Teflon coating, conducting straps from OBC and COMMS to radiator</li>
+<li><strong>MLI:</strong> 15-layer Kapton/Nomex on all non-radiator exterior faces</li>
+<li><strong>Heater:</strong> 7 W Kapton-foil patch on battery, thermostat-controlled at 7/12 °C</li>
+<li><strong>Thermal strap:</strong> Copper braid from camera to structure for heat spreading</li>
+</ul>
+<p>Now iterate:</p>
+<ul>
+<li>Can the radiator be reduced if the payload dissipates only 15 W for 10 minutes? The transient thermal mass of the structure (~900 J/kg·K for Al) buffers short peaks. A transient analysis might show the radiator can be 20% smaller.</li>
+<li>Could a <strong>variable-emittance radiator</strong> reduce heater power by rejecting less heat in the cold case?</li>
+<li>What if the <strong>battery survival temperature</strong> is −5 °C (as some Li-ion cells allow)? Then heater power drops to near zero — the 8 W internal dissipation may be sufficient.</li>
+<li>If the orbit had a higher beta angle (less eclipse), the cold case improves and heater power reduces.</li>
+</ul>
+<p>Each iteration tightens the design toward a thermal control system that keeps every component within its temperature range with minimum mass and power.</p>
+</details>
+</section>
+
+<script>
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+ document.body.classList.toggle('dark');
+ const isDark=document.body.classList.contains('dark');
+ localStorage.setItem('theme',isDark?'dark':'light');
+ btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+</script>
+</body>
+</html>

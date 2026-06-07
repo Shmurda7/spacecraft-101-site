@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Communications (COMMS) Subsystem</title>
+<style>
+:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
+body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
+summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+details details summary{font-size:1em}
+a{color:var(--link)}
+h2{margin-top:24px}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--th-bg);font-weight:bold}
+.note{color:var(--note);font-style:italic;font-size:0.9em}
+.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
+.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
+.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
+.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+.calc-out div{font-size:0.95em}
+.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
+.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
+.calc-reset:hover{opacity:.8}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
+#toggle-theme:hover{opacity:.8}
+hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+<a href="index.html">← Home</a>
+<h1>Communications (COMMS) Subsystem</h1>
+<p>The <strong>Communications (COMMS)</strong> subsystem is the spacecraft's link to the ground. It receives commands, transmits telemetry and science data, and may support cross-link communication between spacecraft. Designing a COMMS subsystem starts from the mission's data requirements — how much data needs to come down, how often you can talk to the ground, and how much power, mass, and money you have to spend. Everything else follows from there.</p>
+
+<nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1em">Contents</h2>
+<ul style="margin:4px 0;padding-left:20px">
+<li><a href="#s1">1. RF Fundamentals</a></li>
+<li><a href="#s2">2. Antennas</a></li>
+<li><a href="#s3">3. Transmitters &amp; Receivers</a></li>
+<li><a href="#s4">4. Link Analysis</a></li>
+<li><a href="#s5">5. Ground Segment</a></li>
+<li><a href="#s6">6. Regulations &amp; Licensing</a></li>
+<li><a href="#s7">7. Designing a Communications System</a></li>
+</ul>
+</nav>
+
+<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1.1em">Before You Dive In — The Big Picture</h2>
+<p style="margin:8px 0">The <strong>COMMS subsystem</strong> is the only connection between the spacecraft and the mission team. If the link fails, the spacecraft is unreachable — no commands can be sent, no data can be recovered. Every COMMS design starts with a simple question: <em>how much data do I need to get down, and how often can I talk to the ground?</em></p>
+<p style="margin:8px 0">The sections below give you the reference material — frequency bands, modulation schemes, antenna types, link budgets, ground stations. But if you're designing a comms system from scratch, start with <a href="#s7">Section 7</a> — it walks through a complete example (a cubesat measuring radiation in the Van Allen Belt) step by step, showing how each decision flows from the data requirement.</p>
+<p style="margin:8px 0">Every COMMS subsystem is built from six fundamental elements:</p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0">
+<tr><th style="width:130px;text-align:left;padding:4px 8px">Element</th><th style="text-align:left;padding:4px 8px">What it does</th></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>RF Front-End</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Generates and receives the radio-frequency carrier. Frequency band, modulation, and output power are determined here.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Antenna System</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Converts electrical signals to electromagnetic waves and vice versa. Gain, beamwidth, polarization, and pointing mechanism define coverage.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Transmitter</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Amplifies the modulated signal to the power level needed to close the link. Power amplifier efficiency directly impacts the spacecraft power budget.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Receiver</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Captures and demodulates the weak ground signal. Sensitivity, noise figure, and dynamic range determine the minimum usable signal.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Modem &amp; Coding</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Modulates the data onto the carrier and applies error-correcting codes. Determines spectral efficiency and link robustness.</td></tr>
+<tr><td style="padding:4px 8px"><strong>Ground Segment Interface</strong></td><td style="padding:4px 8px">The ground station network, antenna tracking, Doppler compensation, and protocol stack that make the space-to-ground link usable.</td></tr>
+</table>
+<p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These elements work together: the modem produces a modulated signal, the transmitter amplifies it, and the antenna radiates it to the ground station — with every stage subject to frequency allocation, power limits, and link budget constraints.</p>
+</div>
+
+<section class="section-card" id="s1">
+<h2 style="margin-top:0">1. RF Fundamentals</h2>
+<p>Radio-frequency fundamentals underpin every COMMS design. Frequency band choice determines antenna size, atmospheric loss, and data rate capability. Modulation and coding determine how efficiently you use the bandwidth and how robust the link is to noise. The key insight: <strong>there is no direct conversion from frequency to data rate</strong> — the relationship depends entirely on how data is modulated onto the carrier wave.</p>
+
+<details>
+<summary>Frequency Bands</summary>
+<p>Lower frequencies penetrate atmosphere better but offer less bandwidth. Higher frequencies offer more bandwidth but suffer from atmospheric attenuation and rain fade. The band you choose constrains antenna size, available hardware, and regulatory licensing.</p>
+<table>
+<tr><th>Band</th><th>Frequency</th><th>Typical Use</th><th>Key Properties</th></tr>
+<tr><td><strong>VHF</strong></td><td>30–300 MHz</td><td>Legacy TT&amp;C, amateur</td><td>Low data rate; large antennas; penetrates obstacles well</td></tr>
+<tr><td><strong>UHF</strong></td><td>300–1000 MHz</td><td>TT&amp;C, low-rate data, amateur satellites</td><td>Penetrates atmosphere well; large antennas for a given gain; low data rate</td></tr>
+<tr><td><strong>L-band</strong></td><td>1–2 GHz</td><td>GPS, satellite phones</td><td>Good balance of penetration and bandwidth</td></tr>
+<tr><td><strong>S-band</strong></td><td>2–4 GHz</td><td>TT&amp;C, medium-rate telemetry, deep space</td><td>Most common for TT&amp;C; good atmosphere penetration; ~Mbps data rate</td></tr>
+<tr><td><strong>C-band</strong></td><td>4–8 GHz</td><td>Satcom, radar</td><td>Higher bandwidth; some rain fade</td></tr>
+<tr><td><strong>X-band</strong></td><td>8–12 GHz</td><td>High-rate downlink, SAR, deep space</td><td>Wider bandwidth available; more susceptible to rain fade; ~100 Mbps</td></tr>
+<tr><td><strong>Ku-band</strong></td><td>12–18 GHz</td><td>Broadband satcom</td><td>Higher frequencies; used for bent-pipe transponders</td></tr>
+<tr><td><strong>K-band</strong></td><td>18–27 GHz</td><td>High-rate links</td><td>Significant atmospheric absorption</td></tr>
+<tr><td><strong>Ka-band</strong></td><td>26–40 GHz</td><td>Very high-rate downlink, inter-satellite links</td><td>Very wide bandwidth; significant atmospheric attenuation; >Gbps potential</td></tr>
+<tr><td><strong>V-band</strong></td><td>40–75 GHz</td><td>Advanced satcom, crosslink</td><td>Extreme atmospheric attenuation; short-range or space-only</td></tr>
+<tr><td><strong>Optical</strong></td><td>IR / visible</td><td>High-rate deep space, inter-satellite</td><td>Extremely narrow beams; no frequency regulation; weather-dependent on ground</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Modulation Schemes</summary>
+<p>A carrier wave oscillating at some frequency can carry data by varying one or more of its properties: amplitude (ASK), frequency (FSK), or phase (PSK). The number of distinct states per symbol determines spectral efficiency in bits per second per Hertz (bps/Hz). Higher-order modulations pack more bits per symbol but require a higher signal-to-noise ratio to maintain the same bit error rate.</p>
+<table>
+<tr><th>Scheme</th><th>Efficiency (bps/Hz)</th><th>Complexity</th><th>Used For</th></tr>
+<tr><td><strong>BPSK</strong></td><td>1</td><td>Low</td><td>TT&amp;C, deep space (lowest Eb/N₀ required)</td></tr>
+<tr><td><strong>QPSK / OQPSK</strong></td><td>2</td><td>Low</td><td>Most common for telemetry and medium-rate downlink</td></tr>
+<tr><td><strong>8-PSK</strong></td><td>3</td><td>Medium</td><td>Higher-rate downlink with good efficiency</td></tr>
+<tr><td><strong>16-APSK / 32-APSK</strong></td><td>4–5</td><td>High</td><td>High-rate downlink (Ka-band), DVB-S2 standards</td></tr>
+<tr><td><strong>GMSK</strong></td><td>~1.5</td><td>Medium</td><td>UHF and S-band with good spectral containment</td></tr>
+</table>
+<p class="note">Spectral efficiency is the ratio of data rate to bandwidth. For example, QPSK encodes 2 bits per symbol, so a 1 MHz channel can carry ~2 Mbps (before coding overhead). Pulse-shaping roll-off and forward error correction both add bandwidth overhead — typically 20–50%.</p>
+</details>
+
+<details>
+<summary>Error-Correcting Codes</summary>
+<p>Forward error correction (FEC) adds redundant bits to the transmitted stream so the receiver can correct errors without retransmission. Coding gain is the reduction in required Eb/N₀ for the same BER — a 7 dB coding gain means you can transmit at 1/5 the power for the same link quality.</p>
+<table>
+<tr><th>Code</th><th>Coding Gain</th><th>Complexity</th><th>Notes</th></tr>
+<tr><td><strong>Convolutional (r=1/2, k=7)</strong></td><td>~5 dB</td><td>Low</td><td>Heritage code; often concatenated with Reed-Solomon</td></tr>
+<tr><td><strong>Reed-Solomon (255,223)</strong></td><td>~2 dB</td><td>Medium</td><td>Block code; good for burst errors</td></tr>
+<tr><td><strong>Turbo codes</strong></td><td>~7–8 dB</td><td>High</td><td>CCSDS standard; near Shannon-limit performance</td></tr>
+<tr><td><strong>LDPC (Low-Density Parity Check)</strong></td><td>~7–9 dB</td><td>High</td><td>CCSDS standard; modern deep space missions; lower decoding complexity</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s2">
+<h2 style="margin-top:0">2. Antennas</h2>
+<p>The antenna converts electrical signals into radiated electromagnetic waves and vice versa. Antenna design starts with Maxwell's equations — the four laws that describe how electric and magnetic fields are generated and interact. Understanding these fundamentals is essential because antenna performance directly determines whether your link closes, and every parameter (gain, directivity, efficiency, polarization, radiation pattern) involves trade-offs.</p>
+
+<details>
+<summary>Antenna Theory — Maxwell's Equations</summary>
+<p>All antenna behavior is derived from four physical laws:</p>
+<table>
+<tr><th>Law</th><th>What it means</th></tr>
+<tr><td><strong>Gauss's Law for Electricity</strong></td><td>Electric charges produce electric fields. The net electric flux through a closed surface is proportional to the charge enclosed.</td></tr>
+<tr><td><strong>Gauss's Law for Magnetism</strong></td><td>There are no magnetic monopoles. Magnetic field lines form closed loops — they always return to their source.</td></tr>
+<tr><td><strong>Faraday's Law of Induction</strong></td><td>A changing magnetic field induces an electric field. This is how a receiving antenna works: the passing EM wave's magnetic field induces a current in the antenna conductor.</td></tr>
+<tr><td><strong>Ampere-Maxwell Law</strong></td><td>A changing electric field (or a current) produces a magnetic field. This is how a transmitting antenna works: an alternating current in the conductor generates a radiating magnetic field.</td></tr>
+</table>
+<p>Together, these laws describe a self-sustaining process: a changing electric field generates a magnetic field, and a changing magnetic field generates an electric field — producing a wave that propagates outward through space at the speed of light. This is how every antenna works.</p>
+</details>
+
+<details>
+<summary>Key Antenna Parameters</summary>
+<table>
+<tr><th>Parameter</th><th>What It Tells You</th></tr>
+<tr><td><strong>Gain (dBi)</strong></td><td>The ratio of power radiated in a specific direction compared to an isotropic antenna (which radiates equally in all directions). Gain = Directivity × Efficiency. Always given in dBi (dB relative to isotropic). A higher gain antenna focuses the beam more tightly.</td></tr>
+<tr><td><strong>Directivity</strong></td><td>A measure of how focused the radiation pattern is, regardless of losses. Directivity is what you'd get if the antenna were perfectly efficient. Real gain = directivity × efficiency.</td></tr>
+<tr><td><strong>Efficiency</strong></td><td>Ratio of radiated power to input power. Loss comes from three main sources: <strong>reflection loss</strong> (impedance mismatch between the antenna and the feed line — like a resistance mismatch for AC signals), <strong>conductor loss</strong> (energy lost as heat when RF current flows through the metal; skin effect concentrates current near the conductor surface at higher frequencies, increasing effective resistance), and <strong>dielectric loss</strong> (the PCB substrate or insulating material absorbs some RF power as heat).</td></tr>
+<tr><td><strong>Polarization</strong></td><td>The orientation of the electric field vector in the propagating wave. If the transmit and receive antennas have mismatched polarization, you get significant loss — complete mismatch means no connection.</td></tr>
+<tr><td><strong>Beamwidth (HPBW)</strong></td><td>The angular width of the main lobe where power drops to half (−3 dB). Tells you how precisely the antenna must be pointed. Beamwidth is not coverage — coverage requires accounting for the full pattern including side lobes.</td></tr>
+<tr><td><strong>VSWR / Return Loss</strong></td><td>How well the antenna impedance matches the feed line. VSWR < 2:1 is typical (meaning < 10% of power is reflected back).</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Polarization Deep Dive</summary>
+<p>Polarization determines how the electric field of the radiated wave behaves:</p>
+<table>
+<tr><th>Type</th><th>Behavior</th><th>Pros</th><th>Cons</th></tr>
+<tr><td><strong>Linear</strong></td><td>Electric field oscillates in a single plane (vertical or horizontal)</td><td>Direct and concentrated; stable and long-range; simple, inexpensive, easy to repair</td><td>Requires perfect alignment between transmit and receive antennas; any rotation causes loss</td></tr>
+<tr><td><strong>Circular</strong></td><td>Electric and magnetic field vectors are 90° out of phase, causing the resultant field vector to rotate (right-hand or left-hand)</td><td>Immune to interference; works regardless of spacecraft attitude; ideal for unpredictable orientations</td><td>Reduced range compared to linear; more complex antenna feed design</td></tr>
+<tr><td><strong>Elliptical</strong></td><td>The two field components have different magnitudes, creating an elliptical trajectory</td><td>Flexible signal transmission; improved reception in complex environments</td><td>Very complex to design and analyze</td></tr>
+</table>
+<p>Circular polarization is created by feeding the antenna with two orthogonal feed ports, with a 90° phase offset between them. The simplest way to create the 90° offset is to make one feed line a quarter-wavelength longer than the other. Most spacecraft use circular polarization because the attitude can change unpredictably, and circular polarization doesn't care about orientation.</p>
+</details>
+
+<details>
+<summary>Radiation Patterns</summary>
+<p>A radiation pattern describes how an antenna radiates power into space:</p>
+<table>
+<tr><th>Pattern Type</th><th>Description</th></tr>
+<tr><td><strong>Isotropic (theoretical)</strong></td><td>Equal radiation in all directions. Used as the baseline reference for gain measurements.</td></tr>
+<tr><td><strong>Omnidirectional</strong></td><td>Radiates equally in a plane (e.g., a dipole radiates like a doughnut). Useful when spacecraft attitude is unknown.</td></tr>
+<tr><td><strong>Directional</strong></td><td>Focuses energy into a narrow beam (parabolic dish, horn, patch array). Higher gain but needs accurate pointing.</td></tr>
+</table>
+<p>Key terms: <strong>Main lobe</strong> = the strongest beam. <strong>Side lobes</strong> = unwanted beams at other angles (these can cause interference). <strong>Front-to-back ratio</strong> = difference between forward and backward radiation (higher is better).</p>
+</details>
+
+<details>
+<summary>Antenna Types</summary>
+<table>
+<tr><th>Type</th><th>Gain</th><th>Beamwidth</th><th>When Used</th></tr>
+<tr><td><strong>Dipole / monopole</strong></td><td>~2 dBi</td><td>Omnidirectional</td><td>UHF, low-gain TT&amp;C, tumbling-safe</td></tr>
+<tr><td><strong>Patch (microstrip)</strong></td><td>3–9 dBi</td><td>30–90°</td><td>S-band TT&amp;C, medium-gain, low-profile; the most common antenna for small spacecraft</td></tr>
+<tr><td><strong>Helical</strong></td><td>10–20 dBi</td><td>15–60°</td><td>UHF/S-band, circular polarization, LEO</td></tr>
+<tr><td><strong>Parabolic dish</strong></td><td>20–50+ dBi</td><td>0.5–10°</td><td>X/Ka-band high-gain, deep space, narrow beam</td></tr>
+<tr><td><strong>Phased array</strong></td><td>Variable</td><td>Electronically steerable</td><td>Inter-satellite links, beam-forming missions; high complexity and cost</td></tr>
+<tr><td><strong>Reflectarray</strong></td><td>25–40 dBi</td><td>1–5°</td><td>High-gain without dish mass; flat profile</td></tr>
+<tr><td><strong>Yagi-Uda</strong></td><td>6–20 dBi</td><td>10–60°</td><td>Directional ground-station antennas; simple and cheap</td></tr>
+<tr><td><strong>Turnstile</strong></td><td>~3 dBi</td><td>Near-omni</td><td>UHF; circular polarization from crossed dipoles</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Patch Antenna Design (Example)</summary>
+<p>The patch (microstrip) antenna is the workhorse of small spacecraft. Made of a highly conductive metal (copper) patch of length L and width W on a dielectric substrate of thickness h with permittivity ε<sub>r</sub>:</p>
+<ul>
+<li>The thickness h must be much smaller than the wavelength, but not smaller than λ/40 or efficiency degrades.</li>
+<li>The resonant frequency is determined by the patch length L, which should equal half a wavelength within the dielectric: L = λ / (2√ε<sub>r</sub>).</li>
+<li>The width W controls the input impedance. For a square patch, input impedance is ~300 Ω. Increasing W reduces impedance — reaching 50 Ω often requires a very wide patch (lots of space).</li>
+<li>Larger width also increases bandwidth.</li>
+<li>The radiation pattern broadens as the substrate thickness increases.</li>
+</ul>
+</details>
+</section>
+
+<section class="section-card" id="s3">
+<h2 style="margin-top:0">3. Transmitters &amp; Receivers</h2>
+<p>The transmitter amplifies and radiates the modulated signal; the receiver captures and demodulates the weak ground signal. Together they define the achievable data rate and link margin.</p>
+
+<details>
+<summary>Transmitter Architecture</summary>
+<table>
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td><strong>Frequency synthesizer</strong></td><td>Generates the carrier frequency; phase noise and stability affect modulation quality</td></tr>
+<tr><td><strong>Modulator</strong></td><td>Impresses the data onto the carrier (BPSK, QPSK, etc.)</td></tr>
+<tr><td><strong>Upconverter</strong></td><td>Shifts the modulated signal from IF to the final RF frequency</td></tr>
+<tr><td><strong>Power amplifier (PA)</strong></td><td>Amplifies to the required transmit power; efficiency (PAE) is critical for power budget</td></tr>
+<tr><td><strong>Bandpass filter</strong></td><td>Removes harmonics and out-of-band spurious emissions</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Receiver Architecture</summary>
+<table>
+<tr><th>Component</th><th>Role</th></tr>
+<tr><td><strong>Low-noise amplifier (LNA)</strong></td><td>First amplification stage; noise figure sets receiver sensitivity</td></tr>
+<tr><td><strong>Downconverter</strong></td><td>Shifts RF signal to IF for demodulation</td></tr>
+<tr><td><strong>AGC (automatic gain control)</strong></td><td>Maintains constant signal level at demodulator input as range varies</td></tr>
+<tr><td><strong>Demodulator</strong></td><td>Recovers the baseband data from the modulated carrier</td></tr>
+<tr><td><strong>Decoder</strong></td><td>Applies error correction to recover clean data from noisy channel</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Key Performance Parameters</summary>
+<table>
+<tr><th>Parameter</th><th>Definition</th></tr>
+<tr><td><strong>Transmit power</strong></td><td>Output power at the antenna feed; typically 1–50 W for LEO, up to 100 W+ for deep space</td></tr>
+<tr><td><strong>Receiver sensitivity</strong></td><td>Minimum signal power for a given BER (typically -110 to -130 dBm)</td></tr>
+<tr><td><strong>Noise figure</strong></td><td>Degradation of signal-to-noise ratio through the receiver; 1–5 dB typical</td></tr>
+<tr><td><strong>Dynamic range</strong></td><td>Range of input power over which the receiver operates without saturation or loss of lock</td></tr>
+<tr><td><strong>Phase noise</strong></td><td>Short-term frequency jitter; affects modulation quality, especially for higher-order modulations</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s4">
+<h2 style="margin-top:0">4. Link Analysis</h2>
+<p>The link budget is the fundamental calculation that proves the communication link will work. It accounts for every gain and loss between the transmitter and receiver — transmit power, antenna gains, free-space path loss, atmospheric effects, pointing error, and implementation margin. The result is compared against the required signal quality for your modulation and coding scheme to determine whether the link has positive margin.</p>
+
+<details>
+<summary>The Link Budget Equation</summary>
+<p>The received power at the ground station is:</p>
+<p class="formula">
+P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>point</sub>
+</p>
+<p>Where:</p>
+<table>
+<tr><th>Term</th><th>Meaning</th></tr>
+<tr><td><strong>EIRP (Effective Isotropic Radiated Power)</strong></td><td>The realistic amount of power radiated from the antenna. EIRP = P<sub>T</sub> + G<sub>T</sub> − Loss<sub>sys</sub>. P<sub>T</sub> is the transmitter power, G<sub>T</sub> is the transmit antenna gain, Loss<sub>sys</sub> includes cable loss, connector loss, and noise temperature effects.</td></tr>
+<tr><td><strong>G<sub>rx</sub></strong></td><td>Gain of the receiving antenna (ground station).</td></tr>
+<tr><td><strong>FSL (Free-Space Path Loss)</strong></td><td>FSL = (4πR/λ)² where R is distance and λ is wavelength. The signal spreads out as it travels — power drops with the square of distance. This is the dominant loss in any space link.</td></tr>
+<tr><td><strong>L<sub>env</sub></strong></td><td>Atmospheric and environmental losses: oxygen absorption, water vapor, rain fade (significant above 10 GHz), polarization mismatch.</td></tr>
+<tr><td><strong>L<sub>point</sub></strong></td><td>Pointing loss — the reduction in gain when the spacecraft or ground antenna isn't perfectly aligned. For omni antennas, pointing loss is negligible.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>From Received Power to Link Quality</summary>
+<p>Received power alone doesn't tell you if the link works — you need the signal-to-noise ratio. The chain of calculations:</p>
+<table>
+<tr><th>Step</th><th>Calculation</th><th>Purpose</th></tr>
+<tr><td><strong>1. G/T (receiver sensitivity)</strong></td><td>G/T = G<sub>rx</sub> − T<sub>sys</sub></td><td>Gain-to-noise-temperature ratio. T<sub>sys</sub> is the system noise temperature (sum of receiver noise, antenna noise, sky noise, and ground noise — all converted through the noise temperature equation). A higher G/T means a more sensitive receiver.</td></tr>
+<tr><td><strong>2. C/N₀ (carrier-to-noise density)</strong></td><td>C/N₀ = EIRP + G/T − Loss<sub>env</sub> − k</td><td>The carrier power divided by the noise power spectral density. k = Boltzmann's constant (−228.6 dBW/Hz·K).</td></tr>
+<tr><td><strong>3. Eb/N₀ (energy per bit)</strong></td><td>Eb/N₀ = C/N₀ − R<sub>b</sub></td><td>Energy per bit divided by noise density. R<sub>b</sub> is the bit rate. This is the fundamental metric — it tells you how much noise pollution each bit has to fight through.</td></tr>
+<tr><td><strong>4. BER (bit error rate)</strong></td><td>BER = f(Eb/N₀, modulation, coding)</td><td>The probability that a single bit is wrong. Each modulation scheme has a known BER vs Eb/N₀ curve. For QPSK at Eb/N₀ = 9 dB, the BER is ~10⁻³ (1 error per 1000 bits). Most missions require BER between 10⁻⁵ and 10⁻⁷ for telemetry, and 10⁻⁹ for commanding.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Noise Temperature</summary>
+<p>Noise temperature is how RF engineers quantify noise. Every component in the signal path adds noise — the antenna sees sky noise and ground noise, the LNA contributes its own noise, the cables add noise. All these are summed into a system noise temperature (T<sub>sys</sub>) using the Friis formula for cascaded stages. A lower T<sub>sys</sub> = less noise = better sensitivity. Typical spacecraft receive chains have T<sub>sys</sub> of 100–500 K depending on frequency band and ground station quality.</p>
+</details>
+
+<details>
+<summary>Link Margin</summary>
+<p>Link margin = (actual Eb/N₀) − (required Eb/N₀ for target BER). Positive margin means the link works. Typical guidelines: 3 dB minimum for TT&amp;C links, 5–10 dB for payload data downlinks. Negative margin forces a trade — increase transmitter power, use a higher-gain antenna, improve the modulation/coding scheme, reduce data rate, or upgrade the ground station.</p>
+<p class="note">Implementation margin accounts for uncertainties: hardware performance not matching datasheets, imperfect pointing, aging components, and modeling errors. A typical implementation margin is 2–3 dB. Always include it.</p>
+</details>
+</section>
+
+<section class="section-card" id="s5">
+<h2 style="margin-top:0">5. Ground Segment</h2>
+<p>The ground segment is the earth-side half of the communication link. Ground stations, antenna tracking, Doppler compensation, and protocol stacks must be designed together with the spacecraft COMMS subsystem.</p>
+
+<details>
+<summary>Ground Station Types</summary>
+<table>
+<tr><th>Type</th><th>Antenna Size</th><th>Coverage</th><th>Example</th></tr>
+<tr><td><strong>VHF/UHF amateur</strong></td><td>~3 m</td><td>Local, low-rate</td><td>University ground stations</td></tr>
+<tr><td><strong>S-band dedicated</strong></td><td>3–10 m</td><td>Regional, medium-rate</td><td>Kongsberg, SSC, KSAT</td></tr>
+<tr><td><strong>X/Ka-band large</strong></td><td>11–18 m</td><td>National, high-rate</td><td>NASA DSN, ESA ESTRACK</td></tr>
+<tr><td><strong>Deep space network</strong></td><td>34–70 m</td><td>Global, deep space</td><td>NASA DSN (Goldstone, Madrid, Canberra)</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Doppler &amp; Ranging</summary>
+<table>
+<tr><th>Effect</th><th>Description</th></tr>
+<tr><td><strong>Doppler shift</strong></td><td>Relative motion changes received frequency. When a radiated signal passes through Earth's atmosphere it begins to compress (as the spacecraft approaches) or stretch (as it recedes), shifting the frequency. LEO can see ±50 kHz at S-band. The receiver must track this shift.</td></tr>
+<tr><td><strong>Doppler ranging</strong></td><td>Rate of frequency change gives range rate (velocity). Combined with known orbit geometry and law of sines, the spacecraft's position can be calculated.</td></tr>
+<tr><td><strong>Two-way ranging</strong></td><td>Ground station sends a tone, spacecraft transponds it; the round-trip delay gives range with ~meter accuracy.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Protocols &amp; Standards</summary>
+<table>
+<tr><th>Protocol</th><th>Layer</th><th>Use</th></tr>
+<tr><td><strong>CCSDS AOS / TM</strong></td><td>Data link</td><td>Standard space-to-ground frame format; virtual channels, idle data, fill frames</td></tr>
+<tr><td><strong>CCSDS Proximity-1</strong></td><td>Data link</td><td>Mars relay, in-space proximity links</td></tr>
+<tr><td><strong>CFDP</strong></td><td>Transport</td><td>Reliable file delivery over lossy RF links; store-and-forward, automatic retransmission</td></tr>
+<tr><td><strong>DTN (Bundle Protocol)</strong></td><td>Transport</td><td>Delay-tolerant networking for deep space; store-and-forward overlay</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s6">
+<h2 style="margin-top:0">6. Regulations &amp; Licensing</h2>
+<p>Space communications are regulated internationally by the ITU and nationally by agencies like the FCC (US) or OFCOM (UK). Frequency allocation, power limits, and orbital slot registration must be secured before launch.</p>
+
+<details>
+<summary>Regulatory Bodies</summary>
+<table>
+<tr><th>Body</th><th>Role</th></tr>
+<tr><td><strong>ITU (International Telecommunication Union)</strong></td><td>International allocation of frequency bands; coordination of geostationary orbital slots; radio regulations</td></tr>
+<tr><td><strong>FCC (US) / Ofcom (UK) / BNetzA (DE) / etc.</strong></td><td>National licensing of space stations and earth stations; spectrum auction and assignment</td></tr>
+<tr><td><strong>NASA / ESA / JAXA</strong></td><td>Frequency assignment for their own missions; coordination with ITU through national administrations</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Licensing Process</summary>
+<table>
+<tr><th>Step</th><th>Timeline</th><th>Description</th></tr>
+<tr><td><strong>Frequency coordination</strong></td><td>6–18 months pre-launch</td><td>Submit frequency request to national administration; ITU coordination with existing users</td></tr>
+<tr><td><strong>Space station license</strong></td><td>3–6 months pre-launch</td><td>FCC Form 312 (US) or equivalent; details orbit, power, frequencies, emission type</td></tr>
+<tr><td><strong>Earth station license</strong></td><td>3–6 months pre-launch</td><td>Ground station transmit and receive license; site coordination for interference</td></tr>
+<tr><td><strong>Post-launch notification</strong></td><td>Within 30 days of launch</td><td>Actual orbital parameters, frequency usage, and power verification reported to ITU</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Key Compliance Requirements</summary>
+<ul>
+<li>Out-of-band emission limits — power spectral density outside allocated band must be below regulatory limits.</li>
+<li>EIRP limits — maximum effective isotropic radiated power per frequency band.</li>
+<li>PFD limits — power flux density at Earth's surface must not exceed thresholds for adjacent services.</li>
+<li>Orbital debris mitigation — end-of-life disposal plan (deorbit or graveyard orbit) is required in many jurisdictions.</li>
+</ul>
+</details>
+</section>
+
+<section class="section-card" id="s7">
+<h2 style="margin-top:0">7. Designing a Communications System — A Worked Example</h2>
+<p>This section walks through designing a COMMS subsystem from scratch using a concrete example. Every decision flows from the data requirement, and each step references the relevant reference section above. The design is iterative — expect to loop back through the steps as choices in one area constrain options in another.</p>
+
+<details>
+<summary>Step 1: Determine the Data Requirement</summary>
+<p><strong>Scenario:</strong> A cubesat measures radiation across the Van Allen Belt. It captures 10 kB/s of science data for 20 minutes per orbit, plus 0.5 kB/s of housekeeping telemetry for the full 90-minute orbit.</p>
+<table>
+<tr><th>Data Type</th><th>Rate</th><th>Duration</th><th>Total Per Orbit</th></tr>
+<tr><td>Science data</td><td>10 kB/s</td><td>20 min</td><td>10,000 B/s × 1,200 s = <strong>12 MB</strong></td></tr>
+<tr><td>Housekeeping telemetry</td><td>0.5 kB/s</td><td>90 min</td><td>500 B/s × 5,400 s = <strong>2.7 MB</strong></td></tr>
+<tr><td><strong>Total</strong></td><td></td><td></td><td><strong>14.7 MB per orbit</strong></td></tr>
+</table>
+<p>Now decide how often to downlink. Say you have 1 ground contact per orbit with a 3-minute access window (determined by your ground station locations and orbital geometry). The required downlink data rate is:</p>
+<p class="formula">
+14,700,000 bytes / 180 seconds = 81.67 kBps
+</p>
+<p>This is your minimum data rate — every other choice in the comms design must support at least this rate.</p>
+<p class="note">The ground access time is purely determined by ground station location and orbital geometry — how long the spacecraft is within the ground station antenna's field of view. If you can afford more ground stations or a higher-gain ground antenna, your access window and data rate per pass change.</p>
+</details>
+
+<details>
+<summary>Step 2: Choose the Modulation Scheme</summary>
+<p>Modulation determines how many bits you can squeeze through each Hertz of bandwidth. For simplicity, start with Phase Shift Keying (PSK):</p>
+<table>
+<tr><th>Scheme</th><th>Spectral Efficiency</th><th>Bit Rate in 1 MHz</th><th>Complexity</th></tr>
+<tr><td>BPSK</td><td>1 bps/Hz</td><td>1 Mbps</td><td>Lowest</td></tr>
+<tr><td>QPSK</td><td>2 bps/Hz</td><td>2 Mbps</td><td>Low</td></tr>
+<tr><td>8-PSK</td><td>3 bps/Hz</td><td>3 Mbps</td><td>Medium</td></tr>
+</table>
+<p>Our required data rate is 81.67 kBps = 653 kbps. With BPSK (1 bps/Hz):</p>
+<p class="formula">
+653 kbps / 1 bps/Hz = ~653 kHz of bandwidth needed
+</p>
+<p>Adding pulse-shaping roll-off and forward error correction overhead (typically 20–50% extra bandwidth), the total required bandwidth is roughly <strong>800 kHz to 1 MHz</strong>. A practical choice is allocating 200 kHz and using a higher-gain antenna or better coding to close the link within that narrow band.</p>
+<p class="note">When conducting a modulation trade study, the key parameters are: complexity (more complex = better performance but harder to implement), cost (parts and development), schedule (time to develop and test), and power draw (more complex systems draw more power).</p>
+</details>
+
+<details>
+<summary>Step 3: Select the Frequency Band</summary>
+<p>Band selection depends on the data rate requirement, available hardware, regulatory constraints, and the mission orbit. For a low-altitude cubesat (~400 km) that is power, mass, and size constrained:</p>
+<table>
+<tr><th>Band</th><th>Typical Data Rate</th><th>Antenna Size for Given Gain</th><th>Fit for Our Example</th></tr>
+<tr><td>UHF (300–1000 MHz)</td><td>~10–100 kbps</td><td>Large</td><td>Maybe — low rate, simple hardware, but may not support 653 kbps</td></tr>
+<tr><td>S-band (2–4 GHz)</td><td>~1–10 Mbps</td><td>Small to medium</td><td><strong>Good fit</strong> — plenty of headroom, good hardware availability, moderate atmosphere loss</td></tr>
+<tr><td>X-band (8–12 GHz)</td><td>~10–100+ Mbps</td><td>Small</td><td>Overkill for our data rate, more expensive, more atmospheric loss</td></tr>
+</table>
+<p>For this example, <strong>S-band</strong> (2–4 GHz) is the pragmatic choice — it has ample bandwidth for our 653 kbps requirement, mature and affordable COTS hardware exists, and the atmospheric loss is manageable even at low elevation angles.</p>
+</details>
+
+<details>
+<summary>Step 4: Choose Polarization and Antenna Type</summary>
+<p>For a small spacecraft where attitude can change unpredictably, <strong>circular polarization</strong> is the standard choice — it doesn't care about orientation. A complete polarization mismatch means no connection, and linear polarization requires precise alignment that a tumbling or slewing spacecraft can't guarantee.</p>
+<p>For the antenna type, the trade depends on the mission parameters:</p>
+<table>
+<tr><th>Criterion</th><th>Our Values</th><th>Implication</th></tr>
+<tr><td>Altitude</td><td>~400 km (LEO)</td><td>Short range, low path loss — don't need a high-gain antenna</td></tr>
+<tr><td>Power, mass, size</td><td>Severely constrained</td><td>Small, lightweight, low-profile antenna needed</td></tr>
+<tr><td>Data rate</td><td>~653 kbps</td><td>Readily achievable with S-band and a modest-gain antenna</td></tr>
+</table>
+<p>A <strong>patch (microstrip) antenna</strong> is the best fit — low profile, lightweight, circularly polarized, and 3–9 dBi of gain that comfortably closes our link. For a higher-rate mission at X-band, a parabolic dish or phased array would be justified.</p>
+</details>
+
+<details>
+<summary>Step 5: Build the Preliminary Link Budget</summary>
+<p>With the preliminary design choices made (S-band, QPSK, 653 kbps, patch antenna, circular polarization), the next step is to verify the link will close by building a preliminary link budget:</p>
+<table>
+<tr><th>Parameter</th><th>Example Values</th></tr>
+<tr><td>Frequency</td><td>2.4 GHz (S-band)</td></tr>
+<tr><td>Transmit power</td><td>0.5 W = 27 dBm</td></tr>
+<tr><td>Spacecraft antenna gain</td><td>5 dBi (patch)</td></tr>
+<tr><td>System losses (cable, connector, implementation)</td><td>3 dB</td></tr>
+<tr><td>EIRP</td><td>27 + 5 − 3 = 29 dBm</td></tr>
+<tr><td>Ground station antenna gain</td><td>10 dBi (small dish)</td></tr>
+<tr><td>Free-space path loss at 400 km</td><td>FSL = 32.4 + 20log(2400) + 20log(400) ≈ 152 dB</td></tr>
+<tr><td>Atmospheric and polarization losses</td><td>2 dB</td></tr>
+<tr><td>Pointing loss</td><td>1 dB</td></tr>
+<tr><td>Received power</td><td>29 + 10 − 152 − 2 − 1 = −116 dBm</td></tr>
+<tr><td>System noise temperature (T<sub>sys</sub>)</td><td>~300 K</td></tr>
+<tr><td>C/N₀</td><td>−116 dBm + 228.6 − 10log(300) ≈ 78 dB·Hz</td></tr>
+<tr><td>Required Eb/N₀ for QPSK at BER 10⁻⁵</td><td>~9.5 dB</td></tr>
+<tr><td>Maximum bit rate that closes the link</td><td>78 − 9.5 + 2 (coding gain) ≈ 70.5 dB·Hz ≈ 1.1 Mbps</td></tr>
+</table>
+<p><strong>Result:</strong> The preliminary link budget shows the link can support up to ~1.1 Mbps — well above our 653 kbps requirement, leaving margin for implementation losses and degradation. The design is viable.</p>
+
+<details>
+<summary>Interactive Link Budget Calculator</summary>
+<p>Adjust any parameter and the budget updates live. Click <strong>Reset to Defaults</strong> to return to the walkthrough values.</p>
+<div class="calculator">
+  <div class="calc-grid">
+    <label>Frequency (MHz): <input type="number" id="c_freq" value="2400" step="100" min="100" max="40000"></label>
+    <label>Distance (km): <input type="number" id="c_dist" value="400" step="10" min="100" max="40000"></label>
+    <label>Transmit power (dBm): <input type="number" id="c_ptx" value="27" step="1" min="-20" max="60"></label>
+    <label>SC antenna gain (dBi): <input type="number" id="c_gtx" value="5" step="0.5" min="-10" max="50"></label>
+    <label>System losses (dB): <input type="number" id="c_Lsys" value="3" step="0.5" min="0" max="20"></label>
+    <label>Ground station gain (dBi): <input type="number" id="c_grx" value="10" step="0.5" min="-10" max="70"></label>
+    <label>Atmospheric loss (dB): <input type="number" id="c_Latm" value="2" step="0.5" min="0" max="20"></label>
+    <label>Pointing loss (dB): <input type="number" id="c_Lpoint" value="1" step="0.5" min="0" max="20"></label>
+    <label>System noise temp (K): <input type="number" id="c_Tsys" value="300" step="10" min="10" max="1000"></label>
+    <label>Required Eb/N₀ (dB): <input type="number" id="c_EbN0" value="9.5" step="0.5" min="0" max="30"></label>
+    <label>Coding gain (dB): <input type="number" id="c_Gcode" value="2" step="0.5" min="0" max="20"></label>
+    <label>Target data rate (kbps): <input type="number" id="c_Rreq" value="653" step="50" min="1" max="100000"></label>
+  </div>
+  <div class="calc-out">
+    <div>EIRP: <span id="c_outEIRP">--</span></div>
+    <div>Free-space path loss: <span id="c_outFSL">--</span></div>
+    <div>P<sub>rx</sub>: <span id="c_outPrx">--</span></div>
+    <div>C/N₀: <span id="c_outCN0">--</span></div>
+    <div>Max bitrate: <span id="c_outRmax">--</span></div>
+    <div>Link margin at target: <span id="c_outMargin">--</span></div>
+  </div>
+  <button class="calc-reset" id="c_reset">Reset to Defaults</button>
+</div>
+</details>
+
+<p class="note">This is a simplified budget. A real link budget goes through detailed calculation of noise temperature, atmospheric attenuation models, antenna pattern integration, and includes margin at every stage. The full link budget process is covered in <a href="#s4">Section 4</a>.</p>
+</details>
+
+<details>
+<summary>Step 6: Iterate and Converge</summary>
+<p>With the budget closed, you have a baseline design: <strong>S-band, QPSK modulation, circular polarization, patch antenna, 0.5 W transmitter, with ~1 Mbps capacity</strong>. Now iterate through the trades:</p>
+<ul>
+<li>Could you use a lower-power transmitter and save 0.3 W of spacecraft power? Re-run the budget with 0.2 W.</li>
+<li>Could you use a simpler ground station (less gain) and save ground segment cost? Re-run the budget with a 5 dBi ground antenna.</li>
+<li>Is the BER requirement too tight? If the mission can tolerate 10⁻⁴ instead of 10⁻⁵, the required Eb/N₀ drops by ~1 dB, giving more margin.</li>
+</ul>
+<p>Each iteration tightens the design. The final design is never the first one — it's the converged result of 5–10 passes through the trades, with each decision checked against the others.</p>
+</details>
+</section>
+
+<script>
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+ document.body.classList.toggle('dark');
+ const isDark=document.body.classList.contains('dark');
+ localStorage.setItem('theme',isDark?'dark':'light');
+ btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+
+function g(id){return +document.getElementById(id).value}
+function s(id,v){document.getElementById(id).textContent=v}
+
+const cDefaults={};
+['c_freq','c_dist','c_ptx','c_gtx','c_Lsys','c_grx','c_Latm','c_Lpoint','c_Tsys','c_EbN0','c_Gcode','c_Rreq'].forEach(id=>{cDefaults[id]=g(id)});
+
+function calcLink(){
+ const f=g('c_freq'), d=g('c_dist'), Ptx=g('c_ptx'), Gtx=g('c_gtx'), Lsys=g('c_Lsys');
+ const Grx=g('c_grx'), Latm=g('c_Latm'), Lpoint=g('c_Lpoint'), Tsys=g('c_Tsys');
+ const EbN0=g('c_EbN0'), Gcode=g('c_Gcode'), Rreq=g('c_Rreq');
+ const EIRP=Ptx+Gtx-Lsys;
+ const FSL=32.4+20*Math.log10(f)+20*Math.log10(d);
+ const Prx_dBm=EIRP+Grx-FSL-Latm-Lpoint;
+ const Prx_dBW=Prx_dBm-30;
+ const CN0=Prx_dBW+228.6-10*Math.log10(Tsys);
+ const Rmax_kbps=Math.pow(10,(CN0-EbN0+Gcode)/10)/1000;
+ const margin=CN0-EbN0+Gcode-10*Math.log10(Rreq*1000);
+ s('c_outEIRP',EIRP.toFixed(1)+' dBm');
+ s('c_outFSL',FSL.toFixed(1)+' dB');
+ s('c_outPrx',Prx_dBm.toFixed(1)+' dBm');
+ s('c_outCN0',CN0.toFixed(1)+' dB·Hz');
+ s('c_outRmax',Rmax_kbps.toFixed(1)+' kbps');
+ s('c_outMargin',margin.toFixed(1)+' dB');
+}
+
+document.querySelectorAll('#c_freq,#c_dist,#c_ptx,#c_gtx,#c_Lsys,#c_grx,#c_Latm,#c_Lpoint,#c_Tsys,#c_EbN0,#c_Gcode,#c_Rreq').forEach(el=>el.addEventListener('input',calcLink));
+document.getElementById('c_reset').addEventListener('click',()=>{
+ Object.keys(cDefaults).forEach(id=>document.getElementById(id).value=cDefaults[id]);
+ calcLink();
+});
+calcLink();
+</script>
+</body>
+</html>

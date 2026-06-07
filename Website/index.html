@@ -5,122 +5,302 @@
 <title>Engineering Notes</title>
 <style>
 :root{--bg:#f5f5f5;--card-bg:white;--text:#1e293b;--link:#2563eb;--shadow:rgba(0,0,0,.1)}
-body.dark{--bg:#0f172a;--card-bg:#1e293b;--text:#e2e8f0;--link:#60a5fa;--shadow:rgba(0,0,0,.4)}
-body{font-family:Arial,sans-serif;max-width:900px;margin:auto;padding:40px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
-.card{background:var(--card-bg);padding:20px;border-radius:10px;box-shadow:0 2px 6px var(--shadow);margin-top:20px}
+body.dark{--bg:#0a0e1a;--card-bg:#111827;--text:#e2e8f0;--link:#60a5fa;--shadow:rgba(0,0,0,.4)}
+body{font-family:Arial,sans-serif;max-width:1000px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+.card{background:var(--card-bg);padding:20px 28px;border-radius:10px;box-shadow:0 2px 6px var(--shadow);margin-top:20px}
 a.button{display:inline-block;padding:10px 15px;background:#2563eb;color:white;text-decoration:none;border-radius:6px;transition:opacity .2s}
 a.button:hover{opacity:.8}
-#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid #cbd5e1;border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100;transition:background .3s}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid #334155;border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100;transition:background .3s}
 #toggle-theme:hover{opacity:.8}
 </style>
 </head>
 <body>
 <button id="toggle-theme">☾ Dark</button>
 
-<div style="text-align:center;margin:0 0 10px 0">
-<svg viewBox="0 0 600 240" width="100%" style="max-width:600px">
+<!-- Satellite Orbiting Earth -->
+<div style="text-align:center;margin:0 0 20px 0;overflow-x:auto">
+<svg viewBox="0 0 600 400" width="100%" style="max-width:600px">
   <defs>
-    <radialGradient id="glow-orbit" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#2563eb" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
+    <radialGradient id="earth-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="60%" stop-color="#1d4ed8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="earth-fill" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#3b82f6"/><stop offset="70%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#0f172a"/>
     </radialGradient>
     <linearGradient id="sat-body" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#475569"/><stop offset="100%" stop-color="#1e293b"/>
+      <stop offset="0%" stop-color="#64748b"/><stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Stars -->
+  <rect x="0" y="0" width="600" height="398" rx="0" fill="#0a0e1a"/>
+  <g fill="white" opacity="0.6">
+    <circle cx="50" cy="30" r="1"/><circle cx="120" cy="80" r="1.2"/><circle cx="200" cy="20" r="0.8"/>
+    <circle cx="350" cy="50" r="1.5"/><circle cx="500" cy="30" r="1"/><circle cx="550" cy="100" r="1.2"/>
+    <circle cx="40" cy="180" r="0.8"/><circle cx="100" cy="350" r="1"/><circle cx="200" cy="370" r="1.3"/>
+    <circle cx="450" cy="360" r="0.8"/><circle cx="520" cy="180" r="1"/><circle cx="570" cy="250" r="1.2"/>
+    <circle cx="30" cy="280" r="1"/><circle cx="480" cy="80" r="0.7"/><circle cx="320" cy="370" r="1"/>
+    <circle cx="380" cy="20" r="1.1"/><circle cx="560" cy="350" r="0.9"/><circle cx="80" cy="130" r="0.7"/>
+  </g>
+
+  <!-- Atmosphere glow -->
+  <circle cx="300" cy="230" r="150" fill="url(#earth-glow)"/>
+  <circle cx="300" cy="230" r="120" fill="none" stroke="#3b82f6" stroke-width="8" opacity="0.15" filter="url(#glow)"/>
+
+  <!-- Earth -->
+  <circle cx="300" cy="230" r="90" fill="url(#earth-fill)"/>
+
+  <!-- Continents (simplified paths) -->
+  <g fill="#22c55e" opacity="0.6">
+    <path d="M260,190 Q270,185 280,190 Q285,200 275,210 Q265,205 260,190Z"/>
+    <path d="M320,200 Q335,195 340,205 Q345,220 335,230 Q325,225 320,200Z"/>
+    <path d="M280,250 Q295,245 305,255 Q310,270 295,280 Q280,275 280,250Z"/>
+    <path d="M240,230 Q250,225 255,235 Q250,245 240,230Z"/>
+    <path d="M350,240 Q360,235 365,245 Q360,255 350,240Z"/>
+    <path d="M290,175 Q300,170 310,175 Q305,185 290,175Z"/>
+  </g>
+  <g fill="#16a34a" opacity="0.4">
+    <path d="M270,195 Q275,192 278,197 Q275,202 270,195Z"/>
+    <path d="M330,210 Q338,208 340,215 Q336,220 330,210Z"/>
+    <path d="M290,260 Q298,257 302,265 Q296,270 290,260Z"/>
+  </g>
+
+  <!-- Cloud swirls -->
+  <g fill="white" opacity="0.06">
+    <ellipse cx="250" cy="210" rx="40" ry="8" transform="rotate(-15,250,210)"/>
+    <ellipse cx="330" cy="250" rx="35" ry="6" transform="rotate(10,330,250)"/>
+    <ellipse cx="280" cy="270" rx="30" ry="5" transform="rotate(-5,280,270)"/>
+  </g>
+
+  <!-- Orbit path -->
+  <ellipse cx="300" cy="220" rx="210" ry="130" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="4,6"/>
+
+  <!-- Orbiting satellite with motion -->
+  <g>
+    <animateMotion dur="12s" repeatCount="indefinite" path="M300,90 A210,130 0 1,1 299,90 A210,130 0 1,1 300,90"/>
+    <!-- Satellite body -->
+    <rect x="-8" y="-6" width="16" height="12" rx="2" fill="url(#sat-body)" stroke="#94a3b8" stroke-width="0.5"/>
+    <!-- Solar panels -->
+    <rect x="-20" y="-4" width="10" height="8" rx="1" fill="url(#panel)" opacity="0.9"/>
+    <rect x="10" y="-4" width="10" height="8" rx="1" fill="url(#panel)" opacity="0.9"/>
+    <!-- Antenna -->
+    <line x1="0" y1="-6" x2="0" y2="-12" stroke="#94a3b8" stroke-width="0.8"/>
+    <circle cx="0" cy="-12" r="1.5" fill="#f59e0b" opacity="0.8"/>
+  </g>
+
+  <!-- Labels -->
+  <text x="300" y="240" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold" opacity="0.8">Earth</text>
+  <text x="300" y="390" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="bold">A Satellite Orbiting Earth</text>
+  <text x="300" y="375" text-anchor="middle" fill="#64748b" font-size="9">Every spacecraft starts as a design problem — orbit, environment, and mission drive every subsystem choice.</text>
+</svg>
+</div>
+
+<!-- Spacecraft Architecture Diagram -->
+<div style="text-align:center;margin:20px 0;overflow-x:auto">
+<svg viewBox="0 0 640 360" width="100%" style="max-width:640px">
+  <defs>
+    <linearGradient id="bus-body" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/><stop offset="100%" stop-color="#0f172a"/>
     </linearGradient>
     <linearGradient id="panel-grad" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#3b82f6"/>
     </linearGradient>
-    <linearGradient id="obc-chip" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#047857"/>
-    </linearGradient>
-    <linearGradient id="com-link" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/>
-    </linearGradient>
-    <linearGradient id="sens-link" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/>
-    </linearGradient>
   </defs>
 
-  <!-- Background orbit glow -->
-  <circle cx="300" cy="130" r="110" fill="url(#glow-orbit)"/>
+  <rect x="0" y="0" width="638" height="358" rx="10" fill="#111827" stroke="#334155" stroke-width="1"/>
+  <text x="320" y="24" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold">Spacecraft Subsystem Architecture</text>
 
-  <!-- Solar panels -->
-  <rect x="20" y="80" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.9"/>
-  <rect x="20" y="100" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.7"/>
-  <rect x="20" y="120" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.5"/>
-  <rect x="520" y="80" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.9"/>
-  <rect x="520" y="100" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.7"/>
-  <rect x="520" y="120" width="60" height="12" rx="2" fill="url(#panel-grad)" opacity="0.5"/>
+  <!-- Solar Arrays (left & right) -->
+  <rect x="8" y="60" width="36" height="200" rx="3" fill="url(#panel-grad)" opacity="0.7"/>
+  <text x="26" y="165" text-anchor="middle" fill="#e2e8f0" font-size="8" font-weight="bold" transform="rotate(-90,26,165)">Solar Arrays</text>
+  <rect x="596" y="60" width="36" height="200" rx="3" fill="url(#panel-grad)" opacity="0.7"/>
+  <text x="614" y="165" text-anchor="middle" fill="#e2e8f0" font-size="8" font-weight="bold" transform="rotate(90,614,165)">Solar Arrays</text>
 
-  <!-- Satellite bus body -->
-  <rect x="100" y="90" width="400" height="60" rx="6" fill="url(#sat-body)" stroke="#64748b" stroke-width="1"/>
+  <!-- Bus Body -->
+  <rect x="48" y="40" width="544" height="280" rx="6" fill="url(#bus-body)" stroke="#475569" stroke-width="1.5"/>
 
-  <!-- Antenna -->
-  <line x1="300" y1="90" x2="300" y2="40" stroke="#94a3b8" stroke-width="2"/>
-  <line x1="290" y1="50" x2="310" y2="50" stroke="#cbd5e1" stroke-width="1.5"/>
-  <line x1="285" y1="60" x2="315" y2="60" stroke="#cbd5e1" stroke-width="1.5"/>
-  <line x1="280" y1="70" x2="320" y2="70" stroke="#cbd5e1" stroke-width="1"/>
-  <text x="300" y="28" text-anchor="middle" fill="var(--text)" font-size="9">Antenna</text>
+  <!-- Antenna mast -->
+  <line x1="320" y1="40" x2="320" y2="10" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="305" y1="18" x2="335" y2="18" stroke="#94a3b8" stroke-width="1"/>
+  <line x1="310" y1="25" x2="330" y2="25" stroke="#94a3b8" stroke-width="1"/>
 
-  <!-- OBC Chip (center) -->
-  <rect x="230" y="100" width="60" height="40" rx="4" fill="url(#obc-chip)"/>
-  <text x="260" y="120" text-anchor="middle" fill="white" font-size="10" font-weight="bold">OBC</text>
-  <text x="260" y="132" text-anchor="middle" fill="#a7f3d0" font-size="8">Computer</text>
+  <!-- ==================== ADCS ==================== -->
+  <rect x="62" y="52" width="115" height="78" rx="5" fill="#8b5cf6" opacity="0.12"/>
+  <rect x="62" y="52" width="115" height="78" rx="5" fill="none" stroke="#a78bfa" stroke-width="1"/>
+  <!-- Star tracker lens -->
+  <circle cx="96" cy="78" r="14" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+  <circle cx="96" cy="78" r="6" fill="none" stroke="#a78bfa" stroke-width="1"/>
+  <line x1="82" y1="78" x2="110" y2="78" stroke="#a78bfa" stroke-width="0.8"/>
+  <line x1="96" y1="64" x2="96" y2="92" stroke="#a78bfa" stroke-width="0.8"/>
+  <!-- Reaction wheel -->
+  <circle cx="150" cy="90" r="8" fill="none" stroke="#c4b5fd" stroke-width="1"/>
+  <circle cx="150" cy="90" r="3" fill="#c4b5fd"/>
+  <path d="M150,82 A8,8 0 0,1 156,96" fill="none" stroke="#c4b5fd" stroke-width="0.8" marker-end="url(#arrow-down)"/>
+  <text x="119" y="122" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="bold">ADCS</text>
 
-  <!-- Pins on OBC chip -->
-  <line x1="230" y1="108" x2="220" y2="108" stroke="#64748b" stroke-width="2"/>
-  <line x1="230" y1="118" x2="220" y2="118" stroke="#64748b" stroke-width="2"/>
-  <line x1="230" y1="128" x2="220" y2="128" stroke="#64748b" stroke-width="2"/>
-  <line x1="290" y1="108" x2="300" y2="108" stroke="#64748b" stroke-width="2"/>
-  <line x1="290" y1="118" x2="300" y2="118" stroke="#64748b" stroke-width="2"/>
-  <line x1="290" y1="128" x2="300" y2="128" stroke="#64748b" stroke-width="2"/>
+  <!-- ==================== CDH ==================== -->
+  <rect x="191" y="52" width="160" height="78" rx="5" fill="#10b981" opacity="0.12"/>
+  <rect x="191" y="52" width="160" height="78" rx="5" fill="none" stroke="#34d399" stroke-width="1"/>
+  <!-- CPU chip -->
+  <rect x="218" y="67" width="28" height="28" rx="3" fill="#34d399" opacity="0.8"/>
+  <rect x="223" y="72" width="18" height="18" rx="2" fill="#111827"/>
+  <line x1="218" y1="75" x2="212" y2="75" stroke="#34d399" stroke-width="1.5"/>
+  <line x1="218" y1="81" x2="212" y2="81" stroke="#34d399" stroke-width="1.5"/>
+  <line x1="218" y1="87" x2="212" y2="87" stroke="#34d399" stroke-width="1.5"/>
+  <line x1="246" y1="75" x2="252" y2="75" stroke="#34d399" stroke-width="1.5"/>
+  <line x1="246" y1="81" x2="252" y2="81" stroke="#34d399" stroke-width="1.5"/>
+  <line x1="246" y1="87" x2="252" y2="87" stroke="#34d399" stroke-width="1.5"/>
+  <!-- Memory chips -->
+  <rect x="268" y="67" width="14" height="12" rx="2" fill="#34d399" opacity="0.6"/>
+  <rect x="268" y="83" width="14" height="12" rx="2" fill="#34d399" opacity="0.6"/>
+  <rect x="286" y="67" width="14" height="12" rx="2" fill="#34d399" opacity="0.6"/>
+  <rect x="286" y="83" width="14" height="12" rx="2" fill="#34d399" opacity="0.6"/>
+  <!-- Data bus lines -->
+  <rect x="314" y="70" width="24" height="4" rx="1" fill="#34d399" opacity="0.5"/>
+  <rect x="314" y="78" width="24" height="4" rx="1" fill="#34d399" opacity="0.5"/>
+  <rect x="314" y="86" width="24" height="4" rx="1" fill="#34d399" opacity="0.5"/>
+  <text x="271" y="122" text-anchor="middle" fill="#34d399" font-size="9" font-weight="bold">OBC / CDH</text>
 
-  <!-- Connected subsystems -->
-  <!-- Power subsystem -->
-  <rect x="120" y="100" width="40" height="40" rx="4" fill="#dc2626" opacity="0.8"/>
-  <text x="140" y="120" text-anchor="middle" fill="white" font-size="8">Power</text>
-  <text x="140" y="130" text-anchor="middle" fill="#fee2e2" font-size="7">EPS</text>
-  <line x1="160" y1="120" x2="218" y2="120" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <circle r="3" fill="#ef4444"><animateMotion dur="3s" repeatCount="indefinite" path="M160,120 L218,120"/></circle>
+  <!-- ==================== COMMS ==================== -->
+  <rect x="365" y="52" width="115" height="78" rx="5" fill="#f59e0b" opacity="0.12"/>
+  <rect x="365" y="52" width="115" height="78" rx="5" fill="none" stroke="#fbbf24" stroke-width="1"/>
+  <!-- Parabolic dish -->
+  <path d="M380,100 Q400,64 420,100" fill="none" stroke="#fbbf24" stroke-width="1.5"/>
+  <line x1="400" y1="64" x2="400" y2="100" stroke="#fbbf24" stroke-width="0.8"/>
+  <line x1="400" y1="70" x2="410" y2="65" stroke="#fbbf24" stroke-width="0.8"/>
+  <line x1="400" y1="72" x2="412" y2="70" stroke="#fbbf24" stroke-width="0.8"/>
+  <!-- Radio -->
+  <rect x="428" y="69" width="20" height="24" rx="3" fill="#fbbf24" opacity="0.7"/>
+  <circle cx="438" cy="77" r="3" fill="#111827"/>
+  <circle cx="438" cy="87" r="2" fill="#111827"/>
+  <line x1="433" y1="69" x2="433" y2="65" stroke="#fbbf24" stroke-width="1"/>
+  <line x1="443" y1="69" x2="443" y2="65" stroke="#fbbf24" stroke-width="1"/>
+  <text x="422" y="122" text-anchor="middle" fill="#fbbf24" font-size="9" font-weight="bold">COMMS</text>
 
-  <!-- Comms subsystem -->
-  <rect x="370" y="98" width="40" height="20" rx="3" fill="url(#com-link)"/>
-  <text x="390" y="111" text-anchor="middle" fill="white" font-size="7">Comms</text>
-  <rect x="370" y="122" width="40" height="20" rx="3" fill="url(#com-link)"/>
-  <text x="390" y="135" text-anchor="middle" fill="white" font-size="7">Telemetry</text>
-  <line x1="300" y1="110" x2="368" y2="110" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <line x1="300" y1="130" x2="368" y2="130" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <circle r="3" fill="#fbbf24"><animateMotion dur="2.5s" repeatCount="indefinite" path="M300,110 L368,110"/></circle>
-  <circle r="3" fill="#fbbf24"><animateMotion dur="3.5s" repeatCount="indefinite" path="M368,130 L300,130"/></circle>
+  <!-- ==================== DATA BUS ==================== -->
+  <line x1="62" y1="142" x2="582" y2="142" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="250" y="133" width="140" height="18" rx="3" fill="#1e293b" stroke="#3b82f6" stroke-width="1"/>
+  <text x="320" y="145" text-anchor="middle" fill="#60a5fa" font-size="8" font-weight="bold">Onboard Data Bus</text>
+  <line x1="62" y1="134" x2="62" y2="150" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="582" y1="134" x2="582" y2="150" stroke="#3b82f6" stroke-width="1.5"/>
+  <line x1="177" y1="130" x2="177" y2="134" stroke="#3b82f6" stroke-width="1"/>
+  <line x1="351" y1="130" x2="351" y2="134" stroke="#3b82f6" stroke-width="1"/>
+  <line x1="480" y1="130" x2="480" y2="134" stroke="#3b82f6" stroke-width="1"/>
 
-  <!-- Sensor subsystem -->
-  <rect x="440" y="100" width="40" height="40" rx="4" fill="url(#sens-link)" opacity="0.8"/>
-  <text x="460" y="118" text-anchor="middle" fill="white" font-size="7">Sensors</text>
-  <text x="460" y="130" text-anchor="middle" fill="#ddd6fe" font-size="7">IMU/GPS</text>
-  <line x1="410" y1="120" x2="438" y2="120" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4,3"/>
-  <circle r="3" fill="#a78bfa"><animateMotion dur="2.8s" repeatCount="indefinite" path="M410,120 L438,120"/></circle>
+  <!-- ==================== EPS ==================== -->
+  <rect x="62" y="162" width="115" height="65" rx="5" fill="#ef4444" opacity="0.12"/>
+  <rect x="62" y="162" width="115" height="65" rx="5" fill="none" stroke="#f87171" stroke-width="1"/>
+  <!-- Solar cell icon -->
+  <rect x="78" y="172" width="16" height="16" rx="2" fill="none" stroke="#f87171" stroke-width="1"/>
+  <line x1="82" y1="172" x2="82" y2="188" stroke="#f87171" stroke-width="0.5"/>
+  <line x1="90" y1="172" x2="90" y2="188" stroke="#f87171" stroke-width="0.5"/>
+  <line x1="78" y1="180" x2="94" y2="180" stroke="#f87171" stroke-width="0.5"/>
+  <!-- Battery -->
+  <rect x="108" y="172" width="18" height="16" rx="3" fill="none" stroke="#fca5a5" stroke-width="1"/>
+  <line x1="117" y1="172" x2="117" y2="169" stroke="#fca5a5" stroke-width="1.5"/>
+  <rect x="112" y="178" width="4" height="6" rx="1" fill="#f87171"/>
+  <rect x="118" y="175" width="4" height="12" rx="1" fill="#f87171" opacity="0.6"/>
+  <text x="119" y="220" text-anchor="middle" fill="#f87171" font-size="9" font-weight="bold">EPS</text>
 
-  <!-- On-board data bus labels -->
-  <text x="190" y="158" text-anchor="middle" fill="var(--text)" font-size="8" opacity="0.6">Internal Bus</text>
-  <text x="340" y="158" text-anchor="middle" fill="var(--text)" font-size="8" opacity="0.6">Data Bus</text>
-  <text x="426" y="158" text-anchor="middle" fill="var(--text)" font-size="8" opacity="0.6">Sensor Bus</text>
+  <!-- ==================== THERMAL ==================== -->
+  <rect x="191" y="162" width="160" height="65" rx="5" fill="#06b6d4" opacity="0.12"/>
+  <rect x="191" y="162" width="160" height="65" rx="5" fill="none" stroke="#22d3ee" stroke-width="1"/>
+  <!-- Radiator fins -->
+  <rect x="215" y="172" width="30" height="18" rx="2" fill="none" stroke="#22d3ee" stroke-width="1"/>
+  <line x1="222" y1="172" x2="222" y2="190" stroke="#22d3ee" stroke-width="0.8"/>
+  <line x1="228" y1="172" x2="228" y2="190" stroke="#22d3ee" stroke-width="0.8"/>
+  <line x1="234" y1="172" x2="234" y2="190" stroke="#22d3ee" stroke-width="0.8"/>
+  <line x1="240" y1="172" x2="240" y2="190" stroke="#22d3ee" stroke-width="0.8"/>
+  <!-- Heat pipe / arrow -->
+  <line x1="250" y1="181" x2="275" y2="181" stroke="#22d3ee" stroke-width="1.5"/>
+  <polygon points="275,177 282,181 275,185" fill="#22d3ee"/>
+  <!-- Thermometer -->
+  <rect x="290" y="172" width="6" height="18" rx="3" fill="none" stroke="#22d3ee" stroke-width="1"/>
+  <circle cx="293" cy="188" r="4" fill="none" stroke="#22d3ee" stroke-width="1"/>
+  <rect x="292" y="178" width="2" height="6" fill="#22d3ee"/>
+  <text x="271" y="220" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="bold">Thermal</text>
 
-  <!-- Pulsing orbit ring -->
-  <ellipse cx="300" cy="145" rx="200" ry="15" fill="none" stroke="#2563eb" stroke-width="1" stroke-dasharray="8,12" opacity="0.4">
-    <animateTransform attributeName="transform" type="rotate" values="0 300 145;360 300 145" dur="20s" repeatCount="indefinite"/>
-  </ellipse>
-  <ellipse cx="300" cy="145" rx="180" ry="12" fill="none" stroke="#2563eb" stroke-width="0.5" stroke-dasharray="4,16" opacity="0.3">
-    <animateTransform attributeName="transform" type="rotate" values="360 300 145;0 300 145" dur="15s" repeatCount="indefinite"/>
-  </ellipse>
+  <!-- ==================== PAYLOAD ==================== -->
+  <rect x="365" y="162" width="115" height="65" rx="5" fill="#ec4899" opacity="0.12"/>
+  <rect x="365" y="162" width="115" height="65" rx="5" fill="none" stroke="#f472b6" stroke-width="1"/>
+  <!-- Camera/lens -->
+  <circle cx="405" cy="181" r="15" fill="none" stroke="#f472b6" stroke-width="1.5"/>
+  <circle cx="405" cy="181" r="9" fill="none" stroke="#f472b6" stroke-width="1"/>
+  <circle cx="405" cy="181" r="4" fill="#f472b6" opacity="0.5"/>
+  <!-- Body -->
+  <rect x="396" y="192" width="18" height="8" rx="2" fill="none" stroke="#f472b6" stroke-width="1"/>
+  <text x="422" y="220" text-anchor="middle" fill="#f472b6" font-size="9" font-weight="bold">Payload</text>
+
+  <!-- ==================== POWER BUS ==================== -->
+  <line x1="62" y1="238" x2="582" y2="238" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <rect x="240" y="230" width="160" height="16" rx="3" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+  <text x="320" y="241" text-anchor="middle" fill="#f87171" font-size="7" font-weight="bold">Power Distribution Bus</text>
+  <line x1="62" y1="231" x2="62" y2="245" stroke="#ef4444" stroke-width="1"/>
+  <line x1="177" y1="227" x2="177" y2="231" stroke="#ef4444" stroke-width="1"/>
+  <line x1="351" y1="227" x2="351" y2="231" stroke="#ef4444" stroke-width="1"/>
+  <line x1="480" y1="227" x2="480" y2="231" stroke="#ef4444" stroke-width="1"/>
+  <line x1="582" y1="231" x2="582" y2="245" stroke="#ef4444" stroke-width="1"/>
+
+  <!-- ==================== PROPULSION ==================== -->
+  <rect x="62" y="258" width="280" height="50" rx="5" fill="#f97316" opacity="0.12"/>
+  <rect x="62" y="258" width="280" height="50" rx="5" fill="none" stroke="#fdba74" stroke-width="1"/>
+  <!-- Tank -->
+  <ellipse cx="110" cy="283" rx="12" ry="16" fill="none" stroke="#fdba74" stroke-width="1"/>
+  <line x1="98" y1="283" x2="122" y2="283" stroke="#fdba74" stroke-width="0.8"/>
+  <!-- Pipe -->
+  <line x1="122" y1="283" x2="150" y2="283" stroke="#fdba74" stroke-width="1.5"/>
+  <line x1="150" y1="283" x2="150" y2="295" stroke="#fdba74" stroke-width="1.5"/>
+  <!-- Valve -->
+  <rect x="145" y="278" width="10" height="10" rx="1" fill="none" stroke="#fdba74" stroke-width="1"/>
+  <line x1="150" y1="278" x2="150" y2="275" stroke="#fdba74" stroke-width="1"/>
+  <!-- Thruster nozzle -->
+  <polygon points="182,300 170,275 194,275" fill="none" stroke="#fdba74" stroke-width="1"/>
+  <rect x="170" y="270" width="24" height="6" rx="1" fill="none" stroke="#fdba74" stroke-width="1"/>
+  <!-- Flame -->
+  <polygon points="182,300 176,308 188,308" fill="#fdba74" opacity="0.5"/>
+  <text x="240" y="290" text-anchor="middle" fill="#fdba74" font-size="9" font-weight="bold">Propulsion</text>
+
+  <!-- ==================== STRUCTURES ==================== -->
+  <rect x="356" y="258" width="222" height="50" rx="5" fill="#64748b" opacity="0.15"/>
+  <rect x="356" y="258" width="222" height="50" rx="5" fill="none" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,2"/>
+  <!-- Truss frame -->
+  <line x1="380" y1="270" x2="404" y2="298" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="404" y1="270" x2="380" y2="298" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="410" y1="270" x2="434" y2="298" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="434" y1="270" x2="410" y2="298" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="440" y1="270" x2="464" y2="298" stroke="#94a3b8" stroke-width="1.5"/>
+  <line x1="464" y1="270" x2="440" y2="298" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="490" y="290" text-anchor="middle" fill="#94a3b8" font-size="9" font-weight="bold">Structures &amp; Mechanisms</text>
+
+  <!-- Legend -->
+  <rect x="472" y="325" width="8" height="8" rx="1" fill="none" stroke="#3b82f6" stroke-width="1"/>
+  <text x="484" y="332" fill="#60a5fa" font-size="6">Data bus</text>
+  <rect x="520" y="325" width="8" height="8" rx="1" fill="none" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,1"/>
+  <text x="532" y="332" fill="#f87171" font-size="6">Power bus</text>
 </svg>
 </div>
 
 <div class="card">
-<h1>Engineering Knowledge Base</h1>
+<h1 style="margin-top:0">Engineering Knowledge Base</h1>
 <p>A personal website documenting things I've learned, taught, and worked on.</p>
 <h2>Topics</h2>
 <ul>
-<li><a href="obc.html">Command &amp; Data Handling (CDH)</a></li>
+<li><a href="cdh-subsystem.html">Command &amp; Data Handling (CDH) Subsystem</a></li>
+<li><a href="comms-subsystem.html">Communications (COMMS) Subsystem</a></li>
+<li><a href="eps-subsystem.html">Electrical Power Subsystem (EPS)</a></li>
+<li><a href="propulsion-subsystem.html">Propulsion Subsystem</a></li>
+<li><a href="thermal-subsystem.html">Thermal Control Subsystem</a></li>
+<li><a href="gnc-subsystem.html">Guidance, Navigation &amp; Control (GNC) Subsystem</a></li>
+<li><a href="structures-subsystem.html">Structures &amp; Mechanisms Subsystem</a></li>
+<li><a href="systems.html">Systems Engineering</a></li>
 </ul>
 </div>
 

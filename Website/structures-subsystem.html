@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Structures &amp; Mechanisms Subsystem</title>
+<style>
+:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
+body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
+summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+details details summary{font-size:1em}
+a{color:var(--link)}
+h2{margin-top:24px}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--th-bg);font-weight:bold}
+.note{color:var(--note);font-style:italic;font-size:0.9em}
+.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
+.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
+.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
+.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+.calc-out div{font-size:0.95em}
+.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
+.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
+.calc-reset:hover{opacity:.8}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
+#toggle-theme:hover{opacity:.8}
+hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+<a href="index.html">← Home</a>
+<h1>Structures &amp; Mechanisms Subsystem</h1>
+<p>The <strong>Structures &amp; Mechanisms</strong> subsystem is the physical skeleton of the spacecraft. The structure provides the mechanical support to mount every component, withstands launch loads, and maintains alignment of sensitive instruments. Mechanisms enable deployments (solar arrays, antennas, booms), articulation (gimbals, pointing stages), and separation from the launch vehicle.</p>
+
+<nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1em">Contents</h2>
+<ul style="margin:4px 0;padding-left:20px">
+<li><a href="#s1">1. Structural Design</a></li>
+<li><a href="#s2">2. Loads &amp; Environments</a></li>
+<li><a href="#s3">3. Mechanisms</a></li>
+<li><a href="#s4">4. Materials &amp; Manufacturing</a></li>
+<li><a href="#s5">5. Structural Testing</a></li>
+<li><a href="#s6">6. Structures Design Walkthrough</a></li>
+</ul>
+</nav>
+
+<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1.1em">Before You Dive In — The Big Picture</h2>
+<p style="margin:8px 0">The <strong>Structures &amp; Mechanisms</strong> subsystem provides the mechanical foundation for everything on the spacecraft. It must be stiff enough to maintain alignment during maneuvers, strong enough to survive launch without yielding, light enough to fit the mass budget, and precise enough to ensure deployables work the first time — every time.</p>
+<p style="margin:8px 0">Every structural subsystem is defined by four core functions:</p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0">
+<tr><th style="width:130px;text-align:left;padding:4px 8px">Function</th><th style="text-align:left;padding:4px 8px">What it does</th></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Primary Structure</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">The main load-bearing frame (bus panels, shear webs, longerons, thrust cone) that carries all loads from launch and on-orbit operations.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Secondary Structure</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Brackets, mounting plates, and struts that attach components (OBC, battery, reaction wheels, etc.) to the primary structure.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Mechanisms</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Moving parts: hinge and deployment systems, separation systems, pointing gimbals, latch/release devices, and actuators.</td></tr>
+<tr><td style="padding:4px 8px"><strong>Thermal/Mechanical Interface</strong></td><td style="padding:4px 8px">Mounting surfaces that provide both mechanical attachment and thermal conduction paths (or isolation, as needed). Includes bondlines, washers, and interface fillers.</td></tr>
+</table>
+<p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These functions are interdependent: primary structure design must accommodate all mechanisms and their loads, secondary structure must not couple dynamically with primary modes, and every interface must survive the vibration environment while maintaining alignment.</p>
+</div>
+
+<section class="section-card" id="s1">
+<h2 style="margin-top:0">1. Structural Design</h2>
+<p>Structural design starts from the spacecraft layout — where each component sits, how mass is distributed, and where load paths run. The design must satisfy strength, stiffness, mass, and alignment requirements simultaneously.</p>
+
+<details>
+<summary>Structural Architectures</summary>
+<table>
+<tr><th>Type</th><th>Description</th><th>When Used</th></tr>
+<tr><td><strong>Box / panel bus</strong></td><td>Flat panels (Al honeycomb or CFC) bolted into a box; components mounted to interior and exterior faces</td><td>Most small-to-medium satellites; simple, modular, good for panel-level integration</td></tr>
+<tr><td><strong>Central cylinder / thrust cone</strong></td><td>Monolithic or built-up cylinder carries main launch loads; panels attached radially</td><td>Larger spacecraft (GEO comsats); efficient load path from launcher interface</td></tr>
+<tr><td><strong>Truss / frame</strong></td><td>Struts and nodes form an open framework; panels attached to frame</td><td>When mass is critical or payload needs unobstructed views; complex integration</td></tr>
+<tr><td><strong>Monocoque / shell</strong></td><td>Skin carries loads; minimal internal framing</td><td>Small spacecraft, re-entry vehicles; mass-efficient but integration is tight</td></tr>
+<tr><td><strong>CubeSat standard</strong></td><td>1U = 10×10×10 cm; stacking rails, PC/104 or custom stack</td><td>Standardized small satellite form factor; limited structural options</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Design Requirements</summary>
+<table>
+<tr><th>Requirement</th><th>Typical Criterion</th></tr>
+<tr><td><strong>Frequency (stiffness)</strong></td><td>First fundamental frequency > 20–40 Hz (depends on launcher; generally > 30 Hz to avoid coupling with launch vehicle modes)</td></tr>
+<tr><td><strong>Factor of safety (yield)</strong></td><td>1.25× limit load (no permanent deformation under qualification loads)</td></tr>
+<tr><td><strong>Factor of safety (ultimate)</strong></td><td>1.5× limit load (no rupture under qualification loads; 2.0× for fracture-critical parts)</td></tr>
+<tr><td><strong>Buckling margin</strong></td><td>≥ 1.4× for stabilized structures under compressive loads</td></tr>
+<tr><td><strong>Alignment stability</strong></td><td>Thermal distortion and moisture release must not exceed payload alignment budget (e.g., 10–50 arcsec)</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Finite Element Modeling (FEM)</summary>
+<p>A FEM of the entire spacecraft is built to predict structural response under static, dynamic, and thermal loads. The model is correlated to test data (modal survey) and used to predict flight loads. Key outputs: modal frequencies and mode shapes, stress distribution, displacement under load, and interface loads at the launch vehicle attachment. Model correlation typically targets frequency agreement within 5% and mode shape cross-orthogonality > 0.95.</p>
+</details>
+</section>
+
+<section class="section-card" id="s2">
+<h2 style="margin-top:0">2. Loads &amp; Environments</h2>
+<p>The design-driving loads come from the launch vehicle — vibration, acoustic, shock, and acceleration. On-orbit loads (thermal cycling, maneuvering, docking) are generally lower but drive fatigue and alignment stability.</p>
+
+<details>
+<summary>Launch Loads</summary>
+<table>
+<tr><th>Load Type</th><th>Description</th></tr>
+<tr><td><strong>Steady-state acceleration</strong></td><td>Axial (thrust) and lateral acceleration during launch; typically 3–10 g axial, 1–3 g lateral</td></tr>
+<tr><td><strong>Sine vibration</strong></td><td>Low-frequency (5–100 Hz) structural response to engine thrust oscillation and wind gusts; typically 5–20 g at spacecraft interface</td></tr>
+<tr><td><strong>Random vibration</strong></td><td>Broadband (20–2000 Hz) excitation from acoustic noise and aerodynamic buffeting; 5–15 g RMS typical</td></tr>
+<tr><td><strong>Acoustic noise</strong></td><td>High sound pressure levels (130–150 dB) inside fairing at liftoff; drives large panel vibration and fatigue</td></tr>
+<tr><td><strong>Shock</strong></td><td>Pyroshock from separation nuts, bolt cutters, and stage separations; > 1,000 g possible at 1–10 kHz; damages electronics and cracks ceramics</td></tr>
+</table>
+</details>
+
+<details>
+<summary>On-Orbit Environments</summary>
+<table>
+<tr><th>Environment</th><th>Effect on Structure</th></tr>
+<tr><td><strong>Thermal cycling</strong></td><td>±100 °C swings in LEO; differential thermal expansion causes bending and stress; cycle fatigue over 5,000–30,000 orbits</td></tr>
+<tr><td><strong>Microgravity</strong></td><td>No gravity sag; structures only loaded by inertia from maneuvering and thermal stress</td></tr>
+<tr><td><strong>Vacuum</strong></td><td>Outgassing of adhesives and composites; cold welding of mechanisms; no convective cooling</td></tr>
+<tr><td><strong>Radiation &amp; atomic oxygen</strong></td><td>Degradation of polymers, composites, and coatings; atomic oxygen erodes surfaces in LEO</td></tr>
+<tr><td><strong>Micrometeoroid &amp; orbital debris (MMOD)</strong></td><td>Hypervelocity impacts (5–15 km/s); shielding needed for critical components; Whipple shields for pressurized elements</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Load Cycle Derivation</summary>
+<p>The loads cycle starts with launcher-provided interface loads (sine, random, acoustic, shock). These are applied to the spacecraft FEM to predict component-level accelerations and stresses. Component design loads are typically derived by multiplying launcher input by a dynamic amplification factor, then applying safety factors. Coupled loads analysis (CLA) with the full launch vehicle + spacecraft FEM is performed for final verification.</p>
+</details>
+</section>
+
+<section class="section-card" id="s3">
+<h2 style="margin-top:0">3. Mechanisms</h2>
+<p>Mechanisms provide the moving parts of the spacecraft — deployables that must work after years in storage, and articulating assemblies that operate throughout the mission. Mechanisms are a common single-point failure and receive intensive verification.</p>
+
+<details>
+<summary>Deployment Mechanisms</summary>
+<table>
+<tr><th>Mechanism</th><th>Purpose</th><th>Typical Design</th></tr>
+<tr><td><strong>Solar array deployment</strong></td><td>Fold panels from stowed to deployed position</td><td>Hinges, torsion springs, dampers, hold-down and release devices (HDRM), position switches</td></tr>
+<tr><td><strong>Antenna deployment</strong></td><td>Deploy dish, reflector, or mast</td><td>Same family as array deployment; may include cable cutters or length-adjustable struts</td></tr>
+<tr><td><strong>Boom / mast deployment</strong></td><td>Extend magnetometer, gravity-gradient, or instrument boom</td><td>Storable tubular extendable member (STEM), coilable lattice, inflatable</td></tr>
+<tr><td><strong>Cover / door release</strong></td><td>Open instrument aperture cover after launch</td><td>One-shot wax actuator, shape-memory alloy (SMA), or pyrotechnic release</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Hold-Down &amp; Release Devices (HDRMs)</summary>
+<table>
+<tr><th>Type</th><th>Operation</th><th>Shock Level</th><th>Reusability</th></tr>
+<tr><td><strong>Pyrotechnic (explosive bolt, nut, pin)</strong></td><td>Explosive charge breaks a fastener; very reliable</td><td>High (1,000–10,000 g)</td><td>One-shot</td></tr>
+<tr><td><strong>Non-pyro (Frangibolt, pin puller)</strong></td><td>Shape-memory alloy or mechanical release; lower shock</td><td>Low–Medium</td><td>One-shot or limited reset</td></tr>
+<tr><td><strong>Burn wire / thermal knife</strong></td><td>Resistive heating cuts a restraining cord; zero shock</td><td>Very low</td><td>One-shot</td></tr>
+<tr><td><strong>Motorized latch</strong></td><td>Screw or rotary actuator; can be reset</td><td>None</td><td>Reusable</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Pointing &amp; Articulation Mechanisms</summary>
+<table>
+<tr><th>Mechanism</th><th>Purpose</th><th>Typical Architecture</th></tr>
+<tr><td><strong>Solar array drive assembly (SADA)</strong></td><td>Rotate array to track Sun</td><td>Stepper motor + harmonic drive + slip ring; 0.5–5°/s rotation speed</td></tr>
+<tr><td><strong>Antenna gimbal</strong></td><td>Point dish at ground station</td><td>Two-axis gimbal (az/el) with stepper or DC motors; position encoder feedback</td></tr>
+<tr><td><strong>Instrument pointing platform</strong></td><td>Fine pointing for camera, telescope, or laser</td><td>Hexapod (Stewart platform) or two-axis gimbal with nanometer/microradian precision</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s4">
+<h2 style="margin-top:0">4. Materials &amp; Manufacturing</h2>
+<p>Material selection drives structural mass, stiffness, thermal behavior, and cost. Manufacturing processes must produce space-qualified hardware with traceability and quality control throughout.</p>
+
+<details>
+<summary>Common Materials</summary>
+<table>
+<tr><th>Material</th><th>Density (g/cm³)</th><th>E (GPa)</th><th>CTE (ppm/K)</th><th>Notes</th></tr>
+<tr><td><strong>Aluminum 6061-T6 / 7075-T73</strong></td><td>2.7</td><td>69</td><td>23</td><td>Most common; good strength, machinable, weldable; moderate stiffness</td></tr>
+<tr><td><strong>Aluminum honeycomb core</strong></td><td>0.03–0.1 (core)</td><td>Very high (panel)</td><td>23 (facesheet)</td><td>High stiffness/mass for panels; facesheets Al or CFC</td></tr>
+<tr><td><strong>Carbon fiber composite (CFC / CFRP)</strong></td><td>1.5–1.8</td><td>100–400 (fiber direction)</td><td>~−1 to +2 (tailored)</td><td>Very high stiffness/mass; CTE can be tailored to near-zero; expensive; conductive</td></tr>
+<tr><td><strong>Titanium (Ti-6Al-4V)</strong></td><td>4.4</td><td>114</td><td>8.6</td><td>Fittings, brackets, fasteners; good CTE match to composites; high strength</td></tr>
+<tr><td><strong>Invar (Fe-Ni alloy)</strong></td><td>8.1</td><td>140</td><td>~1.3</td><td>Near-zero CTE; used for precision structures and optical benches</td></tr>
+<tr><td><strong>Beryllium</strong></td><td>1.85</td><td>287</td><td>11.3</td><td>Very high stiffness/mass; toxic dust; limited suppliers; used for optical benches</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Manufacturing Processes</summary>
+<table>
+<tr><th>Process</th><th>Used For</th></tr>
+<tr><td><strong>CNC machining</strong></td><td>Brackets, panels, fittings, housings from Al, Ti, or steel billet</td></tr>
+<tr><td><strong>Additive manufacturing (3D printing)</strong></td><td>Complex brackets, waveguide components, custom parts; Ti, Al, Inconel; reduces part count and lead time</td></tr>
+<tr><td><strong>Composite layup &amp; cure (autoclave)</strong></td><td>Carbon fiber panels, tubes, sandwich structures</td></tr>
+<tr><td><strong>Sheet metal forming</strong></td><td>Panels, close-outs, shields</td></tr>
+<tr><td><strong>Chemical etching / EDM</strong></td><td>Precision thin features, weight relief</td></tr>
+<tr><td><strong>Bonding / adhesive assembly</strong></td><td>Honeycomb panels, insert bonding, structural adhesive joints</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Materials Selection Considerations</summary>
+<ul>
+<li><strong>Outgassing:</strong> Total mass loss (TML) < 1%, collected volatile condensable materials (CVCM) < 0.1% per ASTM E595.</li>
+<li><strong>Galvanic compatibility:</strong> Dissimilar metals in contact must be isolated (e.g., Al + CFC with insulating washer and wet-install primer).</li>
+<li><strong>CTE matching:</strong> Dissimilar CTE causes thermal stress and distortion; minimize mismatch in precision assemblies.</li>
+<li><strong>Radiation resistance:</strong> Polymers and composites degrade under radiation; TID tolerance must meet mission life.</li>
+<li><strong>Flammability:</strong> Materials must be self-extinguishing (NASA STD-6001) for crewed or habitable environments.</li>
+</ul>
+</details>
+</section>
+
+<section class="section-card" id="s5">
+<h2 style="margin-top:0">5. Structural Testing</h2>
+<p>Structural testing proves the design can survive the worst-case launch and on-orbit environments. Test levels are typically 1.25× (qualification) or 1.0× (acceptance) of predicted flight loads.</p>
+
+<details>
+<summary>Test Sequence</summary>
+<table>
+<tr><th>Test</th><th>Purpose</th></tr>
+<tr><td><strong>Modal survey</strong></td><td>Measure natural frequencies and mode shapes using low-level sine sweep or hammer impact; correlate FEM</td></tr>
+<tr><td><strong>Static load test</strong></td><td>Apply ultimate design loads using whiffle tree or hydraulic actuators; verify no permanent deformation or rupture</td></tr>
+<tr><td><strong>Sine vibration</strong></td><td>Low-frequency swept sine at qualification levels; verify no resonant amplification exceeds design allowables</td></tr>
+<tr><td><strong>Random vibration</strong></td><td>Broadband random excitation; components and panels tested to acceptance or qualification levels; main workmanship test</td></tr>
+<tr><td><strong>Acoustic test</strong></td><td>Large reverberant chamber at 130–150 dB; full spacecraft test; verifies large panel and appendage response</td></tr>
+<tr><td><strong>Shock test</strong></td><td>Pyroshock simulation using resonant plate, tuned fixture, or live ordnance; verifies electronics and mechanical survivability</td></tr>
+<tr><td><strong>Mechanism functional test</strong></td><td>Deployment, articulation, and latch/release cycling at ambient and thermal vacuum conditions; life test to expected cycles + margin</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Test Levels &amp; Margins</summary>
+<table>
+<tr><th>Test Type</th><th>Qualification Level</th><th>Acceptance Level</th></tr>
+<tr><td><strong>Sine vibration</strong></td><td>1.25× predicted max</td><td>1.0× predicted max</td></tr>
+<tr><td><strong>Random vibration</strong></td><td>1.25× (or +3 dB)</td><td>1.0×</td></tr>
+<tr><td><strong>Static load</strong></td><td>1.25× limit load</td><td>Not tested (verified by analysis + qual)</td></tr>
+<tr><td><strong>Shock</strong></td><td>1.25× predicted shock</td><td>1.0×</td></tr>
+<tr><td><strong>Thermal vacuum</strong></td><td>±10 °C beyond predicted limits</td><td>±5 °C beyond predicted limits</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Model Correlation &amp; Verification</summary>
+<p>After each structural test, the FEM is updated to match measured responses. Correlation targets: natural frequencies within 3–5%, mode shape cross-orthogonality > 0.9, and response amplitude within ±20% at critical locations. The correlated model is used to predict loads for flight conditions that can't be directly tested (e.g., coupled loads with launch vehicle). A verification closure report documents that all requirements are met with positive margin.</p>
+</details>
+</section>
+
+<section class="section-card" id="s6">
+<h2 style="margin-top:0">6. Structures Design Walkthrough</h2>
+<p>This walkthrough sizes the primary structure for a 6U cubesat and selects materials, following the same design-thinking process used across this site.</p>
+
+<details>
+<summary>Step 1: Mission Requirements &amp; Mass Budget</summary>
+<p><strong>Scenario:</strong> A 6U Earth observation cubesat at 500 km SSO with the following component masses and sizes:</p>
+<table>
+<tr><th>Component</th><th>Mass (g)</th><th>Dimensions</th></tr>
+<tr><td>OBC (including CDH stack)</td><td>150</td><td>90 × 60 × 20 mm</td></tr>
+<tr><td>COMMS transceiver</td><td>120</td><td>80 × 60 × 25 mm</td></tr>
+<tr><td>Payload camera</td><td>350</td><td>70 × 70 × 100 mm (includes baffle)</td></tr>
+<tr><td>Battery (4S2P Li-ion)</td><td>400</td><td>100 × 70 × 30 mm</td></tr>
+<tr><td>ADCS (4 wheels + rods)</td><td>600</td><td>Distributed</td></tr>
+<tr><td>GPS receiver</td><td>50</td><td>50 × 40 × 15 mm</td></tr>
+<tr><td>Solar cells + harness</td><td>300</td><td>Body-mounted on faces</td></tr>
+<tr><td>Propulsion (tank + thruster + propellant)</td><td>1,150</td><td>Tank ~53 mm radius</td></tr>
+<tr><td>Wiring harness</td><td>200</td><td>Distributed</td></tr>
+<tr><td><strong>Total component mass</strong></td><td><strong>3,320</strong></td><td></td></tr>
+<tr><td>Structure + fasteners (margin)</td><td>~680</td><td>TBD from sizing</td></tr>
+<tr><td><strong>Total spacecraft (estimated)</strong></td><td><strong>~4,000 (4 kg)</strong></td><td></td></tr>
+</table>
+<p>A standard 6U chassis is 100 × 200 × 300 mm with a maximum launch mass of ~8–12 kg, so there is ample mass margin.</p>
+</details>
+
+<details>
+<summary>Step 2: Material Selection</summary>
+<table>
+<tr><th>Component</th><th>Candidate Materials</th><th>Selected</th><th>Rationale</th></tr>
+<tr><td><strong>Chassis panels</strong></td><td>Al 6061-T6, Al 7075-T73, CFC honeycomb</td><td><strong>Al 6061-T6</strong></td><td>Low cost, good machinability, adequate strength (275 MPa yield), heritage in every cubesat</td></tr>
+<tr><td><strong>CubeSat rails</strong></td><td>Al 7075-T73, Ti-6Al-4V, hardened steel</td><td><strong>Al 7075-T73</strong></td><td>Higher strength (470 MPa yield) than 6061 for the wear-prone rail surfaces; anodized for hardness</td></tr>
+<tr><td><strong>Propulsion tank</strong></td><td>Ti-6Al-4V, Al 7075, stainless steel</td><td><strong>Ti-6Al-4V</strong></td><td>Best strength-to-mass for pressure vessels; compatible with LMP-103S; 4× safety factor</td></tr>
+<tr><td><strong>Brackets / secondary structure</strong></td><td>Al 6061-T6, 3D-printed Ti, AlSi10Mg</td><td><strong>Al 6061-T6</strong></td><td>Simple bracket shapes can be CNC machined; 3D printing for complex shapes if budget allows</td></tr>
+<tr><td><strong>Fasteners</strong></td><td>Stainless steel (A286), Ti</td><td><strong>A286 stainless</strong></td><td>High strength, corrosion resistant, standard aerospace fastener material; Ti for mass-critical joints</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Step 3: Panel Thickness Sizing</summary>
+<p>The primary load for a cubesat is the <strong>quasi-static launch acceleration</strong> — typically 10 g axial, 3 g lateral per the launcher user's guide. For a 4 kg spacecraft, this gives a maximum axial load of 40 kgf (392 N).</p>
+<p>The side panels (100 × 300 mm) are the primary load-bearing elements. A simply supported rectangular panel under lateral pressure has a maximum stress:</p>
+<p class="formula">σ<sub>max</sub> = k × q × b² / t²</p>
+<p>where k = 0.3 (for a/b ≈ 3), q = areal load, b = short side width, t = thickness. For a 2 mm Al 6061 panel:</p>
+<p>First fundamental frequency of a panel:</p>
+<p class="formula">f = (π/2) × √(E × t² / (12 × ρ × a⁴))</p>
+<p>For Al 6061 (E = 69 GPa, ρ = 2,700 kg/m³), a 2 mm thick, 100 × 300 mm panel gives f ≈ 80 Hz — well above the typical 30 Hz minimum. For strength, a 1.5 mm panel also works but with less margin. <strong>Select 2 mm Al 6061-T6 panels</strong> as a conservative, low-risk choice.</p>
+</details>
+
+<details>
+<summary>Step 4: Structural Layout &amp; Analysis Approach</summary>
+<p>The structural layout follows the standard 6U cubesat configuration:</p>
+<ul>
+<li><strong>Rails:</strong> Four aluminum 7075 rails at the corners, 8.5 × 8.5 mm cross-section, with the standard 85 mm rail-to-rail spacing. These transfer the entire launch load from the spacecraft to the dispenser.</li>
+<li><strong>Panels:</strong> Six 2 mm Al 6061-T6 panels (top, bottom, ±Y, ±Z) bolted to the rails. The bottom panel (Z−) serves as the interface to the separation system and contains the ejection springs.</li>
+<li><strong>Internal layout:</strong> Component stack along the Z-axis (longest dimension). The heaviest component (propulsion tank, 1.15 kg) is placed near the spacecraft center of mass to minimize bending moments.</li>
+<li><strong>FEM approach:</strong> Build a shell-element model in NASTRAN or equivalent. Apply 10 g axial + 3 g lateral simultaneously (combined load case) plus thermal loads (ΔT = ±50 °C for sun/shade transition). Check yield (1.25× safety factor) and ultimate (1.5×) margins. First mode should be > 30 Hz.</li>
+</ul>
+</details>
+
+<details>
+<summary>Step 5: Convergence</summary>
+<p>The preliminary structural design:</p>
+<ul>
+<li><strong>Chassis:</strong> 2 mm Al 6061-T6 panels, Al 7075-T73 rails</li>
+<li><strong>Tank:</strong> Ti-6Al-4V, 106 mm diameter sphere</li>
+<li><strong>Brackets:</strong> Al 6061-T6 CNC-machined</li>
+<li><strong>Fasteners:</strong> A286 stainless steel, #4-40 and #6-32</li>
+<li><strong>Total structural mass:</strong> ~0.55–0.75 kg (panels ~300 g, rails ~100 g, fasteners ~50 g, brackets ~100–250 g) — fits within the 680 g allocation</li>
+</ul>
+<p>Now iterate:</p>
+<ul>
+<li>Could <strong>1.5 mm panels</strong> save 150 g of structural mass? A FEM analysis would confirm if the stiffness (first mode > 30 Hz) and strength margins are still positive. For a 4 kg spacecraft, 1.5 mm panels may be adequate.</li>
+<li>Could <strong>carbon fiber composite panels</strong> save even more mass? CFC panels (1.5 mm, 0.5 mm faceskins on Al honeycomb) can cut panel mass by 40–50% but at 3–5× the cost. Worthwhile for mass-constrained missions.</li>
+<li>What is the <strong>first mode frequency</strong> of the full stack? The component stack (propulsion tank + battery + OBC) has its own local modes. If any component mode couples with the primary structure mode (< 30 Hz), redesign the mounting bracket or add stiffeners.</li>
+<li>Does the <strong>dispenser interface</strong> require specific rail tolerances? CubeSat standard requires rails flat to 0.1 mm over their length. If not met, the spacecraft may jam during ejection.</li>
+</ul>
+<p>Each iteration tightens the design toward a structure that is stiff enough, strong enough, light enough, and compatible with the launcher and all other subsystems.</p>
+</details>
+</section>
+
+<script>
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+ document.body.classList.toggle('dark');
+ const isDark=document.body.classList.contains('dark');
+ localStorage.setItem('theme',isDark?'dark':'light');
+ btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+</script>
+</body>
+</html>

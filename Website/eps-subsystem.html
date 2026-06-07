@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Electrical Power Subsystem (EPS)</title>
+<style>
+:root{--bg:#f8fafc;--card-bg:white;--card-bg-nested:#fafcff;--text:#1e293b;--border:#cbd5e1;--th-bg:#e2e8f0;--link:#2563eb;--note:#64748b;--hr:#e2e8f0}
+body.dark{--bg:#0f172a;--card-bg:#1e293b;--card-bg-nested:#334155;--text:#e2e8f0;--border:#475569;--th-bg:#334155;--link:#60a5fa;--note:#94a3b8;--hr:#334155}
+body{font-family:Arial,sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+details,.section-card{background:var(--card-bg);margin:10px 0;padding:12px 20px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+details details{margin:8px 0 4px 8px;padding:10px;background:var(--card-bg-nested);border:1px solid var(--border)}
+summary{font-weight:bold;cursor:pointer;font-size:1.1em}
+details details summary{font-size:1em}
+a{color:var(--link)}
+h2{margin-top:24px}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
+th{background:var(--th-bg);font-weight:bold}
+.note{color:var(--note);font-style:italic;font-size:0.9em}
+.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
+.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
+.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
+.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+.calc-out div{font-size:0.95em}
+.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
+.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
+.calc-reset:hover{opacity:.8}
+#toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
+#toggle-theme:hover{opacity:.8}
+hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
+</style>
+</head>
+<body>
+<button id="toggle-theme">☾ Dark</button>
+<a href="index.html">← Home</a>
+<h1>Electrical Power Subsystem (EPS)</h1>
+<p>The <strong>Electrical Power Subsystem (EPS)</strong> generates, stores, regulates, and distributes electrical power to every other subsystem. It must supply reliable power through eclipse seasons, during peak loads, and over the full mission lifetime, with enough margin to handle degradation and contingency operations. Designing an EPS starts from the power profile — what each subsystem needs, when, and for how long — and works back through generation, storage, and distribution to close the budget.</p>
+
+<nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1em">Contents</h2>
+<ul style="margin:4px 0;padding-left:20px">
+<li><a href="#s1">1. Power Generation</a></li>
+<li><a href="#s2">2. Energy Storage</a></li>
+<li><a href="#s3">3. Power Distribution</a></li>
+<li><a href="#s4">4. Power Budgeting</a></li>
+<li><a href="#s5">5. Power Management &amp; Protection</a></li>
+<li><a href="#s6">6. EPS Design Process</a></li>
+</ul>
+</nav>
+
+<div style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin:16px 0;">
+<h2 style="margin-top:0;font-size:1.1em">Before You Dive In — The Big Picture</h2>
+<p style="margin:8px 0">The <strong>EPS</strong> is the heartbeat of the spacecraft — if power fails, the mission is over. Every subsystem depends on a steady, regulated supply of power, and the EPS must deliver it through eclipses, peak loads, and degradation over years in orbit. The design starts with a <strong>power profile</strong>: a spreadsheet of what every component draws, in every mode, for every phase of the mission.</p>
+<p style="margin:8px 0">Every EPS is built from five functional blocks:</p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0">
+<tr><th style="width:130px;text-align:left;padding:4px 8px">Block</th><th style="text-align:left;padding:4px 8px">What it does</th></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Solar Array</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Converts sunlight into electrical power. Sizing must account for radiation degradation (EOL vs BOL), seasonal variation, and off-pointing.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Battery</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Stores energy for eclipse periods and peak loads. Chemistry, capacity, depth-of-discharge, and cycle life drive the design.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Power Conditioning</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Regulates the raw array/bus voltage to stable rails. DC-DC converters, voltage regulation, and bus filtering.</td></tr>
+<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Power Distribution</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">Switches, fuses, and wiring that deliver power to each load with overcurrent protection and fault isolation.</td></tr>
+<tr><td style="padding:4px 8px"><strong>Power Management</strong></td><td style="padding:4px 8px">Health monitoring, MPPT (maximum power point tracking), load shedding, and battery management. The intelligence that keeps the system alive.</td></tr>
+</table>
+<p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These blocks work together across every mission phase: the array charges the battery in sunlight, the battery powers the spacecraft in eclipse, and the distribution network delivers regulated power to every load — all while the power management system protects against faults and degradation. Section 6 ties everything together with a worked design example.</p>
+</div>
+
+<section class="section-card" id="s1">
+<h2 style="margin-top:0">1. Power Generation</h2>
+<p>Solar arrays are the primary power source for nearly all spacecraft. Design starts with a <strong>power equipment list (PEL) and power profile</strong> — how much power the spacecraft needs and when. From there you determine the solar cell type, array configuration, and size needed.</p>
+
+<details>
+<summary>Solar Cell Technologies</summary>
+<table>
+<tr><th>Type</th><th>Efficiency</th><th>Rad Tolerance</th><th>Cost</th><th>When Used</th></tr>
+<tr><td><strong>Silicon (Si)</strong></td><td>14–18%</td><td>Moderate</td><td>Low</td><td>Small satellites, low-cost missions</td></tr>
+<tr><td><strong>Triple-junction (GaInP/GaAs/Ge)</strong></td><td>28–32%</td><td>High</td><td>Medium</td><td>Standard for most LEO/GEO missions</td></tr>
+<tr><td><strong>4-junction / 5-junction IMM</strong></td><td>32–38%</td><td>Very high</td><td>High</td><td>High-power, deep space, advanced missions</td></tr>
+<tr><td><strong>Thin-film (CIGS, CdTe)</strong></td><td>12–18%</td><td>Very high</td><td>Low</td><td>Flexible arrays, small satellites</td></tr>
+<tr><td><strong>Perovskite (emerging)</strong></td><td>20–26% (lab)</td><td>Unknown</td><td>Very low</td><td>Experimental / future technology</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Array Configuration</summary>
+<table>
+<tr><th>Config</th><th>Power</th><th>Complexity</th><th>Notes</th></tr>
+<tr><td><strong>Body-mounted</strong></td><td>Low</td><td>Lowest</td><td>Cells on spacecraft body; no deployable; limited power</td></tr>
+<tr><td><strong>Single deployable panel</strong></td><td>Medium</td><td>Low</td><td>One wing; simple hinge and hold-down; common for small sats</td></tr>
+<tr><td><strong>Dual-panel</strong></td><td>Medium–High</td><td>Medium</td><td>Two wings; typical for 100–500 kg spacecraft</td></tr>
+<tr><td><strong>Multi-panel (3–5)</strong></td><td>High</td><td>High</td><td>Multiple panels per wing; complex deployment; large spacecraft</td></tr>
+<tr><td><strong>Flexible blanket</strong></td><td>Very high</td><td>Highest</td><td>Roll-out or accordion deploy; ISS, large GEO sats</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Array Sizing — The Design Walkthrough</summary>
+<p>Solar array sizing follows a structured flow. For each decision factor, ask:</p>
+<table>
+<tr><th>Factor</th><th>What to Consider</th><th>Impact on Design</th></tr>
+<tr><td><strong>1. Power profile</strong></td><td>What does each subsystem draw in each mode (sun-point, eclipse, payload, safe hold)? Sum the worst-case loads per mode.</td><td>Determines the minimum power the array must deliver in sunlight and the battery must supply in eclipse.</td></tr>
+<tr><td><strong>2. Cell type selection</strong></td><td>Triple-junction GaAs is the default for most missions. Silicon for low cost. Thin-film for flexibility. Multi-junction IMM for high efficiency.</td><td>Higher efficiency cells reduce array area and mass but cost more. The efficiency directly drives array size.</td></tr>
+<tr><td><strong>3. Operational environment</strong></td><td>Where in space? LEO vs GEO vs interplanetary affects radiation dose, temperature range, and solar intensity (1/R² for interplanetary).</td><td>Higher radiation means faster EOL degradation — over-size the array. Higher temperatures reduce cell voltage.</td></tr>
+<tr><td><strong>4. Mission lifetime</strong></td><td>How long must the array endure the environment? 1 year vs 5 years vs 15 years changes the total degradation.</td><td>EOL power may be 70–85% of BOL. Longer missions need larger arrays at BOL to still meet requirements at EOL.</td></tr>
+<tr><td><strong>5. Sun angle / articulation</strong></td><td>Body-mounted (no articulation) gets cos(θ) solar incidence. Single-axis tracking keeps arrays normal to the sun within one axis. Full articulation keeps them always pointed at the sun.</td><td>Body-mounted arrays in LEO can lose 30–50% of peak power due to angle. Articulation adds mass, complexity, and a mechanism (SADA) but delivers more power per unit area.</td></tr>
+<tr><td><strong>6. Inefficiencies</strong></td><td>How much of the substrate can be covered in cells? Battery recharge efficiency, MPPT losses, DC-DC conversion losses, harness IR losses.</td><td>These accumulate. Typical end-to-end efficiency from array output to usable load power is 70–85%.</td></tr>
+<tr><td><strong>7. Margin</strong></td><td>Design margin for uncertainty in degradation, power draw, and manufacturing tolerances.</td><td>15–25% margin on generation at system level is typical.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Radioisotope Thermoelectric Generators (RTGs)</summary>
+<p>RTGs convert heat from radioactive decay into electricity using thermocouples (the Seebeck effect — a voltage generated by a temperature difference across dissimilar metals). RTGs are used when solar power is insufficient: deep space missions (> 2–3 AU from the Sun), long-duration polar missions, or missions that must survive without sunlight.</p>
+<table>
+<tr><th>Parameter</th><th>Value</th></tr>
+<tr><td>Efficiency</td><td>Very low (~6%) but highly reliable (no moving parts)</td></tr>
+<tr><td>Fuel</td><td>Typically Pu-238 (half-life = 87.7 years)</td></tr>
+<tr><td>Power decay</td><td>P(t) = P₀ × e^(−t / τ) where τ = t₁/₂ / ln(2)</td></tr>
+<tr><td>Advantages</td><td>Continuous power regardless of distance from Sun or eclipse; decades of operation</td></tr>
+<tr><td>Disadvantages</td><td>Heavy; expensive; regulatory hurdles (nuclear launch authorization); limited Pu-238 supply</td></tr>
+</table>
+</details>
+
+<details>
+<summary>MPPT (Maximum Power Point Tracking)</summary>
+<p>Solar cells have a characteristic I-V curve where the maximum power point (P = V × I) occurs at a specific voltage. MPPT is the technique of operating the array at that voltage to extract the most power.</p>
+<table>
+<tr><th>Method</th><th>Complexity</th><th>Efficiency</th><th>Notes</th></tr>
+<tr><td><strong>Direct energy transfer (DET)</strong></td><td>Lowest</td><td>70–85%</td><td>Array connected directly to bus; excess power dissipated in shunt; simplest, most reliable</td></tr>
+<tr><td><strong>Perturb &amp; observe</strong></td><td>Low</td><td>85–95%</td><td>Small voltage steps to find maximum power point; standard digital MPPT</td></tr>
+<tr><td><strong>Incremental conductance</strong></td><td>Medium</td><td>90–98%</td><td>More accurate than P&amp;O; good for rapidly changing illumination (eclipse exit)</td></tr>
+<tr><td><strong>Fractional open-circuit voltage</strong></td><td>Low</td><td>80–90%</td><td>Senses open-circuit voltage periodically; sets operating point at ~80% of V<sub>oc</sub></td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s2">
+<h2 style="margin-top:0">2. Energy Storage</h2>
+<p>Batteries store energy for eclipse operation and peak loads. After the solar array is sized (determining how much charge current is available), the battery is sized to store enough energy to survive the longest eclipse plus margin. Chemistry, capacity, depth-of-discharge, and cycle life are the key design parameters.</p>
+
+<details>
+<summary>Battery Chemistries</summary>
+<table>
+<tr><th>Chemistry</th><th>Energy Density (Wh/kg)</th><th>Cycle Life</th><th>Notes</th></tr>
+<tr><td><strong>Li-ion (NCA, NMC)</strong></td><td>150–250</td><td>5,000–20,000</td><td>Most common; high density; needs careful charge management and cell balancing</td></tr>
+<tr><td><strong>LiFePO₄ (LFP)</strong></td><td>90–140</td><td>15,000–30,000</td><td>Lower density but very safe; longer cycle life; tolerant to overcharge</td></tr>
+<tr><td><strong>Li-S (emerging)</strong></td><td>350–500 (theoretical)</td><td>100–1,000</td><td>Very high energy density; short cycle life; R&amp;D phase</td></tr>
+<tr><td><strong>NiCd (legacy)</strong></td><td>40–60</td><td>20,000–50,000</td><td>Very robust; memory effect; low density; heavy</td></tr>
+<tr><td><strong>NiH₂ (legacy)</strong></td><td>50–70</td><td>30,000–60,000</td><td>Extremely long life; used on GEO and ISS; high self-discharge</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Battery Design Considerations</summary>
+<p>When sizing a battery, these factors drive the design:</p>
+<table>
+<tr><th>Factor</th><th>Considerations</th></tr>
+<tr><td><strong>Safety</strong></td><td>Li-ion can enter thermal runaway if overcharged, over-discharged, or physically damaged. Cell selection, charge control, and mechanical design must prevent this.</td></tr>
+<tr><td><strong>Purpose &amp; mission profile</strong></td><td>Are you powering through a 30-minute LEO eclipse or a 72-hour safe hold? The energy requirement determines total capacity.</td></tr>
+<tr><td><strong>Series vs parallel configuration</strong></td><td><strong>Series:</strong> increases total voltage while current stays the same. Used when components need higher voltage (e.g., reaction wheels at 28 V). <strong>Parallel:</strong> increases total current while voltage stays the same. Used for high peak-current draws (e.g., hold-down and release mechanisms for array deployment).</td></tr>
+<tr><td><strong>Cell balancing</strong></td><td>In a series string, cells can drift apart. Balancing (passive or active) ensures all cells stay at the same state of charge.</td></tr>
+<tr><td><strong>Depth of discharge</strong></td><td>Lower DoD = longer cycle life. LEO batteries typically operate at 20–30% DoD for 30,000+ cycles. GEO batteries can operate at 60–80% DoD because they cycle only ~100 times per year (eclipse seasons).</td></tr>
+<tr><td><strong>Temperature range</strong></td><td>Li-ion typically operates at 0–40 °C. Outside this range, performance degrades and safety risks increase. Batteries are often the most temperature-sensitive component on the spacecraft.</td></tr>
+<tr><td><strong>Launch site handling</strong></td><td>Batteries must be shipped, stored, and handled safely before launch. Some chemistries (Li-ion) have transport restrictions.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Fuel Cells (Alternative Power Source)</summary>
+<p>Fuel cells convert hydrogen and oxygen into electricity, water, and heat. They are used when the mission duration is short enough that cryogenic storage is feasible (hours to a few days), or when water is a useful byproduct.</p>
+<table>
+<tr><th>Parameter</th><th>Value</th></tr>
+<tr><td>Reaction</td><td>2H₂ + O₂ → 2H₂O + electricity + heat</td></tr>
+<tr><td>Energy density</td><td>Very high (theoretically); but hydrogen and oxygen must be stored cryogenically (H₂ at −253 °C, O₂ at −183 °C)</td></tr>
+<tr><td>Cell voltage</td><td>~0.7 V per cell; stack voltage = number of cells × 0.7 V</td></tr>
+<tr><td>Sizing math</td><td>1 mole of H₂ = 2 g produces ~237 kJ = ~66 Wh. Required H₂ mass = E_req / 66 Wh/g (approximate)</td></tr>
+<tr><td>Byproducts</td><td>Water can be used for crewed missions or electrolyzed back into propellant; heat must be managed.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Key Battery Parameters</summary>
+<table>
+<tr><th>Parameter</th><th>Definition</th></tr>
+<tr><td><strong>Capacity (Ah)</strong></td><td>Total charge stored; usually specified at C-rate, temperature, and end-of-life</td></tr>
+<tr><td><strong>Depth of discharge (DoD)</strong></td><td>Percentage of capacity used per cycle; lower DoD = longer cycle life</td></tr>
+<tr><td><strong>State of charge (SoC)</strong></td><td>Current charge as percentage of capacity; tracked by coulomb counting + voltage</td></tr>
+<tr><td><strong>C-rate</strong></td><td>Charge/discharge rate relative to capacity; 1C = full discharge in 1 hour; LEO typically C/2 to C/5</td></tr>
+<tr><td><strong>Cycle life</strong></td><td>Number of charge/discharge cycles before capacity drops below 80% of initial</td></tr>
+<tr><td><strong>Self-discharge</strong></td><td>Capacity loss per month when idle; 1–5% for Li-ion, higher for NiH₂</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Battery Management</summary>
+<table>
+<tr><th>Function</th><th>Purpose</th></tr>
+<tr><td><strong>Cell balancing</strong></td><td>Ensures all series cells are at the same voltage; prevents overcharge/overdischarge of weak cells</td></tr>
+<tr><td><strong>Charge control</strong></td><td>CC-CV (constant current, constant voltage) charging; limits charge rate and termination voltage</td></tr>
+<tr><td><strong>Temperature monitoring</strong></td><td>Batteries must stay within safe temperature range; heaters may be needed for cold survival</td></tr>
+<tr><td><strong>SoC estimation</strong></td><td>Tracks remaining energy; critical for eclipse operation planning and load shedding decisions</td></tr>
+<tr><td><strong>Overcurrent / short-circuit protection</strong></td><td>Fuses or PTCs prevent catastrophic failure from internal or external shorts</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s3">
+<h2 style="margin-top:0">3. Power Distribution</h2>
+<p>Power distribution delivers regulated voltage to every load, with overcurrent protection, fault isolation, and bus stability. The architecture choices here affect mass, reliability, and integration complexity.</p>
+
+<details>
+<summary>Bus Architectures</summary>
+<table>
+<tr><th>Architecture</th><th>Description</th><th>When Used</th></tr>
+<tr><td><strong>Unregulated bus</strong></td><td>Array/battery voltage directly to loads; each load has its own regulator</td><td>Small satellites, simple designs</td></tr>
+<tr><td><strong>Regulated bus</strong></td><td>DC-DC converter maintains constant bus voltage; loads need less input filtering</td><td>Most LEO/GEO spacecraft</td></tr>
+<tr><td><strong>Dual bus (regulated + unregulated)</strong></td><td>High-power loads on unregulated bus; sensitive electronics on regulated bus</td><td>Medium to large spacecraft</td></tr>
+<tr><td><strong>Distributed power architecture</strong></td><td>Point-of-load converters near each load; reduces harness losses</td><td>High-power missions, modular designs</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Voltage Levels</summary>
+<table>
+<tr><th>Bus Voltage</th><th>Common Uses</th></tr>
+<tr><td><strong>3.3 V / 5 V</strong></td><td>Digital electronics, OBC, FPGAs</td></tr>
+<tr><td><strong>12 V</strong></td><td>Payloads, small actuators, radios</td></tr>
+<tr><td><strong>28 V</strong></td><td>Standard spacecraft bus voltage; MIL-STD-704 heritage; used by most subsystems</td></tr>
+<tr><td><strong>50–100 V</strong></td><td>High-power payloads, electric propulsion (Hall thrusters)</td></tr>
+<tr><td><strong>120–150 V</strong></td><td>Large spacecraft, high-power arrays (ISS operates at 120 V)</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Protection &amp; Switching</summary>
+<table>
+<tr><th>Device</th><th>Function</th></tr>
+<tr><td><strong>Solid-state power controller (SSPC)</strong></td><td>Intelligent switch with overcurrent limiting, inrush control, and telemetry; primary method for modern EPS</td></tr>
+<tr><td><strong>Latching current limiter (LCL)</strong></td><td>Limits inrush and fault current; latches off on overload; reset by command</td></tr>
+<tr><td><strong>Fuse (one-shot)</strong></td><td>Simple overcurrent protection; cannot be reset; used for non-critical or hard-to-access loads</td></tr>
+<tr><td><strong>Pyro initiator driver</strong></td><td>Dedicated high-current circuit for firing separation nuts, cutters, valves</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s4">
+<h2 style="margin-top:0">4. Power Budgeting</h2>
+<p>The power budget is the master spreadsheet that tracks generation vs consumption across all mission phases. It must close with margin at end of life, worst-case conditions.</p>
+
+<details>
+<summary>Power Budget Elements</summary>
+<table>
+<tr><th>Category</th><th>Description</th></tr>
+<tr><td><strong>Power generation (solar array)</strong></td><td>Array power at BOL and EOL for minimum sun angle and worst-case temperature</td></tr>
+<tr><td><strong>Battery energy storage</strong></td><td>Usable energy at end-of-life, accounting for DoD limits and capacity degradation</td></tr>
+<tr><td><strong>Subsystem loads</strong></td><td>Average and peak power per subsystem per operating mode (sun-point, eclipse, payload, safe hold, thrusting)</td></tr>
+<tr><td><strong>Power bus losses</strong></td><td>Regulator efficiency (80–95%), harness resistive losses, connector losses, distribution losses</td></tr>
+<tr><td><strong>Margin</strong></td><td>15–25% margin on generation, 10–15% on consumption; contingency reserve for uncertainty</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Power Modes</summary>
+<table>
+<tr><th>Mode</th><th>Typical Load (% of max)</th><th>Duration</th><th>Notes</th></tr>
+<tr><td><strong>Sun-point / safe hold</strong></td><td>40–60%</td><td>Indefinite</td><td>Attitude control, heaters, basic COMMS; sun-pointing for max array power</td></tr>
+<tr><td><strong>Eclipse survival</strong></td><td>30–50%</td><td>~30–60 min (LEO)</td><td>Heaters, critical avionics only; battery supplies all power</td></tr>
+<tr><td><strong>Payload operation</strong></td><td>70–100%</td><td>10–60 min per orbit</td><td>Instruments, data handling, high-rate transmitter active</td></tr>
+<tr><td><strong>Thrusting / maneuver</strong></td><td>60–90%</td><td>Minutes to hours</td><td>Propulsion valves/firing, ADCS for attitude control during burn</td></tr>
+<tr><td><strong>Contingency / anomaly</strong></td><td>20–40%</td><td>Hours to days</td><td>Minimal load; ground troubleshooting; lowest power configuration</td></tr>
+</table>
+</details>
+</section>
+
+<section class="section-card" id="s5">
+<h2 style="margin-top:0">5. Power Management &amp; Protection</h2>
+<p>The power management function keeps the EPS healthy — tracking the array's maximum power point, managing battery charge, protecting against faults, and autonomously shedding loads when energy is low.</p>
+
+<details>
+<summary>Fault Protection</summary>
+<table>
+<tr><th>Event</th><th>Protection</th></tr>
+<tr><td><strong>Battery overvoltage</strong></td><td>Charge termination at cell voltage limit; shunt regulator diverts excess array power</td></tr>
+<tr><td><strong>Battery undervoltage</strong></td><td>Load shedding to prevent deep discharge; critical loads only below threshold</td></tr>
+<tr><td><strong>Overcurrent / short circuit</strong></td><td>SSPC or LCL trips; faulted load isolated; remaining bus continues operation</td></tr>
+<tr><td><strong>Bus undervoltage</strong></td><td>Non-critical loads shed; safe hold entry if voltage continues to drop</td></tr>
+<tr><td><strong>Cell imbalance</strong></td><td>Balancing circuit equalizes cells; if imbalance persists, cell(s) may be unusable</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Heater Power Management</summary>
+<p>Heaters can be the largest single power draw in eclipse. Management techniques include: proportional-integral control (PID) for precise temperature regulation, thermostat-controlled bang-bang heaters for simplicity, and duty-cycled heaters for power-constrained modes. Heater power should be included in the power budget with operational margins for cold-case scenarios.</p>
+</details>
+</section>
+
+<section class="section-card" id="s6">
+<h2 style="margin-top:0">6. EPS Design Process</h2>
+<p>Every spacecraft needs an Electrical Power Subsystem. The design follows a structured path from system-level requirements down to component selection, with trade-offs at every step. This section walks through the process and ends with a worked example.</p>
+
+<h3 style="margin-top:0">Starting Requirements</h3>
+<p>EPS design begins with requirements derived from the mission and subsystem loads:</p>
+<table>
+<tr><th>Requirement</th><th>What It Defines</th></tr>
+<tr><td><strong>Power profile</strong></td><td>The load in each operational mode (sun, eclipse, payload, safe hold) for every subsystem. Summed into orbit-average and peak power.</td></tr>
+<tr><td><strong>Bus voltage level</strong></td><td>28 V regulated is the standard for most spacecraft. Determines the DC-DC converter design and battery series configuration.</td></tr>
+<tr><td><strong>Cycling &amp; charging</strong></td><td>Eclipse duration and frequency. Determines battery capacity, DoD, and charge rate. LEO: ~30 min eclipse, ~90 min orbit (15+ cycles/day). GEO: ~45 days eclipse season, 2×/year.</td></tr>
+<tr><td><strong>EPS component definition</strong></td><td>Battery size, solar array EOL power, peak power handling, regulator type, distribution architecture.</td></tr>
+</table>
+
+<h3 style="margin-top:0">Trade Spaces</h3>
+
+<details>
+<summary>System-Level Trades</summary>
+<table>
+<tr><th>Trade</th><th>Options</th><th>Drives</th></tr>
+<tr><td><strong>DC bus voltage</strong></td><td>5 V · 12 V · 28 V · 50 V · 120 V</td><td>Higher voltage reduces harness losses but increases safety risk and component voltage ratings. 28 V is the heritage standard.</td></tr>
+<tr><td><strong>Power source</strong></td><td>Solar arrays · RTG · Fuel cells · Battery-only</td><td>Mission duration, distance from Sun, peak power requirement, regulatory burden (RTG needs nuclear launch approval).</td></tr>
+<tr><td><strong>Bus regulation</strong></td><td>Unregulated · Regulated · Dual bus</td><td>Load sensitivity, cost, complexity. Unregulated is simplest but each load needs its own regulator.</td></tr>
+<tr><td><strong>Array articulation</strong></td><td>Body-mounted · Single-axis tracking · Full articulation</td><td>Power requirement vs mass vs complexity vs pointing constraints. Body-mounted is simplest but delivers least power.</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Component-Level Trades</summary>
+<table>
+<tr><th>Component</th><th>Options</th><th>Key Trade-off</th></tr>
+<tr><td><strong>Energy storage</strong></td><td>Li-ion · LiFePO₄ · NiCd · NiH₂ · Fuel cell</td><td>Energy density vs cycle life vs safety vs cost vs heritage</td></tr>
+<tr><td><strong>Charging method</strong></td><td>CC-CV · Trickle charge · Pulse charging</td><td>Charge speed vs battery life vs complexity. CC-CV is standard for Li-ion.</td></tr>
+<tr><td><strong>Power conversion</strong></td><td>Linear regulator · Buck converter · Boost converter · SEPIC</td><td>Efficiency vs noise vs complexity vs cost. Switching converters are 80–95% efficient; linear regulators are simpler but waste power as heat.</td></tr>
+<tr><td><strong>Solar cell type</strong></td><td>Si · Triple-junction GaAs · Multi-junction IMM · Thin-film</td><td>Efficiency vs cost vs rad tolerance vs mass vs flexibility</td></tr>
+<tr><td><strong>Battery configuration</strong></td><td>Series (voltage) · Parallel (current) · Series-parallel</td><td>Voltage requirement vs current requirement vs cell balancing complexity</td></tr>
+</table>
+</details>
+
+<details>
+<summary>EEE Part-Level Trades</summary>
+<table>
+<tr><th>Trade</th><th>Options</th><th>Considerations</th></tr>
+<tr><td><strong>Radiation hardening</strong></td><td>Rad-hard by design · Rad-tolerant COTS · COTS with shielding</td><td>Cost vs performance vs TID tolerance. COTS parts can be used in benign LEO orbits with shielding; deep space needs rad-hard components.</td></tr>
+<tr><td><strong>Parts quality</strong></td><td>Space-grade (QML V/B) · Military-grade · Automotive (AEC-Q100) · Commercial</td><td>Reliability vs cost vs availability. Battery cells in particular are often COTS automotive-grade with extensive screening.</td></tr>
+<tr><td><strong>Risk acceptance</strong></td><td>Single-string · Redundant (cold/hot spare) · FDIR-managed</td><td>EPS reliability is mission-critical. Most spacecraft use redundant power paths and latch-up protected switching.</td></tr>
+</table>
+</details>
+
+<h3 style="margin-top:0">What Is Derating?</h3>
+<p>Derating is operating a component below its rated maximum to improve reliability. For the EPS, derating applies across every component:</p>
+<table>
+<tr><th>Component</th><th>Derating Example</th></tr>
+<tr><td>Solar array</td><td>Design for EOL power at 70–85% of BOL; add 15–25% margin beyond worst-case load</td></tr>
+<tr><td>Battery</td><td>Limit DoD to 20–30% (LEO) or 60–70% (GEO); derate capacity by 20% for EOL</td></tr>
+<tr><td>DC-DC converter</td><td>Continuous load ≤ 70% of rated output; input voltage range derated by 10% on each end</td></tr>
+<tr><td>Connectors</td><td>Use ≤ 60% of rated current per pin; derate temperature by 20 °C</td></tr>
+<tr><td>Harness / wiring</td><td>Limit current to ≤ 50% of rated ampacity for the wire gauge and insulation type</td></tr>
+<tr><td>Power switches (SSPCs)</td><td>Continuous load ≤ 70% of rated current; inrush handling within 80% of peak rating</td></tr>
+</table>
+<p class="note">Derating margins follow standards: ECSS-Q-ST-30-11C (European) and MIL-STD-975 (US). Higher-class missions require more conservative derating.</p>
+
+<h3 style="margin-top:0">Typical Design Order</h3>
+<p>EPS design is a dependency chain — each decision constrains the next:</p>
+<ol>
+<li><strong>Power profile &amp; loads</strong> — Sum up every subsystem's power draw per mode. This is the starting point for everything.</li>
+<li><strong>Bus voltage &amp; architecture</strong> — Decide the bus voltage (28 V standard) and whether it's regulated, unregulated, or dual-bus.</li>
+<li><strong>Solar array sizing</strong> — Determine the cell type, array configuration, and area to meet the power requirement at EOL with margin.</li>
+<li><strong>Battery sizing</strong> — Once you know the array current and eclipse loads, size the battery for DoD, cycle life, and energy requirement.</li>
+<li><strong>Power distribution</strong> — SSPCs, wiring, and connector layout. Driven by the number of loads, their locations, and their current draws.</li>
+<li><strong>Power management &amp; protection</strong> — MPPT algorithm, charge control, fault detection, load shedding thresholds. Designed to keep the system alive autonomously.</li>
+<li><strong>Heater power allocation</strong> — Must fit within the eclipse budget. Often the largest unplanned load — model it early.</li>
+</ol>
+
+<h3 style="margin-top:0">Worked Example: 6U Cubesat in LEO</h3>
+
+<details>
+<summary>Scenario &amp; Power Profile</summary>
+<p><strong>Mission:</strong> A 6U Earth observation cubesat at 500 km SSO. Payload camera draws 15 W for 10 minutes per orbit. COMMS transmitter draws 10 W during downlink (5-minute pass per orbit). OBC, ADCS, and heaters draw a baseline 8 W continuously.</p>
+<table>
+<tr><th>Mode</th><th>OBC</th><th>ADCS</th><th>COMMS</th><th>Payload</th><th>Heaters</th><th>Total</th></tr>
+<tr><td>Sun-point (baseline)</td><td>2 W</td><td>2 W</td><td>1 W</td><td>0 W</td><td>3 W</td><td>8 W</td></tr>
+<tr><td>Payload operation</td><td>3 W</td><td>3 W</td><td>1 W</td><td>15 W</td><td>2 W</td><td>24 W</td></tr>
+<tr><td>Downlink</td><td>2 W</td><td>2 W</td><td>10 W</td><td>0 W</td><td>3 W</td><td>17 W</td></tr>
+<tr><td>Eclipse survival</td><td>2 W</td><td>2 W</td><td>1 W</td><td>0 W</td><td>5 W</td><td>10 W</td></tr>
+</table>
+</details>
+
+<details>
+<summary>Orbit Energy Calculation</summary>
+<p>At 500 km SSO, orbit period is ~94 minutes with ~35 minutes in eclipse. The orbit-average power and eclipse energy requirement:</p>
+<table>
+<tr><th>Phase</th><th>Duration</th><th>Power</th><th>Energy</th></tr>
+<tr><td>Sun-point baseline</td><td>79 min (60 min baseline + transitions)</td><td>8 W</td><td>8 W × 3,540 s = 28.3 kJ</td></tr>
+<tr><td>Payload operation</td><td>10 min</td><td>24 W</td><td>24 W × 600 s = 14.4 kJ</td></tr>
+<tr><td>Downlink</td><td>5 min</td><td>17 W</td><td>17 W × 300 s = 5.1 kJ</td></tr>
+<tr><td>Eclipse survival</td><td>35 min</td><td>10 W</td><td>10 W × 2,100 s = 21.0 kJ</td></tr>
+<tr><td><strong>Total orbit energy</strong></td><td>94 min</td><td></td><td><strong>~68.8 kJ</strong> (sunlight: 47.8 kJ, eclipse: 21.0 kJ)</td></tr>
+</table>
+<p>Eclipse energy = 21.0 kJ. Battery must supply this plus margin. With 20% margin: 25.2 kJ = 7.0 Wh.</p>
+
+<details>
+<summary>Interactive Orbit Energy Calculator</summary>
+<div class="calculator">
+ <div class="calc-grid">
+  <label>Altitude (km): <input type="number" id="e_alt" value="500" step="10" min="200" max="2000"></label>
+  <label>Baseline power (W): <input type="number" id="e_Pbase" value="8" step="1" min="0" max="1000"></label>
+  <label>Payload power (W): <input type="number" id="e_Ppay" value="24" step="1" min="0" max="1000"></label>
+  <label>Payload duration (min): <input type="number" id="e_Tpay" value="10" step="1" min="0" max="120"></label>
+  <label>Downlink power (W): <input type="number" id="e_Pdl" value="17" step="1" min="0" max="1000"></label>
+  <label>Downlink duration (min): <input type="number" id="e_Tdl" value="5" step="1" min="0" max="120"></label>
+  <label>Eclipse power (W): <input type="number" id="e_Pecl" value="10" step="1" min="0" max="1000"></label>
+  <label>Eclipse margin (%): <input type="number" id="e_margin" value="20" step="5" min="0" max="100"></label>
+ </div>
+ <div class="calc-out">
+  <div>Orbit period: <span id="e_outPeriod">--</span></div>
+  <div>Eclipse time: <span id="e_outEclipse">--</span></div>
+  <div>Sunlight time: <span id="e_outSun">--</span></div>
+  <div>Sunlight energy: <span id="e_outSunE">--</span></div>
+  <div>Eclipse energy: <span id="e_outEclE">--</span></div>
+  <div>Battery energy needed: <span id="e_outBatE">--</span></div>
+ </div>
+ <button class="calc-reset" id="e_reset">Reset to Defaults</button>
+</div>
+</details>
+</details>
+
+<details>
+<summary>Battery Sizing</summary>
+<p>Li-ion cells at 3.7 V nominal, 3 Ah each, 20% DoD per orbit:</p>
+<ul>
+<li>Usable energy per cell per orbit: 3.7 V × 3 Ah × 20% DoD = 2.22 Wh</li>
+<li>Cells needed: 7.0 Wh / 2.22 Wh = ~4 cells</li>
+<li>Series configuration for bus voltage: 4 cells × 3.7 V = 14.8 V (boosted to 28 V bus via DC-DC)</li>
+<li>Or 8 cells (4S2P) for margin: 4S = 14.8 V, 2P = 6 Ah total → 4.44 Wh usable per orbit at 20% DoD — plenty of margin</li>
+</ul>
+
+<details>
+<summary>Interactive Battery Sizing Calculator</summary>
+<div class="calculator">
+ <div class="calc-grid">
+  <label>Cell voltage (V): <input type="number" id="b_Vcell" value="3.7" step="0.1" min="1" max="5"></label>
+  <label>Cell capacity (Ah): <input type="number" id="b_Ah" value="3" step="0.5" min="0.1" max="500"></label>
+  <label>Depth of discharge (%): <input type="number" id="b_DoD" value="20" step="5" min="1" max="100"></label>
+  <label>Eclipse energy (Wh): <input type="number" id="b_Eecl" value="7.0" step="0.5" min="0" max="10000"></label>
+  <label>Bus voltage target (V): <input type="number" id="b_Vbus" value="28" step="2" min="1" max="200"></label>
+  <label>String margin (extra parallel): <input type="number" id="b_par" value="0" step="1" min="0" max="10"></label>
+ </div>
+ <div class="calc-out">
+  <div>Usable energy per cell: <span id="b_outUcell">--</span></div>
+  <div>Min cells in series: <span id="b_outS">--</span></div>
+  <div>Min cells needed: <span id="b_outNmin">--</span></div>
+  <div>Config with margin: <span id="b_outConfig">--</span></div>
+  <div>Usable energy (full config): <span id="b_outUsable">--</span></div>
+ </div>
+ <button class="calc-reset" id="b_reset">Reset to Defaults</button>
+</div>
+</details>
+</details>
+
+<details>
+<summary>Solar Array Sizing</summary>
+<p>Sunlight energy needed: 47.8 kJ + 20% margin = 57.4 kJ. Plus battery recharge: 7.0 Wh × 1.2 (charge efficiency) = 8.4 Wh = 30.2 kJ. Total sunlight energy: ~87.6 kJ over 59 minutes of usable sunlit orbit time.</p>
+<ul>
+<li>Required average array power: 87.6 kJ / 3,540 s = 24.7 W</li>
+<li>With 30% margin on power (degradation, temperature, off-pointing): 24.7 W × 1.3 = 32.1 W</li>
+<li>Triple-junction GaAs cells at 30% efficiency, 1,367 W/m² solar flux: need 32.1 / (1,367 × 0.30) = <strong>0.078 m²</strong></li>
+<li>A 6U cubesat (~0.1 m² per face) can mount body-mounted cells on 1–2 faces, or use deployable panels for full coverage. With body-mount on 2 faces and cosine losses, you'd get ~0.12 m² effective — enough to meet the requirement.</li>
+</ul>
+
+<details>
+<summary>Interactive Solar Array Sizing Calculator</summary>
+<div class="calculator">
+ <div class="calc-grid">
+  <label>Sunlight energy needed (kJ): <input type="number" id="s_Eneeded" value="87.6" step="5" min="0" max="10000"></label>
+  <label>Sunlit time (min): <input type="number" id="s_Tsun" value="59" step="1" min="0" max="120"></label>
+  <label>Power margin (%): <input type="number" id="s_Pmargin" value="30" step="5" min="0" max="100"></label>
+  <label>Solar cell efficiency (%): <input type="number" id="s_eff" value="30" step="1" min="5" max="50"></label>
+  <label>Solar flux (W/m²): <input type="number" id="s_flux" value="1367" step="10" min="500" max="2000"></label>
+ </div>
+ <div class="calc-out">
+  <div>Required average power: <span id="s_outPavg">--</span></div>
+  <div>With margin: <span id="s_outPmargin">--</span></div>
+  <div>Required array area: <span id="s_outArea">--</span></div>
+  <div>6U face equivalent: <span id="s_outFaces">--</span></div>
+ </div>
+ <button class="calc-reset" id="s_reset">Reset to Defaults</button>
+</div>
+</details>
+</details>
+
+<details>
+<summary>Convergence</summary>
+<p>The preliminary numbers close: body-mounted triple-junction cells on two faces, a 4S2P Li-ion battery at 20% DoD, and a 28 V regulated bus. Now iterate: can you body-mount on 3 faces and reduce DoD to 15% for longer battery life? Can you use a single deployable panel instead for more power headroom? Each iteration tightens the design toward a converged EPS that meets the mission with comfortable margin.</p>
+</details>
+</section>
+
+<script>
+const btn=document.getElementById('toggle-theme');
+const stored=localStorage.getItem('theme');
+if(stored==='dark'){document.body.classList.add('dark');btn.textContent='☀ Light'}
+btn.onclick=()=>{
+ document.body.classList.toggle('dark');
+ const isDark=document.body.classList.contains('dark');
+ localStorage.setItem('theme',isDark?'dark':'light');
+ btn.textContent=isDark?'☀ Light':'☾ Dark';
+};
+
+function g(id){return +document.getElementById(id).value}
+function s(id,v){document.getElementById(id).textContent=v}
+
+const eDefs={};['e_alt','e_Pbase','e_Ppay','e_Tpay','e_Pdl','e_Tdl','e_Pecl','e_margin'].forEach(id=>{eDefs[id]=g(id)});
+function calcOrbit(){
+ const alt=g('e_alt'),Pb=g('e_Pbase'),Pp=g('e_Ppay'),Tp=g('e_Tpay'),Pd=g('e_Pdl'),Td=g('e_Tdl'),Pe=g('e_Pecl'),M=g('e_margin');
+ const R=6371+alt, Torb=2*Math.PI*Math.sqrt(Math.pow(R*1000,3)/3.986e14)/60;
+ const ratio=Math.acos(6371/(6371+alt))/Math.PI;
+ const Tecl=Torb*ratio, Tsun=Torb-Tecl;
+ const tPay_s=Tp*60, tDl_s=Td*60, tBase_s=Tsun*60-tPay_s-tDl_s, tEcl_s=Tecl*60;
+ const Ebase=Pb*tBase_s, Epay=Pp*tPay_s, Edl=Pd*tDl_s, Eecl=Pe*tEcl_s;
+ const Ebat=Eecl*(1+M/100);
+ s('e_outPeriod',Torb.toFixed(1)+' min');
+ s('e_outEclipse',Tecl.toFixed(1)+' min');
+ s('e_outSun',Tsun.toFixed(1)+' min');
+ s('e_outSunE',((Ebase+Epay+Edl)/1000).toFixed(1)+' kJ');
+ s('e_outEclE',(Eecl/1000).toFixed(1)+' kJ');
+ s('e_outBatE',(Ebat/1000).toFixed(1)+' kJ = '+(Ebat/3600).toFixed(1)+' Wh');
+}
+document.querySelectorAll('#e_alt,#e_Pbase,#e_Ppay,#e_Tpay,#e_Pdl,#e_Tdl,#e_Pecl,#e_margin').forEach(el=>el.addEventListener('input',calcOrbit));
+document.getElementById('e_reset').addEventListener('click',()=>{Object.keys(eDefs).forEach(id=>document.getElementById(id).value=eDefs[id]);calcOrbit()});
+calcOrbit();
+
+const bDefs={};['b_Vcell','b_Ah','b_DoD','b_Eecl','b_Vbus','b_par'].forEach(id=>{bDefs[id]=g(id)});
+function calcBattery(){
+ const Vc=g('b_Vcell'),Ah=g('b_Ah'),DoD=g('b_DoD'),Eecl=g('b_Eecl'),Vbus=g('b_Vbus'),Par=g('b_par');
+ const Ucell=Vc*Ah*DoD/100;
+ const Nmin=Math.ceil(Eecl/Ucell);
+ const S=Math.ceil(Vbus/Vc);
+ const P=S+Par>0?Math.ceil(Nmin/S)+(Par>0?Par:0):Math.ceil(Nmin/S);
+ const Ntotal=S*P;
+ s('b_outUcell',Ucell.toFixed(2)+' Wh');
+ s('b_outS',S+'S');
+ s('b_outNmin',Nmin+' cells');
+ s('b_outConfig',S+'S'+P+'P ('+Ntotal+' cells total)');
+ s('b_outUsable',(Ntotal*Ucell).toFixed(1)+' Wh');
+}
+document.querySelectorAll('#b_Vcell,#b_Ah,#b_DoD,#b_Eecl,#b_Vbus,#b_par').forEach(el=>el.addEventListener('input',calcBattery));
+document.getElementById('b_reset').addEventListener('click',()=>{Object.keys(bDefs).forEach(id=>document.getElementById(id).value=bDefs[id]);calcBattery()});
+calcBattery();
+
+const sDefs={};['s_Eneeded','s_Tsun','s_Pmargin','s_eff','s_flux'].forEach(id=>{sDefs[id]=g(id)});
+function calcArray(){
+ const E=g('s_Eneeded')*1000,T=g('s_Tsun')*60,Pm=g('s_Pmargin'),eff=g('s_eff')/100,flux=g('s_flux');
+ const Pavg=E/T;
+ const Pmarg=Pavg*(1+Pm/100);
+ const Area=Pmarg/(flux*eff);
+ const faces=Area/0.1;
+ s('s_outPavg',Pavg.toFixed(1)+' W');
+ s('s_outPmargin',Pmarg.toFixed(1)+' W');
+ s('s_outArea',Area.toFixed(4)+' m²');
+ s('s_outFaces',faces.toFixed(2)+' × 6U faces (0.1 m² each)');
+}
+document.querySelectorAll('#s_Eneeded,#s_Tsun,#s_Pmargin,#s_eff,#s_flux').forEach(el=>el.addEventListener('input',calcArray));
+document.getElementById('s_reset').addEventListener('click',()=>{Object.keys(sDefs).forEach(id=>document.getElementById(id).value=sDefs[id]);calcArray()});
+calcArray();
+</script>
+</body>
+</html>

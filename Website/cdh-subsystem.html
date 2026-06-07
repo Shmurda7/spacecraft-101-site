@@ -17,6 +17,16 @@ table{width:100%;border-collapse:collapse;margin:10px 0}
 th,td{border:1px solid var(--border);padding:8px 12px;text-align:left}
 th{background:var(--th-bg);font-weight:bold}
 .note{color:var(--note);font-style:italic;font-size:0.9em}
+.formula{font-family:'Courier New',Courier,monospace;padding:12px 16px;background:var(--card-bg-nested);border-left:4px solid var(--link);border-radius:4px;margin:12px 0;font-size:1.05em;overflow-x:auto}
+.calculator{background:var(--card-bg-nested);border:1px solid var(--border);border-radius:8px;padding:16px;margin:12px 0}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px}
+.calc-grid label{font-size:0.9em;display:flex;flex-direction:column;gap:2px}
+.calc-grid input{padding:4px 8px;border:1px solid var(--border);border-radius:4px;background:var(--card-bg);color:var(--text);font-family:monospace;font-size:1em}
+.calc-out{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--border)}
+.calc-out div{font-size:0.95em}
+.calc-out span{font-weight:bold;font-family:monospace;color:var(--link)}
+.calc-reset{padding:6px 14px;background:var(--link);color:white;border:none;border-radius:4px;cursor:pointer;font-size:0.9em}
+.calc-reset:hover{opacity:.8}
 #toggle-theme{position:fixed;top:16px;right:16px;padding:6px 14px;background:var(--card-bg);color:var(--text);border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:0.9em;z-index:100}
 #toggle-theme:hover{opacity:.8}
 hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
@@ -1597,6 +1607,80 @@ hr{border:none;border-top:1px solid var(--hr);margin:12px 0}
 <li><strong>Software architecture</strong> — RTOS, bootloader, image update — runs on the hardware decided above</li>
 </ol>
 <p class="note">In practice, this is iterative. A chosen CPU may not fit the power budget, forcing a step back. The data bus choice may limit which processors are viable. Expect 2–3 passes through the full chain to converge.</p>
+
+<h3 style="margin-top:0">Worked Example: 6U Cubesat OBC Selection</h3>
+
+<details>
+<summary>Step 1: Mission Requirements</summary>
+<p><strong>Scenario:</strong> 6U Earth observation cubesat at 500 km SSO. The CDH subsystem must handle:</p>
+<table>
+<tr><th>Function</th><th>Requirement</th></tr>
+<tr><td>Attitude control loop</td><td>100 Hz control rate, 1 kHz sensor read rate (gyro, star tracker, magnetometer)</td></tr>
+<tr><td>Payload data handling</td><td>Camera produces 12 Mpixel images at 10-bit depth, 1 image per orbit. Process and compress: ~12 MB per orbit</td></tr>
+<tr><td>Telemetry storage</td><td>Store 72 hours of continuous housekeeping (100 parameters at 1 Hz): ~2.5 GB</td></tr>
+<tr><td>Command processing</td><td>Accept and validate uplink commands (up to 1 kB per command), distribute to subsystems</td></tr>
+<tr><td>Radiation environment</td><td>TID ~15 krad over 3 years (500 km SSO, 2.5 mm Al shielding)</td></tr>
+</table>
+<p>The key driver is the <strong>100 Hz control loop</strong> with deterministic timing — an RTOS is needed, and the processor must have enough throughput for control + data compression + telemetry packing simultaneously.</p>
+</details>
+
+<details>
+<summary>Step 2: CPU Trade</summary>
+<table>
+<tr><th>Option</th><th>Architecture</th><th>Performance</th><th>Rad Tolerance</th><th>Power</th><th>Cost</th><th>Ecosystem</th></tr>
+<tr><td><strong>ARM Cortex-M7 (STM32H7)</strong></td><td>ARMv7-M</td><td>~1,000 DMIPS @ 480 MHz</td><td>COTS (mitigate with TMR/EDAC)</td><td>~500 mW</td><td>$20</td><td>Excellent: FreeRTOS, CubeIDE, vast middleware</td></tr>
+<tr><td><strong>ARM Cortex-R52</strong></td><td>ARMv8-R</td><td>~2,000 DMIPS @ 1 GHz</td><td>Rad-tolerant (lockstep cores)</td><td>~1.5 W</td><td>$200+</td><td>Good: real-time focused, ASIL-D</td></tr>
+<tr><td><strong>LEON3/4 (GR712RC)</strong></td><td>SPARC v8</td><td>~800 DMIPS @ 160 MHz</td><td>Rad-hard by design (300 krad)</td><td>~1 W</td><td>$5,000+</td><td>Space heritage, RTEMS, limited middleware</td></tr>
+<tr><td><strong>RISC-V (PolarFire SoC)</strong></td><td>RV64GC</td><td>~2,500 DMIPS @ 600 MHz + FPGA fabric</td><td>Flash-based FPGA (100 krad)</td><td>~1.5 W</td><td>$250</td><td>Growing fast: Linux + FPGA in one chip</td></tr>
+</table>
+<p>For a cost-sensitive 6U cubesat, an <strong>ARM Cortex-M7 (STM32H7)</strong> provides adequate performance (~1,000 DMIPS) with the best software ecosystem and lowest power. Radiation is mitigated via software TMR on critical data, ECC on external memory, and watchdog recovery. If budget allows, the <strong>PolarFire SoC</strong> offers significantly more performance + FPGA flexibility for payload processing.</p>
+</details>
+
+<details>
+<summary>Step 3: Memory Sizing</summary>
+<table>
+<tr><th>Memory Type</th><th>Size Needed</th><th>Selected</th><th>Part</th></tr>
+<tr><td><strong>RAM (code + data)</strong></td><td>FSW code ~256 kB, heap + stacks ~256 kB, buffers ~512 kB → ~1 MB</td><td>2 MB (2× margin)</td><td>STM32H7 internal SRAM (1 MB) + external PSRAM (8 MB) for growth</td></tr>
+<tr><td><strong>NVM (code storage)</strong></td><td>Bootloader ~32 kB, OS + FSW ~512 kB, golden image ~512 kB → ~1 MB</td><td>2 MB NOR Flash (XIP)</td><td>External Quad-SPI NOR (e.g., IS25LP128)</td></tr>
+<tr><td><strong>NVM (data storage)</strong></td><td>Housekeeping 2.5 GB, image data 12 MB/orbit × 30 days → ~360 MB</td><td>1 GB NAND Flash</td><td>SD card (industrial-grade SLC) or eMMC</td></tr>
+</table>
+<p>The STM32H7's internal SRAM handles performance-critical real-time needs (control loop, interrupt handlers, DMA buffers). External PSRAM provides bulk storage for image buffers before compression. A SLC SD card stores telemetry and images for downlink.</p>
+</details>
+
+<details>
+<summary>Step 4: Bus Architecture</summary>
+<p>The CDH data bus must connect all subsystems. For a 6U cubesat, a single <strong>CAN 2.0B bus at 500 kbps</strong> covers all command/response and housekeeping traffic. The payload camera connects via a dedicated <strong>SPI link</strong> (20 Mbps) for high-speed image transfer to the OBC's external memory.</p>
+<table>
+<tr><th>Bus</th><th>Connected Nodes</th><th>Data</th><th>Speed</th></tr>
+<tr><td><strong>CAN 2.0B</strong></td><td>OBC, EPS, COMMS, ADCS, Thermal Controller</td><td>Commands, telemetry, mode changes, fault reports</td><td>500 kbps</td></tr>
+<tr><td><strong>SPI (dedicated)</strong></td><td>OBC → Payload Camera (NVM)</td><td>Raw image data → external memory</td><td>20 Mbps</td></tr>
+<tr><td><strong>UART</strong></td><td>OBC → GPS receiver</td><td>NMEA position/velocity sentences</td><td>115,200 bps</td></tr>
+</table>
+<p>This simple bus architecture keeps harness mass low (~50 g), connector count minimal (1 micro-D for CAN + power), and fault isolation straightforward. CAN's built-in priority arbitration ensures command messages always get through even under bus load.</p>
+</details>
+
+<details>
+<summary>Step 5: Convergence</summary>
+<p>The preliminary CDH design:</p>
+<ul>
+<li><strong>Processor:</strong> STM32H743 (ARM Cortex-M7, 480 MHz, 1 MB SRAM)</li>
+<li><strong>Code storage:</strong> 128 Mb Quad-SPI NOR Flash (XIP for fast boot)</li>
+<li><strong>Data storage:</strong> 8 MB external PSRAM (buffer) + 1 GB SLC microSD (telemetry/images)</li>
+<li><strong>RTOS:</strong> FreeRTOS with preemptive scheduling, tickless idle for power saving</li>
+<li><strong>Data bus:</strong> CAN 2.0B at 500 kbps + dedicated SPI for payload + UART for GPS</li>
+<li><strong>FDIR:</strong> External watchdog + software TMR on critical state + ECC on external memory</li>
+<li><strong>Total OBC power:</strong> ~0.6 W (continuous) to ~1.5 W (payload processing peak)</li>
+<li><strong>Total OBC mass:</strong> ~150 g (single PC/104-sized board)</li>
+</ul>
+<p>Now iterate:</p>
+<ul>
+<li>Could <strong>FreeRTOS</strong> meet the 100 Hz control deadline? The STM32H7 at 480 MHz can execute ~50,000 instructions per control cycle at 100 Hz — well within margin for a simple PD controller. If the control law becomes more complex (e.g., LQR with Kalman filter), consider moving to the PolarFire SoC for dedicated FPGA acceleration.</li>
+<li>Is <strong>1 GB of data storage</strong> sufficient? With 12 MB per image + 2.5 GB for 72-hour telemetry: if downlink is 1 pass per day with 10 MB data volume, the buffer fills at ~37 MB/day. A 1 GB card holds > 27 days of data — adequate margin.</li>
+<li>Could <strong>CAN-FD</strong> replace CAN 2.0B? CAN-FD (8 Mbps data phase) would allow firmware updates over the bus 16× faster, useful if the COMMS link is the bottleneck. Consider upgrading if over-the-air updates are needed.</li>
+<li>Can the <strong>radiation tolerance</strong> be improved without changing the processor? Shielding the OBC with 1 mm additional Al adds ~30 g but reduces TID from ~15 krad to ~8 krad, well within COTS margins. A cost-effective mitigation.</li>
+</ul>
+<p>Each iteration tightens the design toward a CDH subsystem that meets the mission's processing, storage, and data-handling needs within the mass, power, and cost budgets of a 6U cubesat.</p>
+</details>
 </section>
 
 <script>
