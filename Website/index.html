@@ -7,7 +7,14 @@
 :root{--bg:#f0e8f5;--card-bg:#fff9fb;--text:#3a2a4a;--text-light:#7a6a8a;--link:#d0608a;--link-hover:#c04070;--shadow:rgba(208,96,138,.12);--border:#e0d0e5;--accent:#e8a050}
 body.dark{--bg:#0a0515;--card-bg:#151020;--text:#e0d0e8;--link:#f0a0b0;--link-hover:#e88090;--shadow:rgba(240,160,176,.12);--border:#3a2a50;--accent:#e8a050}
 html{scroll-behavior:smooth}
-body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1000px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .4s,color .4s;opacity:0;animation:pageIn .5s ease-out forwards}
+body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);transition:background .4s,color .4s;opacity:0;animation:pageIn .5s ease-out forwards}
+#main-content{max-width:1000px;margin:0 auto;padding:30px}
+#search-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+#search-bar label{font-size:13px;font-weight:700;color:var(--text-light);white-space:nowrap}
+#search-input{flex:1;padding:8px 14px;border:2px solid var(--border);border-radius:50px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+#search-input:focus{border-color:var(--link)}
+#search-input::placeholder{color:var(--text-light)}
+.search-match{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px;padding:0 2px}
 @keyframes pageIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
 ::selection{background:color-mix(in srgb,var(--link) 30%,transparent)}
 .card{background:var(--card-bg);padding:22px 30px;border-radius:18px;box-shadow:0 3px 16px var(--shadow);border:2px solid var(--border);margin-top:20px;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
@@ -23,12 +30,7 @@ a.button:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px var(
 @keyframes twinkle{0%,100%{opacity:.3}50%{opacity:1;animation-timing-function:ease-in-out}}
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:.8}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-#globe-container{text-align:center;margin:0 0 20px 0;overflow-x:auto}
-#globe-container svg{max-width:600px;display:block;margin:auto;border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,.3)}
-#satellite{cursor:pointer;transition:filter .3s}
-#satellite:hover #sat-body{filter:drop-shadow(0 0 12px #f0a0b0)}
-#sat-info{position:absolute;background:var(--card-bg);color:var(--text);border:2px solid var(--border);border-radius:14px;padding:8px 14px;font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s;z-index:10;font-weight:600}
-#sat-info.visible{opacity:1}
+#globe-container{margin:0 0 20px 0;max-width:600px;margin-left:auto;margin-right:auto;border-radius:18px;box-shadow:0 4px 24px rgba(0,0,0,.3);overflow:hidden}
 .icon-list{list-style:none;padding:0}
 .icon-list li{margin:10px 0;display:flex;align-items:center;gap:14px}
 .icon-list a{color:var(--text);text-decoration:none;font-weight:700;font-size:1em;transition:color .15s;font-family:'Quicksand','Nunito',sans-serif}
@@ -36,160 +38,201 @@ a.button:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px var(
 .icon-list .sub-icon{flex-shrink:0;width:30px;height:30px;display:flex;align-items:center;justify-content:center;background:var(--card-bg);border:2px solid var(--border);border-radius:10px;padding:4px;transition:all .25s cubic-bezier(.34,1.56,.64,1)}
 .icon-list li:hover .sub-icon{border-color:var(--link);transform:scale(1.15) rotate(-5deg)}
 #particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:hidden}
-.p-star{position:absolute;border-radius:50%;opacity:0;animation:starFloat linear infinite}@keyframes starFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-5vh) scale(1) rotate(360deg)}}</style>
+.p-star{position:absolute;border-radius:50%;opacity:0;animation:starFloat linear infinite}@keyframes starFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-5vh) scale(1) rotate(360deg)}}
+#sat-info{position:absolute;background:var(--card-bg);color:var(--text);border:2px solid var(--border);border-radius:14px;padding:8px 14px;font-size:11px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .3s;z-index:10;font-weight:600}
+#sat-info.visible{opacity:1}
+#scene-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--card-bg);color:var(--text-light);font-size:13px;font-weight:700;border-radius:18px;z-index:5;transition:opacity .6s;pointer-events:none}</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 </head>
 <body>
-<button id="toggle-theme">☾ Dark</button>
-
-<div id="globe-container">
-<svg viewBox="0 0 600 400" width="100%">
-<defs>
-<radialGradient id="space-bg" cx="50%" cy="30%" r="80%">
-<stop offset="0%" stop-color="#1a1030"/><stop offset="50%" stop-color="#0d0820"/><stop offset="100%" stop-color="#080410"/>
-</radialGradient>
-<radialGradient id="nebula" cx="70%" cy="70%" r="60%">
-<stop offset="0%" stop-color="#d0608a" stop-opacity="0.15"/><stop offset="50%" stop-color="#b080d0" stop-opacity="0.08"/><stop offset="100%" stop-color="#6888c0" stop-opacity="0"/>
-</radialGradient>
-<radialGradient id="earth-glow" cx="50%" cy="50%" r="50%">
-<stop offset="60%" stop-color="#1d4ed8" stop-opacity="0.4"/>
-<stop offset="100%" stop-color="#1d4ed8" stop-opacity="0"/>
-</radialGradient>
-<radialGradient id="earth-fill" cx="40%" cy="40%" r="60%">
-<stop offset="0%" stop-color="#88b0e0"/><stop offset="70%" stop-color="#6a90c8"/><stop offset="100%" stop-color="#3a5a80"/>
-</radialGradient>
-<linearGradient id="sat-body" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" stop-color="#d0a8e8"/><stop offset="100%" stop-color="#a078c0"/>
-</linearGradient>
-<linearGradient id="panel" x1="0%" y1="0%" x2="0%" y2="100%">
-<stop offset="0%" stop-color="#f4a261"/><stop offset="100%" stop-color="#e8786a"/>
-</linearGradient>
-<linearGradient id="sat-glow-g" x1="0%" y1="100%" x2="0%" y2="0%">
-<stop offset="0%" stop-color="#f59e0b" stop-opacity="0"/><stop offset="100%" stop-color="#f59e0b" stop-opacity="0.5"/>
-</linearGradient>
-<filter id="glow">
-<feGaussianBlur stdDeviation="4" result="blur"/>
-<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-</filter>
-<filter id="sat-glow">
-<feGaussianBlur stdDeviation="2" result="blur"/>
-<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-</filter>
-</defs>
-
-<rect x="0" y="0" width="600" height="398" rx="18" fill="url(#space-bg)"/>
-<rect x="0" y="0" width="600" height="398" rx="18" fill="url(#nebula)"/>
-
-<!-- Stars -->
-<g fill="white">
-<circle cx="50" cy="30" r="1.5" class="star" style="animation:twinkle 3s infinite 0s"/>
-<circle cx="120" cy="80" r="1" class="star" style="animation:twinkle 4s infinite 0.5s"/>
-<circle cx="200" cy="20" r="2" class="star" style="animation:twinkle 2.5s infinite 1.2s"/>
-<circle cx="350" cy="50" r="1" class="star" style="animation:twinkle 3.5s infinite 0.8s"/>
-<circle cx="500" cy="30" r="1.5" class="star" style="animation:twinkle 4.2s infinite 1.5s"/>
-<circle cx="550" cy="100" r="1" class="star" style="animation:twinkle 2.8s infinite 0.3s"/>
-<circle cx="40" cy="180" r="1.2" class="star" style="animation:twinkle 3.8s infinite 2s"/>
-<circle cx="100" cy="350" r="1.5" class="star" style="animation:twinkle 3.2s infinite 1s"/>
-<circle cx="200" cy="370" r="1" class="star" style="animation:twinkle 4.5s infinite 0.2s"/>
-<circle cx="450" cy="360" r="1.2" class="star" style="animation:twinkle 2.2s infinite 1.8s"/>
-<circle cx="520" cy="180" r="1" class="star" style="animation:twinkle 3.6s infinite 0.7s"/>
-<circle cx="570" cy="250" r="1.5" class="star" style="animation:twinkle 4s infinite 1.3s"/>
-<circle cx="30" cy="280" r="1" class="star" style="animation:twinkle 3s infinite 1.6s"/>
-<circle cx="480" cy="80" r="1" class="star" style="animation:twinkle 2.6s infinite 0.1s"/>
-<circle cx="320" cy="370" r="1.5" class="star" style="animation:twinkle 3.3s infinite 2.2s"/>
-<circle cx="380" cy="20" r="1" class="star" style="animation:twinkle 4.8s infinite 0.4s"/>
-<circle cx="560" cy="350" r="1.2" class="star" style="animation:twinkle 3s infinite 1.1s"/>
-<circle cx="80" cy="130" r="1" class="star" style="animation:twinkle 2.4s infinite 2.5s"/>
-</g>
-
-<!-- Big bright stars -->
-<g>
-<circle cx="90" cy="50" r="2" fill="#93c5fd" opacity="0.8" filter="url(#glow)"/>
-<circle cx="510" cy="70" r="2.5" fill="#f0a0b0" opacity="0.7" filter="url(#glow)"/>
-<circle cx="45" cy="310" r="1.8" fill="#fbbf24" opacity="0.6" filter="url(#glow)"/>
-<circle cx="555" cy="300" r="2" fill="#a78bfa" opacity="0.7" filter="url(#glow)"/>
-</g>
-
-<!-- Shooting star -->
-<g opacity="0.7">
-<line x1="520" y1="40" x2="570" y2="15" stroke="url(#sat-glow-g)" stroke-width="2" stroke-linecap="round"/>
-</g>
-
-<circle cx="300" cy="230" r="160" fill="url(#earth-glow)"/>
-<circle cx="300" cy="230" r="120" fill="none" stroke="#3b82f6" stroke-width="8" opacity="0.12" filter="url(#glow)"/>
-
-<g id="earth-spin" style="transform-origin:300px 230px">
-<circle cx="300" cy="230" r="90" fill="url(#earth-fill)"/>
-<g fill="#22c55e" opacity="0.5">
-<path d="M260,190 Q270,185 280,190 Q285,200 275,210 Q265,205 260,190Z"/>
-<path d="M320,200 Q335,195 340,205 Q345,220 335,230 Q325,225 320,200Z"/>
-<path d="M280,250 Q295,245 305,255 Q310,270 295,280 Q280,275 280,250Z"/>
-<path d="M240,230 Q250,225 255,235 Q250,245 240,230Z"/>
-<path d="M350,240 Q360,235 365,245 Q360,255 350,240Z"/>
-<path d="M290,175 Q300,170 310,175 Q305,185 290,175Z"/>
-</g>
-<g fill="#16a34a" opacity="0.35">
-<path d="M270,195 Q275,192 278,197 Q275,202 270,195Z"/>
-<path d="M330,210 Q338,208 340,215 Q336,220 330,210Z"/>
-<path d="M290,260 Q298,257 302,265 Q296,270 290,260Z"/>
-</g>
-<g fill="white" opacity="0.06">
-<ellipse cx="250" cy="210" rx="40" ry="8" transform="rotate(-15,250,210)"/>
-<ellipse cx="330" cy="250" rx="35" ry="6" transform="rotate(10,330,250)"/>
-<ellipse cx="280" cy="270" rx="30" ry="5" transform="rotate(-5,280,270)"/>
-</g>
-</g>
-
-<!-- Atmosphere arc -->
-<ellipse cx="300" cy="230" rx="95" ry="98" fill="none" stroke="#88b0e0" stroke-width="1.5" opacity="0.15"/>
-
-<ellipse cx="300" cy="210" rx="215" ry="130" fill="none" stroke="#475569" stroke-width="1" stroke-dasharray="4,6" opacity="0.5"/>
-
-<!-- Cute satellite -->
-<g id="satellite" transform="translate(300,80)">
-  <!-- Trail -->
-  <line x1="0" y1="8" x2="0" y2="28" stroke="#f0a0b0" stroke-width="1" opacity="0.2"/>
-  <line x1="-2" y1="10" x2="-3" y2="26" stroke="#f0a0b0" stroke-width="0.8" opacity="0.15"/>
-  <line x1="2" y1="10" x2="3" y2="26" stroke="#f0a0b0" stroke-width="0.8" opacity="0.15"/>
-
-  <!-- Solar panels (bigger) -->
-  <rect x="-32" y="-6" width="14" height="20" rx="2" fill="url(#panel)" opacity="0.85"/>
-  <rect x="18" y="-6" width="14" height="20" rx="2" fill="url(#panel)" opacity="0.85"/>
-  <line x1="-32" y1="2" x2="-18" y2="2" stroke="#e8786a" stroke-width="0.5" opacity="0.5"/>
-  <line x1="32" y1="2" x2="18" y2="2" stroke="#e8786a" stroke-width="0.5" opacity="0.5"/>
-  <line x1="-32" y1="6" x2="-18" y2="6" stroke="#e8786a" stroke-width="0.5" opacity="0.5"/>
-  <line x1="32" y1="6" x2="18" y2="6" stroke="#e8786a" stroke-width="0.5" opacity="0.5"/>
-
-  <!-- Body -->
-  <rect x="-10" y="-10" width="20" height="20" rx="5" fill="url(#sat-body)" stroke="#a078c0" stroke-width="0.8"/>
-
-  <!-- Cute face: eyes -->
-  <circle cx="-4" cy="-2" r="2" fill="#2a1f35"/>
-  <circle cx="4" cy="-2" r="2" fill="#2a1f35"/>
-  <!-- Eyes: highlights -->
-  <circle cx="-3" cy="-3" r="0.8" fill="white" opacity="0.8"/>
-  <circle cx="5" cy="-3" r="0.8" fill="white" opacity="0.8"/>
-
-  <!-- Cute mouth (wifi smile) -->
-  <line x1="-3" y1="3" x2="3" y2="3" stroke="#2a1f35" stroke-width="0.6"/>
-
-  <!-- Antenna dish -->
-  <path d="M0,-10 Q0,-18 -8,-22" fill="none" stroke="#94a3b8" stroke-width="0.8"/>
-  <line x1="0" y1="-10" x2="10" y2="-18" stroke="#94a3b8" stroke-width="0.6"/>
-  <!-- Antenna signal -->
-  <line x1="-8" y1="-22" x2="-14" y2="-26" stroke="#f59e0b" stroke-width="0.6" opacity="0.6"/>
-  <line x1="-8" y1="-22" x2="-12" y2="-30" stroke="#f59e0b" stroke-width="0.5" opacity="0.4"/>
-  <line x1="-8" y1="-22" x2="-4" y2="-30" stroke="#f59e0b" stroke-width="0.4" opacity="0.3"/>
-  <!-- Blinking LED on body -->
-  <circle cx="7" cy="5" r="1.2" fill="#f59e0b" opacity="0.8" filter="url(#sat-glow)"/>
-</g>
-
-<text x="300" y="245" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="bold" opacity="0.7">✦ Earth</text>
-<text x="300" y="390" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="bold">✦ Interactive Satellite Orbit</text>
-<text x="300" y="375" text-anchor="middle" fill="var(--text-light)" font-size="9">Click the satellite for info · Each subsystem is a design problem waiting to be solved.</text>
-</svg>
+<div id="main-content">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap">
+  <div id="search-bar">
+    <label for="search-input">✦ Search</label>
+    <input type="text" id="search-input" placeholder="Filter topics..." />
+  </div>
+  <button id="toggle-theme" style="margin-left:auto">☾ Dark</button>
 </div>
 
-<div id="sat-info"></div>
+<div id="globe-container">
+  <div id="three-container" style="width:100%;height:420px;position:relative">
+    <div id="scene-loading">✦ Loading 3D Scene...</div>
+  </div>
+  <div id="sat-info"></div>
+</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const container = document.getElementById('three-container');
+const loading = document.getElementById('scene-loading');
+const h = 420;
+const w = container.clientWidth;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(30, w/h, 0.1, 1000);
+camera.position.set(0, 1.8, 8);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(w, h);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = 4;
+renderer.toneMappingExposure = 1.2;
+container.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.minDistance = 3.5;
+controls.maxDistance = 15;
+controls.target.set(0, 0, 0);
+controls.update();
+
+const ambientLight = new THREE.AmbientLight(0x404060, 0.5);
+scene.add(ambientLight);
+const sunLight = new THREE.DirectionalLight(0xffffff, 2.5);
+sunLight.position.set(5, 5, 10);
+scene.add(sunLight);
+const fillLight = new THREE.DirectionalLight(0x8888ff, 0.4);
+fillLight.position.set(-5, -2, -5);
+scene.add(fillLight);
+
+const starGeo = new THREE.BufferGeometry();
+const sc = 2000;
+const pos = new Float32Array(sc * 3);
+const col = new Float32Array(sc * 3);
+for (let i = 0; i < sc; i++) {
+  const r = 40 + Math.random() * 60;
+  const th = Math.random() * Math.PI * 2;
+  const ph = Math.acos(2 * Math.random() - 1);
+  pos[i*3] = r * Math.sin(ph) * Math.cos(th);
+  pos[i*3+1] = r * Math.cos(ph);
+  pos[i*3+2] = r * Math.sin(ph) * Math.sin(th);
+  const c = 0.4 + Math.random() * 0.6;
+  col[i*3] = c; col[i*3+1] = c; col[i*3+2] = c + Math.random() * 0.2;
+}
+starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+starGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.85 })));
+
+const c2 = document.createElement('canvas');
+c2.width = 1024; c2.height = 512;
+const cx = c2.getContext('2d');
+const gr = cx.createLinearGradient(0, 0, 0, 512);
+gr.addColorStop(0, '#0a2a5a');
+gr.addColorStop(0.3, '#1a4a8a');
+gr.addColorStop(0.5, '#1a5a9a');
+gr.addColorStop(0.7, '#1a4a8a');
+gr.addColorStop(1, '#0a2a5a');
+cx.fillStyle = gr;
+cx.fillRect(0, 0, 1024, 512);
+function blob(x, y, rx, ry, color) {
+  cx.save(); cx.translate(x, y); cx.beginPath();
+  for (let a = 0; a < Math.PI * 2; a += 0.1) {
+    const r = (rx + ry) / 2 + Math.sin(a*3) * rx*0.2 + Math.cos(a*5) * ry*0.1;
+    a === 0 ? cx.moveTo(r, 0) : cx.lineTo(r * Math.cos(a), r * Math.sin(a));
+  }
+  cx.closePath(); cx.fillStyle = color; cx.fill(); cx.restore();
+}
+blob(550, 180, 80, 50, '#3a8a3a'); blob(580, 220, 60, 40, '#3a8a3a');
+blob(570, 270, 50, 60, '#2a7a2a'); blob(500, 170, 40, 60, '#4a9a4a');
+blob(620, 200, 30, 30, '#8a7a4a'); blob(380, 140, 90, 60, '#3a8a3a');
+blob(360, 210, 50, 40, '#4a9a4a'); blob(370, 260, 60, 80, '#2a7a2a');
+blob(750, 160, 60, 40, '#4a9a4a'); blob(770, 200, 70, 50, '#3a8a3a');
+blob(800, 230, 40, 30, '#8a7a4a'); blob(840, 200, 50, 40, '#3a8a3a');
+blob(830, 270, 50, 40, '#2a7a2a'); blob(880, 300, 40, 30, '#4a9a4a');
+blob(200, 150, 20, 30, '#4a9a4a'); blob(490, 310, 20, 15, '#2a7a2a');
+for (let i = 0; i < 300; i++) {
+  cx.fillStyle = `rgba(60,140,60,${0.1 + Math.random() * 0.2})`;
+  cx.fillRect(Math.random() * 1024, Math.random() * 512, 1+Math.random()*2, 1+Math.random()*2);
+}
+for (let i = 0; i < 80; i++) {
+  cx.fillStyle = `rgba(255,255,255,${0.03 + Math.random() * 0.06})`;
+  cx.beginPath(); cx.ellipse(Math.random() * 1024, Math.random() * 512, 10+Math.random()*40, 3+Math.random()*8, Math.random() * Math.PI, 0, Math.PI*2); cx.fill();
+}
+const tex = new THREE.CanvasTexture(c2);
+tex.wrapS = 1000;
+const earth = new THREE.Mesh(new THREE.SphereGeometry(2, 64, 64), new THREE.MeshPhongMaterial({ map: tex, specular: new THREE.Color(0x333355), shininess: 10 }));
+scene.add(earth);
+const glow2 = new THREE.Mesh(new THREE.SphereGeometry(2.05, 32, 32), new THREE.MeshPhongMaterial({ color: 0x88bbff, transparent: true, opacity: 0.12, side: THREE.BackSide }));
+scene.add(glow2);
+const ring2 = new THREE.Mesh(new THREE.RingGeometry(2.1, 2.4, 64), new THREE.MeshBasicMaterial({ color: 0x4488ff, transparent: true, opacity: 0.08, side: THREE.DoubleSide }));
+ring2.rotation.x = Math.PI / 3; ring2.position.y = -0.2;
+scene.add(ring2);
+
+const ops = [];
+const oa = 3.2, ob = 2.4;
+for (let i = 0; i <= 128; i++) {
+  const t = (i / 128) * Math.PI * 2;
+  ops.push(new THREE.Vector3(oa * Math.cos(t), ob * 0.3 * Math.sin(t), ob * 1.2 * Math.sin(t)));
+}
+const or = new THREE.Line(new THREE.BufferGeometry().setFromPoints(ops), new THREE.LineBasicMaterial({ color: 0x6688cc, transparent: true, opacity: 0.25, dashed: true }));
+or.computeLineDistances();
+scene.add(or);
+
+const sg = new THREE.Group();
+sg.add(new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.25, 0.25), new THREE.MeshPhongMaterial({ color: 0xd0a8e8, emissive: 0x402060, emissiveIntensity: 0.1 })));
+const pm = new THREE.MeshPhongMaterial({ color: 0x2a1a3a, emissive: 0x332255, emissiveIntensity: 0.05 });
+const p1 = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.02, 0.6), pm); p1.position.x = 0.4; sg.add(p1);
+const p2 = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.02, 0.6), pm); p2.position.x = -0.4; sg.add(p2);
+const am = new THREE.MeshPhongMaterial({ color: 0x94a3b8 });
+const ant = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.3), am); ant.position.y = 0.2; sg.add(ant);
+const ab = new THREE.Mesh(new THREE.SphereGeometry(0.05), am); ab.position.y = 0.35; sg.add(ab);
+const led = new THREE.Mesh(new THREE.SphereGeometry(0.04), new THREE.MeshBasicMaterial({ color: 0xf59e0b })); led.position.set(0.15, -0.1, 0.1); sg.add(led);
+sg.position.set(oa, 0, 0);
+scene.add(sg);
+
+const trailPos = [];
+const trailM = new THREE.PointsMaterial({ color: 0xf0a0b0, size: 0.03, transparent: true, opacity: 0.4 });
+const trailP = new THREE.Points(new THREE.BufferGeometry(), trailM);
+scene.add(trailP);
+
+let angle = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  angle += 0.008;
+  const x = oa * Math.cos(angle), z = ob * 1.2 * Math.sin(angle), y = ob * 0.3 * Math.sin(angle);
+  sg.position.set(x, y, z);
+  sg.rotation.z = Math.atan2(y, Math.sqrt(x*x + z*z));
+  sg.rotation.y = -angle;
+  led.material.color.setHSL(0.1, 1, 0.5 + 0.5 * Math.sin(angle * 3));
+  if (trailPos.length < 60) { trailPos.push(x, y, z); }
+  else { trailPos.splice(0, 3); trailPos.push(x, y, z); }
+  const ng = new THREE.BufferGeometry();
+  ng.setAttribute('position', new THREE.Float32BufferAttribute(trailPos, 3));
+  trailP.geometry = ng;
+  earth.rotation.y += 0.001;
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+function onResize() {
+  const w2 = container.clientWidth;
+  camera.aspect = w2 / h; camera.updateProjectionMatrix();
+  renderer.setSize(w2, h);
+}
+window.addEventListener('resize', onResize);
+loading.style.opacity = '0';
+setTimeout(() => loading.style.display = 'none', 600);
+
+renderer.domElement.addEventListener('click', function() {
+  const info = document.getElementById('sat-info');
+  info.textContent = '✦ Drag to rotate · Scroll to zoom · Satellite orbiting';
+  info.classList.add('visible');
+  clearTimeout(info._t);
+  info._t = setTimeout(function() { info.classList.remove('visible'); }, 2500);
+});
+
+animate();
+</script>
 
 <div style="text-align:center;margin:20px 0">
 <svg viewBox="0 0 640 380" width="100%" style="max-width:640px">
@@ -296,9 +339,9 @@ a.button:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px var(
 </div>
 
 <div class="card">
-<h1 style="margin-top:0;font-size:1.6em">✦ Engineering Knowledge Base</h1>
+<h1 id="knowledge-base" style="margin-top:0;font-size:1.6em">✦ Engineering Knowledge Base</h1>
 <p style="color:var(--text-light);font-size:1.05em">A personal collection of spacecraft engineering notes — from budgets to design walkthroughs.</p>
-<h2 style="border-bottom:3px solid var(--accent);display:inline-block;border-radius:0 0 3px 3px">✦ Topics</h2>
+<h2 id="topics" style="border-bottom:3px solid var(--accent);display:inline-block;border-radius:0 0 3px 3px">✦ Topics</h2>
 <ul class="icon-list">
 <li style="margin-bottom:16px"><span class="sub-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--link)" stroke-width="2"><path d="M12,2 L12,8 M8,5 L12,8 L16,5"/><polygon points="5,10 19,10 21,16 19,20 5,20 3,16"/><circle cx="12" cy="15" r="2"/><line x1="12" y1="17" x2="12" y2="19"/><line x1="7" y1="10" x2="7" y2="8"/><line x1="17" y1="10" x2="17" y2="8"/></svg></span><a href="satlab.html" style="font-size:1.1em">🚀 SatLab — Build &amp; Launch Your Spacecraft</a> <span style="font-size:.7em;background:color-mix(in srgb,var(--accent) 20%,transparent);color:var(--accent);padding:3px 12px;border-radius:50px;border:1.5px solid color-mix(in srgb,var(--accent) 50%,transparent);font-weight:700">✦ Fun!</span></li>
 <li><span class="sub-icon"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="var(--link)" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><rect x="7" y="7" width="10" height="10" rx="2"/><line x1="4" y1="10" x2="2" y2="10"/><line x1="4" y1="14" x2="2" y2="14"/><line x1="20" y1="10" x2="22" y2="10"/><line x1="20" y1="14" x2="22" y2="14"/></svg></span><a href="cdh-subsystem.html">Command &amp; Data Handling (CDH) Subsystem</a></li>
@@ -314,9 +357,536 @@ a.button:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px var(
 
 <script>
 (function(){let c=document.getElementById('particles');if(!c){c=document.createElement('div');c.id='particles';document.body.prepend(c)}for(let i=32;i--;){let s=document.createElement('div');s.className='p-star';let sz=2+Math.random()*4;s.style.cssText='left:'+(Math.random()*100)+'%;width:'+sz+'px;height:'+sz+'px;background:rgba(255,255,255,'+(.2+Math.random()*.4)+');animation-duration:'+(10+Math.random()*20)+'s;animation-delay:'+(Math.random()*20)+'s';c.appendChild(s)}
-const btn=document.getElementById('toggle-theme');const stored=localStorage.getItem('theme');
+})();
+(function(){
+const btn=document.getElementById('toggle-theme');if(!btn)return;
+const stored=localStorage.getItem('theme');
 if(stored==='dark'){document.body.classList.add('dark');btn.textContent='\u2606 Light'}
-btn.onclick=()=>{document.body.classList.toggle('dark');const isDark=document.body.classList.contains('dark');localStorage.setItem('theme',isDark?'dark':'light');btn.textContent=isDark?'\u2606 Light':'\u2605 Dark'};
+btn.onclick=function(){document.body.classList.toggle('dark');const isDark=document.body.classList.contains('dark');localStorage.setItem('theme',isDark?'dark':'light');btn.textContent=isDark?'\u2606 Light':'\u2605 Dark'};
+})();
+</script>
+
+<div style="text-align:center;margin:40px 0 10px 0">
+  <svg viewBox="0 0 320 50" width="480" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="320" height="50" rx="8" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1.5"/>
+
+    <!-- ① Circle -->
+    <text x="8" y="13" fill="var(--text-light)" font-size="7" font-weight="700">①</text>
+    <circle cx="28" cy="25" r="10" fill="none" stroke="var(--link)" stroke-width="2"/>
+    <circle cx="28" cy="25" r="4" fill="var(--link)"/>
+
+    <!-- ② Lines -->
+    <text x="58" y="13" fill="var(--text-light)" font-size="7" font-weight="700">②</text>
+    <line x1="68" y1="14" x2="88" y2="14" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="68" y1="22" x2="88" y2="22" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-dasharray="4,3"/>
+    <line x1="68" y1="30" x2="88" y2="30" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2,3"/>
+
+    <!-- ③ Rect -->
+    <text x="108" y="13" fill="var(--text-light)" font-size="7" font-weight="700">③</text>
+    <rect x="120" y="13" width="22" height="22" rx="4" fill="none" stroke="var(--text-light)" stroke-width="2"/>
+    <rect x="124" y="17" width="14" height="14" rx="2" fill="var(--text-light)" opacity=".3"/>
+
+    <!-- ④ Polygon -->
+    <text x="162" y="13" fill="var(--text-light)" font-size="7" font-weight="700">④</text>
+    <polygon points="178,13 196,13 203,25 196,37 178,37 171,25" fill="none" stroke="var(--link)" stroke-width="2"/>
+    <polygon points="180,17 194,17 199,25 194,33 180,33 175,25" fill="var(--link)" opacity=".15"/>
+
+    <!-- ⑤ Text -->
+    <text x="222" y="13" fill="var(--text-light)" font-size="7" font-weight="700">⑤</text>
+    <text x="230" y="30" fill="var(--accent)" font-size="12" font-weight="800" font-family="Quicksand,Nunito,sans-serif">SVG</text>
+
+    <!-- ⑥ Path (bonus) -->
+    <text x="280" y="13" fill="var(--text-light)" font-size="7" font-weight="700">⑥</text>
+    <path d="M290,35 Q300,10 310,35" fill="none" stroke="var(--accent)" stroke-width="2"/>
+    <circle cx="290" cy="35" r="2" fill="var(--accent)"/>
+    <circle cx="310" cy="35" r="2" fill="var(--accent)"/>
+  </svg>
+  <p style="color:var(--text-light);font-size:10px;margin-top:6px">✦ SVG Primitives: ① circle · ② lines · ③ rect · ④ polygon · ⑤ text · ⑥ path</p>
+</div>
+
+<div style="text-align:center;margin:30px 0 10px 0">
+  <svg viewBox="0 0 570 340" width="540" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="570" height="340" rx="8" fill="var(--card-bg)" stroke="var(--border)" stroke-width="1.5"/>
+
+    <!-- Row 1 (y=37) -->
+    <!-- 01 Rocket -->
+    <text x="7" y="12" fill="var(--text-light)" font-size="6" font-weight="700">01</text>
+    <path d="M33,14 L22,40 L26,38 L33,46 L40,38 L44,40Z" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <path d="M33,16 L28,34 L33,30 L38,34Z" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <circle cx="33" cy="25" r="2" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="22" y1="40" x2="18" y2="46" stroke="var(--link)" stroke-width="1.2"/>
+    <line x1="44" y1="40" x2="48" y2="46" stroke="var(--link)" stroke-width="1.2"/>
+
+    <!-- 02 Rocket right -->
+    <text x="63" y="12" fill="var(--text-light)" font-size="6" font-weight="700">02</text>
+    <path d="M82,14 L78,24 L82,22 L84,28 L86,22 L90,24Z" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <path d="M82,16 L78,26 L82,24 L86,26Z" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <circle cx="82" cy="21" r="1.5" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="84" y1="28" x2="88" y2="32" stroke="var(--link)" stroke-width="1"/>
+    <line x1="90" y1="24" x2="94" y2="22" stroke="var(--link)" stroke-width="1"/>
+
+    <!-- 03 Spacecraft -->
+    <text x="119" y="12" fill="var(--text-light)" font-size="6" font-weight="700">03</text>
+    <polygon points="135,40 145,20 155,40" fill="none" stroke="var(--link)" stroke-width="1.8"/>
+    <line x1="145" y1="20" x2="145" y2="44" stroke="var(--link)" stroke-width="1.5"/>
+    <line x1="135" y1="40" x2="130" y2="44" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="155" y1="40" x2="160" y2="44" stroke="var(--accent)" stroke-width="1.2"/>
+    <circle cx="145" cy="32" r="2" fill="none" stroke="var(--link)" stroke-width="1"/>
+
+    <!-- 04 Satellite -->
+    <text x="175" y="12" fill="var(--text-light)" font-size="6" font-weight="700">04</text>
+    <rect x="195" y="24" width="12" height="14" rx="2" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <rect x="188" y="27" width="7" height="8" rx="1" fill="var(--accent)" opacity=".4"/>
+    <rect x="207" y="27" width="7" height="8" rx="1" fill="var(--accent)" opacity=".4"/>
+    <line x1="186" y1="35" x2="182" y2="38" stroke="var(--link)" stroke-width="1"/>
+    <line x1="216" y1="35" x2="220" y2="38" stroke="var(--link)" stroke-width="1"/>
+    <circle cx="201" cy="31" r="2" fill="var(--link)" opacity=".3"/>
+
+    <!-- 05 Solar panel -->
+    <text x="231" y="12" fill="var(--text-light)" font-size="6" font-weight="700">05</text>
+    <rect x="246" y="16" width="22" height="26" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <line x1="246" y1="22" x2="268" y2="22" stroke="var(--accent)" stroke-width=".7"/>
+    <line x1="246" y1="28" x2="268" y2="28" stroke="var(--accent)" stroke-width=".7"/>
+    <line x1="246" y1="34" x2="268" y2="34" stroke="var(--accent)" stroke-width=".7"/>
+    <line x1="254" y1="16" x2="254" y2="42" stroke="var(--accent)" stroke-width=".7"/>
+    <line x1="262" y1="16" x2="262" y2="42" stroke="var(--accent)" stroke-width=".7"/>
+    <rect x="254" y="24" width="8" height="4" fill="var(--accent)" opacity=".15"/>
+    <rect x="250" y="30" width="4" height="8" fill="var(--accent)" opacity=".1"/>
+
+    <!-- 06 Antenna dish -->
+    <text x="287" y="12" fill="var(--text-light)" font-size="6" font-weight="700">06</text>
+    <path d="M312,14 Q322,18 332,14" fill="none" stroke="var(--link)" stroke-width="2"/>
+    <line x1="322" y1="16" x2="322" y2="46" stroke="var(--link)" stroke-width="1.5"/>
+    <line x1="322" y1="46" x2="317" y2="50" stroke="var(--link)" stroke-width="1.2"/>
+    <line x1="322" y1="46" x2="327" y2="50" stroke="var(--link)" stroke-width="1.2"/>
+    <path d="M312,14 Q322,22 332,14" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5"/>
+    <circle cx="322" cy="14" r="1.5" fill="var(--accent)"/>
+
+    <!-- 07 Camera -->
+    <text x="343" y="12" fill="var(--text-light)" font-size="6" font-weight="700">07</text>
+    <rect x="358" y="22" width="24" height="18" rx="3" fill="none" stroke="var(--text-light)" stroke-width="1.5"/>
+    <rect x="368" y="18" width="6" height="4" rx="1" fill="none" stroke="var(--text-light)" stroke-width="1.2"/>
+    <circle cx="370" cy="31" r="5" fill="none" stroke="var(--text-light)" stroke-width="1.5"/>
+    <circle cx="370" cy="31" r="2.5" fill="var(--link)" opacity=".3"/>
+    <circle cx="370" cy="31" r="1.2" fill="var(--link)"/>
+    <circle cx="378" cy="26" r="1.2" fill="var(--accent)"/>
+
+    <!-- 08 Telescope -->
+    <text x="399" y="12" fill="var(--text-light)" font-size="6" font-weight="700">08</text>
+    <circle cx="425" cy="25" r="8" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <circle cx="425" cy="25" r="1.5" fill="var(--link)"/>
+    <line x1="417" y1="25" x2="410" y2="25" stroke="var(--link)" stroke-width="1.5"/>
+    <line x1="410" y1="25" x2="410" y2="38" stroke="var(--link)" stroke-width="2"/>
+    <rect x="406" y="38" width="8" height="4" rx="1" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="430" y1="18" x2="437" y2="12" stroke="var(--accent)" stroke-width="1"/>
+
+    <!-- 09 Star 4pt -->
+    <text x="455" y="12" fill="var(--text-light)" font-size="6" font-weight="700">09</text>
+    <polygon points="474,18 477,30 490,33 477,36 474,48 471,36 458,33 471,30" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <polygon points="474,24 476,31 483,33 476,35 474,42 472,35 465,33 472,31" fill="var(--accent)" opacity=".2"/>
+
+    <!-- 10 Star 5pt -->
+    <text x="511" y="12" fill="var(--text-light)" font-size="6" font-weight="700">10</text>
+    <polygon points="528,16 531,27 543,27 533,34 537,45 528,38 519,45 523,34 513,27 525,27" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <polygon points="528,20 530,28 537,28 532,33 534,39 528,35 522,39 524,33 519,28 526,28" fill="var(--link)" opacity=".15"/>
+
+    <!-- Row 2 (y=101) -->
+    <!-- 11 Saturn -->
+    <text x="7" y="76" fill="var(--text-light)" font-size="6" font-weight="700">11</text>
+    <ellipse cx="33" cy="101" rx="16" ry="5" fill="none" stroke="var(--accent)" stroke-width="1.5" transform="rotate(-15,33,101)"/>
+    <circle cx="33" cy="101" r="9" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
+    <circle cx="33" cy="101" r="9" fill="var(--accent)" opacity=".08"/>
+
+    <!-- 12 Earth -->
+    <text x="63" y="76" fill="var(--text-light)" font-size="6" font-weight="700">12</text>
+    <circle cx="89" cy="101" r="10" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <circle cx="89" cy="101" r="10" fill="var(--link)" opacity=".06"/>
+    <ellipse cx="85" cy="97" rx="4" ry="2" fill="none" stroke="var(--link)" stroke-width="1" transform="rotate(-10,85,97)"/>
+    <ellipse cx="93" cy="104" rx="5" ry="2.5" fill="none" stroke="var(--link)" stroke-width="1" transform="rotate(5,93,104)"/>
+    <ellipse cx="89" cy="108" rx="3" ry="1" fill="none" stroke="var(--link)" stroke-width=".8"/>
+
+    <!-- 13 Moon -->
+    <text x="119" y="76" fill="var(--text-light)" font-size="6" font-weight="700">13</text>
+    <circle cx="145" cy="101" r="10" fill="none" stroke="var(--text-light)" stroke-width="1.8"/>
+    <circle cx="145" cy="101" r="10" fill="var(--text-light)" opacity=".08"/>
+    <circle cx="141" cy="97" r="2" fill="none" stroke="var(--text-light)" stroke-width=".8"/>
+    <circle cx="148" cy="103" r="1.5" fill="none" stroke="var(--text-light)" stroke-width=".8"/>
+    <circle cx="143" cy="106" r="1" fill="none" stroke="var(--text-light)" stroke-width=".6"/>
+
+    <!-- 14 Galaxy -->
+    <text x="175" y="76" fill="var(--text-light)" font-size="6" font-weight="700">14</text>
+    <ellipse cx="201" cy="101" rx="14" ry="6" fill="none" stroke="var(--link)" stroke-width="1.5" transform="rotate(-30,201,101)"/>
+    <ellipse cx="201" cy="101" rx="8" ry="3" fill="none" stroke="var(--accent)" stroke-width="1" transform="rotate(-30,201,101)"/>
+    <ellipse cx="201" cy="101" rx="18" ry="8" fill="none" stroke="var(--link)" stroke-width=".8" opacity=".3" transform="rotate(-30,201,101)"/>
+    <circle cx="201" cy="101" r="2" fill="var(--accent)" opacity=".6"/>
+
+    <!-- 15 Comet -->
+    <text x="231" y="76" fill="var(--text-light)" font-size="6" font-weight="700">15</text>
+    <circle cx="262" cy="97" r="5" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle cx="262" cy="97" r="5" fill="var(--accent)" opacity=".1"/>
+    <path d="M257,101 Q250,110 238,112" fill="none" stroke="var(--accent)" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M257,103 Q252,108 245,109" fill="none" stroke="var(--accent)" stroke-width=".8" stroke-linecap="round" opacity=".6"/>
+
+    <!-- 16 Helmet -->
+    <text x="287" y="76" fill="var(--text-light)" font-size="6" font-weight="700">16</text>
+    <circle cx="318" cy="98" r="9" fill="none" stroke="var(--text-light)" stroke-width="1.5"/>
+    <rect x="311" y="93" width="14" height="9" rx="3" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <circle cx="314" cy="96" r="1.5" fill="var(--accent)" opacity=".4"/>
+    <circle cx="322" cy="96" r="1.5" fill="var(--accent)" opacity=".4"/>
+    <line x1="318" y1="107" x2="318" y2="110" stroke="var(--text-light)" stroke-width="1.2"/>
+
+    <!-- 17 Space station -->
+    <text x="343" y="76" fill="var(--text-light)" font-size="6" font-weight="700">17</text>
+    <rect x="358" y="96" width="24" height="6" rx="1" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <rect x="362" y="90" width="6" height="12" rx="1" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <rect x="372" y="88" width="6" height="16" rx="1" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <rect x="366" y="93" width="8" height="8" rx="1" fill="none" stroke="var(--link)" stroke-width="1"/>
+    <line x1="356" y1="93" x2="356" y2="105" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="384" y1="93" x2="384" y2="105" stroke="var(--accent)" stroke-width="1"/>
+    <rect x="364" y="104" width="12" height="3" rx="1" fill="var(--accent)" opacity=".2"/>
+
+    <!-- 18 Circuit board -->
+    <text x="399" y="76" fill="var(--text-light)" font-size="6" font-weight="700">18</text>
+    <rect x="414" y="86" width="24" height="22" rx="3" fill="none" stroke="var(--text-light)" stroke-width="1.3"/>
+    <line x1="420" y1="97" x2="432" y2="97" stroke="var(--link)" stroke-width="1.5"/>
+    <line x1="426" y1="90" x2="426" y2="104" stroke="var(--link)" stroke-width="1.5"/>
+    <line x1="418" y1="92" x2="424" y2="92" stroke="var(--link)" stroke-width=".8"/>
+    <line x1="424" y1="102" x2="434" y2="102" stroke="var(--link)" stroke-width=".8"/>
+    <circle cx="420" cy="97" r="2" fill="var(--link)"/>
+    <circle cx="426" cy="90" r="2" fill="var(--link)"/>
+    <circle cx="434" cy="97" r="2" fill="var(--link)"/>
+    <circle cx="426" cy="104" r="2" fill="var(--link)"/>
+    <circle cx="426" cy="97" r="1.5" fill="var(--accent)"/>
+    <circle cx="420" cy="90" r="1" fill="var(--accent)"/>
+
+    <!-- 19 Microchip -->
+    <text x="455" y="76" fill="var(--text-light)" font-size="6" font-weight="700">19</text>
+    <rect x="470" y="90" width="18" height="18" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <rect x="473" y="93" width="12" height="12" rx="1" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="470" y1="96" x2="466" y2="96" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="470" y1="99" x2="466" y2="99" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="470" y1="102" x2="466" y2="102" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="488" y1="96" x2="492" y2="96" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="488" y1="99" x2="492" y2="99" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="488" y1="102" x2="492" y2="102" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="476" y1="90" x2="476" y2="86" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="479" y1="90" x2="479" y2="86" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="482" y1="90" x2="482" y2="86" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="476" y1="108" x2="476" y2="112" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="479" y1="108" x2="479" y2="112" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="482" y1="108" x2="482" y2="112" stroke="var(--accent)" stroke-width="1"/>
+
+    <!-- 20 Battery -->
+    <text x="511" y="76" fill="var(--text-light)" font-size="6" font-weight="700">20</text>
+    <rect x="525" y="92" width="16" height="16" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <rect x="529" y="89" width="8" height="3" rx="1" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <rect x="528" y="96" width="4" height="4" rx="1" fill="var(--accent)" opacity=".3"/>
+    <rect x="534" y="96" width="4" height="4" rx="1" fill="var(--accent)" opacity=".3"/>
+    <rect x="528" y="102" width="4" height="4" rx="1" fill="var(--accent)" opacity=".15"/>
+    <rect x="534" y="102" width="4" height="4" rx="1" fill="var(--accent)" opacity=".15"/>
+    <line x1="530" y1="104" x2="530" y2="100" stroke="var(--link)" stroke-width=".5"/>
+    <line x1="536" y1="104" x2="536" y2="100" stroke="var(--link)" stroke-width=".5"/>
+
+    <!-- Row 3 (y=165) -->
+    <!-- 21 Engine nozzle -->
+    <text x="7" y="140" fill="var(--text-light)" font-size="6" font-weight="700">21</text>
+    <path d="M20,150 L34,150 L40,174 L14,174Z" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <path d="M14,174 Q27,188 40,174" fill="none" stroke="var(--link)" stroke-width="2"/>
+    <ellipse cx="27" cy="174" rx="13" ry="3" fill="none" stroke="var(--link)" stroke-width="1"/>
+    <rect x="22" y="154" width="10" height="4" rx="1" fill="none" stroke="var(--accent)" stroke-width=".8"/>
+    <path d="M24,176 Q27,184 30,176" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".5"/>
+
+    <!-- 22 Thruster -->
+    <text x="63" y="140" fill="var(--text-light)" font-size="6" font-weight="700">22</text>
+    <circle cx="85" cy="166" r="8" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle cx="85" cy="166" r="3" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="85" y1="158" x2="85" y2="174" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="77" y1="166" x2="93" y2="166" stroke="var(--accent)" stroke-width="1"/>
+    <circle cx="85" cy="166" r="1.5" fill="var(--link)"/>
+
+    <!-- 23 Fuel tank -->
+    <text x="119" y="140" fill="var(--text-light)" font-size="6" font-weight="700">23</text>
+    <ellipse cx="145" cy="150" rx="10" ry="4" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <path d="M135,150 L135,176 Q145,180 155,176 L155,150" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <ellipse cx="145" cy="176" rx="10" ry="4" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <line x1="145" y1="150" x2="145" y2="176" stroke="var(--accent)" stroke-width=".8"/>
+    <rect x="141" y="154" width="8" height="18" rx="1" fill="var(--accent)" opacity=".12"/>
+
+    <!-- 24 Truss -->
+    <text x="175" y="140" fill="var(--text-light)" font-size="6" font-weight="700">24</text>
+    <line x1="190" y1="150" x2="208" y2="150" stroke="var(--text-light)" stroke-width="1.8"/>
+    <line x1="190" y1="178" x2="208" y2="178" stroke="var(--text-light)" stroke-width="1.8"/>
+    <line x1="190" y1="150" x2="190" y2="178" stroke="var(--text-light)" stroke-width="1.8"/>
+    <line x1="208" y1="150" x2="208" y2="178" stroke="var(--text-light)" stroke-width="1.8"/>
+    <line x1="190" y1="150" x2="208" y2="178" stroke="var(--text-light)" stroke-width="1" stroke-dasharray="3,2"/>
+    <line x1="208" y1="150" x2="190" y2="178" stroke="var(--text-light)" stroke-width="1" stroke-dasharray="3,2"/>
+
+    <!-- 25 Honeycomb -->
+    <text x="231" y="140" fill="var(--text-light)" font-size="6" font-weight="700">25</text>
+    <polygon points="252,150 260,150 264,157 260,164 252,164 248,157" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <polygon points="260,150 268,150 272,157 268,164 260,164 256,157" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <polygon points="248,164 256,164 260,171 256,178 248,178 244,171" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <polygon points="256,164 264,164 268,171 264,178 256,178 252,171" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <polygon points="260,164 268,164 272,171 268,178 260,178 256,171" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".4"/>
+
+    <!-- 26 Reaction wheel -->
+    <text x="287" y="140" fill="var(--text-light)" font-size="6" font-weight="700">26</text>
+    <circle cx="318" cy="164" r="12" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <circle cx="318" cy="164" r="6" fill="none" stroke="var(--link)" stroke-width="1" stroke-dasharray="4,2"/>
+    <circle cx="318" cy="164" r="2" fill="var(--link)"/>
+    <path d="M318,152 L321,156 L315,156Z" fill="var(--link)"/>
+    <path d="M318,176 L321,172 L315,172Z" fill="var(--link)"/>
+    <path d="M306,164 L310,167 L310,161Z" fill="var(--link)"/>
+    <path d="M330,164 L326,167 L326,161Z" fill="var(--link)"/>
+
+    <!-- 27 Gyroscope -->
+    <text x="343" y="140" fill="var(--text-light)" font-size="6" font-weight="700">27</text>
+    <circle cx="370" cy="164" r="12" fill="none" stroke="var(--text-light)" stroke-width="1.2"/>
+    <circle cx="370" cy="164" r="8" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4,2"/>
+    <circle cx="370" cy="164" r="4" fill="none" stroke="var(--link)" stroke-width="1.2"/>
+    <circle cx="370" cy="164" r="1.5" fill="var(--link)"/>
+    <line x1="370" y1="152" x2="370" y2="156" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="370" y1="172" x2="370" y2="176" stroke="var(--accent)" stroke-width="1"/>
+
+    <!-- 28 Magnetometer -->
+    <text x="399" y="140" fill="var(--text-light)" font-size="6" font-weight="700">28</text>
+    <line x1="412" y1="178" x2="428" y2="150" stroke="var(--link)" stroke-width="1.5"/>
+    <circle cx="428" cy="150" r="3" fill="var(--link)" opacity=".4"/>
+    <polygon points="412,178 416,172 420,180" fill="none" stroke="var(--link)" stroke-width="1.2"/>
+    <line x1="414" y1="170" x2="422" y2="156" stroke="var(--accent)" stroke-width=".8"/>
+    <line x1="414" y1="170" x2="418" y2="156" stroke="var(--accent)" stroke-width=".8" opacity=".5"/>
+
+    <!-- 29 Sun sensor -->
+    <text x="455" y="140" fill="var(--text-light)" font-size="6" font-weight="700">29</text>
+    <circle cx="479" cy="164" r="7" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <line x1="479" y1="153" x2="479" y2="149" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="479" y1="175" x2="479" y2="179" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="468" y1="164" x2="464" y2="164" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="490" y1="164" x2="494" y2="164" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="471" y1="156" x2="468" y2="153" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="487" y1="172" x2="490" y2="175" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="487" y1="156" x2="490" y2="153" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="471" y1="172" x2="468" y2="175" stroke="var(--accent)" stroke-width="1"/>
+    <circle cx="479" cy="164" r="3" fill="var(--accent)" opacity=".2"/>
+
+    <!-- 30 Star tracker -->
+    <text x="511" y="140" fill="var(--text-light)" font-size="6" font-weight="700">30</text>
+    <rect x="524" y="150" width="16" height="16" rx="2" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <circle cx="532" cy="158" r="4" fill="none" stroke="var(--link)" stroke-width="1"/>
+    <line x1="528" y1="158" x2="536" y2="158" stroke="var(--link)" stroke-width=".8"/>
+    <line x1="532" y1="154" x2="532" y2="162" stroke="var(--link)" stroke-width=".8"/>
+    <circle cx="528" cy="154" r="1" fill="var(--accent)"/>
+    <circle cx="536" cy="162" r="1" fill="var(--accent)"/>
+
+    <!-- Row 4 (y=229) -->
+    <!-- 31 Heat shield -->
+    <text x="7" y="204" fill="var(--text-light)" font-size="6" font-weight="700">31</text>
+    <path d="M16,244 Q33,230 50,244" fill="none" stroke="var(--accent)" stroke-width="1.8"/>
+    <path d="M20,244 Q33,234 46,244" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="33" y1="232" x2="33" y2="244" stroke="var(--accent)" stroke-width="1"/>
+    <path d="M18,244 Q33,248 48,244" fill="none" stroke="var(--link)" stroke-width="2" opacity=".3"/>
+
+    <!-- 32 Radiator -->
+    <text x="63" y="204" fill="var(--text-light)" font-size="6" font-weight="700">32</text>
+    <rect x="80" y="218" width="24" height="20" rx="2" fill="none" stroke="var(--link)" stroke-width="1.3"/>
+    <rect x="80" y="220" width="24" height="4" fill="var(--link)" opacity=".08"/>
+    <rect x="80" y="228" width="24" height="4" fill="var(--link)" opacity=".08"/>
+    <rect x="80" y="236" width="24" height="4" fill="var(--link)" opacity=".08"/>
+    <line x1="84" y1="220" x2="84" y2="240" stroke="var(--link)" stroke-width=".6"/>
+    <line x1="88" y1="220" x2="88" y2="240" stroke="var(--link)" stroke-width=".6"/>
+    <line x1="96" y1="220" x2="96" y2="240" stroke="var(--link)" stroke-width=".6"/>
+    <line x1="100" y1="220" x2="100" y2="240" stroke="var(--link)" stroke-width=".6"/>
+
+    <!-- 33 MLI -->
+    <text x="119" y="204" fill="var(--text-light)" font-size="6" font-weight="700">33</text>
+    <rect x="132" y="218" width="24" height="20" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="132" y1="222" x2="156" y2="222" stroke="var(--accent)" stroke-width=".8"/>
+    <line x1="132" y1="226" x2="156" y2="226" stroke="var(--accent)" stroke-width=".8"/>
+    <line x1="132" y1="230" x2="156" y2="230" stroke="var(--accent)" stroke-width=".8"/>
+    <line x1="132" y1="234" x2="156" y2="234" stroke="var(--accent)" stroke-width=".8"/>
+    <path d="M135,220 Q144,225 153,220" fill="none" stroke="var(--accent)" stroke-width=".6" opacity=".5"/>
+    <path d="M135,224 Q144,229 153,224" fill="none" stroke="var(--accent)" stroke-width=".6" opacity=".5"/>
+    <path d="M135,228 Q144,233 153,228" fill="none" stroke="var(--accent)" stroke-width=".6" opacity=".5"/>
+
+    <!-- 34 Orbit path -->
+    <text x="175" y="204" fill="var(--text-light)" font-size="6" font-weight="700">34</text>
+    <ellipse cx="200" cy="235" rx="20" ry="10" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <ellipse cx="200" cy="235" rx="22" ry="12" fill="none" stroke="var(--link)" stroke-width=".6" opacity=".3"/>
+    <circle cx="200" cy="225" r="2" fill="var(--accent)"/>
+    <circle cx="218" cy="235" r="1.5" fill="var(--accent)"/>
+    <polygon points="218,235 215,233 215,237" fill="var(--accent)"/>
+
+    <!-- 35 Docking port -->
+    <text x="231" y="204" fill="var(--text-light)" font-size="6" font-weight="700">35</text>
+    <circle cx="253" cy="229" r="10" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <circle cx="253" cy="229" r="6" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <circle cx="253" cy="229" r="2" fill="var(--accent)"/>
+    <rect x="249" y="222" width="8" height="3" rx="1" fill="none" stroke="var(--accent)" stroke-width=".8"/>
+    <rect x="249" y="233" width="8" height="3" rx="1" fill="none" stroke="var(--accent)" stroke-width=".8"/>
+
+    <!-- 36 Robotic arm -->
+    <text x="287" y="204" fill="var(--text-light)" font-size="6" font-weight="700">36</text>
+    <rect x="302" y="236" width="24" height="4" rx="1" fill="none" stroke="var(--link)" stroke-width="1.2"/>
+    <circle cx="313" cy="228" r="4" fill="none" stroke="var(--link)" stroke-width="1.2"/>
+    <line x1="313" y1="224" x2="324" y2="216" stroke="var(--link)" stroke-width="1.5"/>
+    <line x1="324" y1="216" x2="332" y2="222" stroke="var(--link)" stroke-width="1.2"/>
+    <circle cx="324" cy="216" r="2" fill="none" stroke="var(--link)" stroke-width="1"/>
+    <rect x="330" y="220" width="4" height="4" rx="1" fill="none" stroke="var(--accent)" stroke-width=".8"/>
+    <rect x="312" y="240" width="4" height="2" rx="1" fill="var(--accent)" opacity=".3"/>
+
+    <!-- 37 Landing legs -->
+    <text x="343" y="204" fill="var(--text-light)" font-size="6" font-weight="700">37</text>
+    <line x1="360" y1="215" x2="360" y2="238" stroke="var(--text-light)" stroke-width="2"/>
+    <line x1="360" y1="238" x2="350" y2="248" stroke="var(--text-light)" stroke-width="1.5"/>
+    <line x1="360" y1="238" x2="370" y2="248" stroke="var(--text-light)" stroke-width="1.5"/>
+    <line x1="350" y1="248" x2="348" y2="243" stroke="var(--text-light)" stroke-width="1"/>
+    <line x1="370" y1="248" x2="372" y2="243" stroke="var(--text-light)" stroke-width="1"/>
+    <rect x="357" y="211" width="6" height="4" rx="1" fill="none" stroke="var(--text-light)" stroke-width="1"/>
+    <line x1="350" y1="228" x2="360" y2="228" stroke="var(--text-light)" stroke-width=".8"/>
+
+    <!-- 38 Parachute -->
+    <text x="399" y="204" fill="var(--text-light)" font-size="6" font-weight="700">38</text>
+    <path d="M408,225 Q418,206 428,225" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <path d="M412,225 Q418,212 424,225" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="418" y1="218" x2="418" y2="245" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="418" y1="245" x2="414" y2="248" stroke="var(--accent)" stroke-width=".8"/>
+    <line x1="418" y1="245" x2="422" y2="248" stroke="var(--accent)" stroke-width=".8"/>
+    <path d="M412,215 Q418,206 424,215" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".4"/>
+
+    <!-- 39 Black hole -->
+    <text x="455" y="204" fill="var(--text-light)" font-size="6" font-weight="700">39</text>
+    <circle cx="479" cy="229" r="10" fill="none" stroke="var(--link)" stroke-width="1.5"/>
+    <circle cx="479" cy="229" r="6" fill="var(--link)" opacity=".08"/>
+    <circle cx="479" cy="229" r="3" fill="var(--link)" opacity=".2"/>
+    <circle cx="479" cy="229" r="1.5" fill="var(--link)"/>
+    <ellipse cx="479" cy="229" rx="12" ry="3" fill="none" stroke="var(--accent)" stroke-width="1" transform="rotate(-20,479,229)"/>
+    <ellipse cx="479" cy="229" rx="12" ry="3" fill="none" stroke="var(--accent)" stroke-width=".8" opacity=".4" transform="rotate(20,479,229)"/>
+
+    <!-- 40 Nebula -->
+    <text x="511" y="204" fill="var(--text-light)" font-size="6" font-weight="700">40</text>
+    <ellipse cx="533" cy="226" rx="14" ry="6" fill="none" stroke="var(--link)" stroke-width="1.2" opacity=".6" transform="rotate(-10,533,226)"/>
+    <ellipse cx="533" cy="232" rx="12" ry="5" fill="none" stroke="var(--accent)" stroke-width="1" opacity=".5" transform="rotate(15,533,232)"/>
+    <ellipse cx="533" cy="229" rx="8" ry="3" fill="none" stroke="var(--link)" stroke-width=".8" opacity=".4"/>
+    <circle cx="527" cy="222" r="1.5" fill="var(--accent)"/>
+    <circle cx="540" cy="234" r="1" fill="var(--link)"/>
+    <circle cx="526" cy="236" r=".8" fill="var(--accent)"/>
+    <circle cx="536" cy="224" r="1" fill="var(--link)" opacity=".5"/>
+
+    <!-- Row 5 (y=293) -->
+    <!-- 41 Asteroid -->
+    <text x="7" y="268" fill="var(--text-light)" font-size="6" font-weight="700">41</text>
+    <ellipse cx="32" cy="293" rx="12" ry="8" fill="none" stroke="var(--text-light)" stroke-width="1.5"/>
+    <circle cx="27" cy="290" r="2" fill="none" stroke="var(--text-light)" stroke-width=".6"/>
+    <circle cx="35" cy="295" r="1.5" fill="none" stroke="var(--text-light)" stroke-width=".6"/>
+    <circle cx="30" cy="296" r="1" fill="none" stroke="var(--text-light)" stroke-width=".5"/>
+    <line x1="22" y1="293" x2="28" y2="293" stroke="var(--text-light)" stroke-width=".6"/>
+
+    <!-- 42 Debris -->
+    <text x="63" y="268" fill="var(--text-light)" font-size="6" font-weight="700">42</text>
+    <rect x="78" y="288" width="6" height="6" rx="1" fill="none" stroke="var(--text-light)" stroke-width="1.2" transform="rotate(15,81,291)"/>
+    <rect x="88" y="284" width="4" height="4" rx="1" fill="none" stroke="var(--text-light)" stroke-width="1" transform="rotate(-10,90,286)"/>
+    <rect x="82" y="297" width="5" height="5" rx="1" fill="none" stroke="var(--text-light)" stroke-width="1" transform="rotate(25,85,300)"/>
+    <circle cx="94" cy="296" r="1.5" fill="none" stroke="var(--text-light)" stroke-width=".8"/>
+    <circle cx="77" cy="283" r="1" fill="var(--text-light)" opacity=".3"/>
+
+    <!-- 43 Launch pad -->
+    <text x="119" y="268" fill="var(--text-light)" font-size="6" font-weight="700">43</text>
+    <rect x="136" y="292" width="20" height="6" rx="1" fill="none" stroke="var(--text-light)" stroke-width="1.3"/>
+    <rect x="141" y="280" width="10" height="12" rx="1" fill="none" stroke="var(--text-light)" stroke-width="1.2"/>
+    <line x1="139" y1="298" x2="153" y2="298" stroke="var(--text-light)" stroke-width=".8"/>
+    <rect x="147" y="282" width="4" height="4" rx="1" fill="var(--accent)" opacity=".2"/>
+    <line x1="146" y1="280" x2="146" y2="276" stroke="var(--accent)" stroke-width=".8"/>
+    <rect x="144" y="276" width="4" height="2" rx="1" fill="none" stroke="var(--accent)" stroke-width=".6"/>
+
+    <!-- 44 Liftoff -->
+    <text x="175" y="268" fill="var(--text-light)" font-size="6" font-weight="700">44</text>
+    <path d="M196,276 L190,294 L194,292 L198,298 L202,292 L206,294Z" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <path d="M196,278 L193,290 L196,288 L199,290Z" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <path d="M192,296 Q196,308 200,296" fill="none" stroke="var(--link)" stroke-width="1.8" opacity=".6"/>
+    <path d="M190,300 Q196,312 202,300" fill="none" stroke="var(--link)" stroke-width="1.2" opacity=".3"/>
+    <circle cx="196" cy="282" r="2" fill="none" stroke="var(--accent)" stroke-width=".8"/>
+    <path d="M194,302 Q196,306 198,302" fill="none" stroke="var(--accent)" stroke-width=".6" opacity=".4"/>
+
+    <!-- 45 Satellite deploy -->
+    <text x="231" y="268" fill="var(--text-light)" font-size="6" font-weight="700">45</text>
+    <rect x="248" y="282" width="18" height="14" rx="2" fill="none" stroke="var(--link)" stroke-width="1.3"/>
+    <line x1="248" y1="284" x2="244" y2="280" stroke="var(--link)" stroke-width="1.2"/>
+    <line x1="266" y1="284" x2="270" y2="280" stroke="var(--link)" stroke-width="1.2"/>
+    <rect x="252" y="286" width="10" height="6" rx="1" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <circle cx="257" cy="289" r="1.5" fill="var(--accent)" opacity=".4"/>
+    <circle cx="252" cy="292" r=".8" fill="var(--accent)" opacity=".3"/>
+    <circle cx="262" cy="292" r=".8" fill="var(--accent)" opacity=".3"/>
+
+    <!-- 46 Solar sail -->
+    <text x="287" y="268" fill="var(--text-light)" font-size="6" font-weight="700">46</text>
+    <polygon points="310,278 330,293 318,298 303,285" fill="none" stroke="var(--accent)" stroke-width="1.5"/>
+    <polygon points="310,278 295,293 303,285" fill="none" stroke="var(--accent)" stroke-width="1.2"/>
+    <polygon points="310,278 299,270 295,293" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <polygon points="310,278 325,270 330,293" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="310" y1="278" x2="310" y2="302" stroke="var(--link)" stroke-width="1.5"/>
+    <rect x="307" y="298" width="6" height="4" rx="1" fill="none" stroke="var(--link)" stroke-width="1"/>
+
+    <!-- 47 Laser comm -->
+    <text x="343" y="268" fill="var(--text-light)" font-size="6" font-weight="700">47</text>
+    <rect x="360" y="284" width="14" height="14" rx="2" fill="none" stroke="var(--link)" stroke-width="1.3"/>
+    <circle cx="367" cy="291" r="3" fill="none" stroke="var(--link)" stroke-width="1"/>
+    <line x1="367" y1="289" x2="367" y2="293" stroke="var(--link)" stroke-width=".8"/>
+    <line x1="374" y1="287" x2="382" y2="283" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="374" y1="291" x2="384" y2="291" stroke="var(--accent)" stroke-width="1.2"/>
+    <line x1="374" y1="295" x2="382" y2="299" stroke="var(--accent)" stroke-width="1.2"/>
+    <circle cx="382" cy="283" r="1" fill="var(--accent)"/>
+    <circle cx="384" cy="291" r="1" fill="var(--accent)"/>
+    <circle cx="382" cy="299" r="1" fill="var(--accent)"/>
+
+    <!-- 48 GPS sat -->
+    <text x="399" y="268" fill="var(--text-light)" font-size="6" font-weight="700">48</text>
+    <rect x="416" y="288" width="16" height="12" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <rect x="420" y="292" width="8" height="4" rx="1" fill="var(--accent)" opacity=".15"/>
+    <line x1="416" y1="292" x2="408" y2="288" stroke="var(--link)" stroke-width="1"/>
+    <line x1="416" y1="296" x2="408" y2="300" stroke="var(--link)" stroke-width="1"/>
+    <line x1="432" y1="292" x2="440" y2="288" stroke="var(--link)" stroke-width="1"/>
+    <line x1="432" y1="296" x2="440" y2="300" stroke="var(--link)" stroke-width="1"/>
+    <path d="M408,282 Q424,278 440,282" fill="none" stroke="var(--link)" stroke-width="1" stroke-dasharray="2,2" opacity=".5"/>
+    <circle cx="414" cy="284" r="1" fill="var(--link)" opacity=".5"/>
+
+    <!-- 49 Science instrument -->
+    <text x="455" y="268" fill="var(--text-light)" font-size="6" font-weight="700">49</text>
+    <rect x="470" y="284" width="18" height="18" rx="2" fill="none" stroke="var(--text-light)" stroke-width="1.3"/>
+    <circle cx="479" cy="293" r="4" fill="none" stroke="var(--text-light)" stroke-width="1.2"/>
+    <line x1="475" y1="293" x2="483" y2="293" stroke="var(--text-light)" stroke-width=".8"/>
+    <line x1="479" y1="289" x2="479" y2="297" stroke="var(--text-light)" stroke-width=".8"/>
+    <path d="M470,286 L464,282 L464,288" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <circle cx="464" cy="285" r="1.5" fill="var(--accent)"/>
+    <rect x="476" y="304" width="6" height="2" rx="1" fill="var(--accent)" opacity=".3"/>
+
+    <!-- 50 Tool kit -->
+    <text x="511" y="268" fill="var(--text-light)" font-size="6" font-weight="700">50</text>
+    <rect x="526" y="286" width="18" height="14" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.3"/>
+    <line x1="530" y1="292" x2="540" y2="292" stroke="var(--accent)" stroke-width="1.2"/>
+    <circle cx="535" cy="292" r="1.5" fill="var(--accent)"/>
+    <path d="M530,300 L528,304 L534,304 L536,300" fill="none" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="540" y1="286" x2="544" y2="282" stroke="var(--accent)" stroke-width="1"/>
+    <line x1="540" y1="286" x2="544" y2="290" stroke="var(--accent)" stroke-width=".8"/>
+    <circle cx="544" cy="286" r="1" fill="var(--accent)"/>
+    <rect x="532" y="300" width="6" height="2" rx="1" fill="var(--accent)" opacity=".3"/>
+  </svg>
+  <p style="color:var(--text-light);font-size:9px;margin-top:6px">✦ 50 Space Icons: pick your favorites</p>
+</div>
+</div>
+
+<script>
+(function(){
+  var input = document.getElementById('search-input');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.icon-list li, .arch-node').forEach(function(el){
+      var text = el.textContent.toLowerCase();
+      var match = !q || text.includes(q);
+      el.style.display = match ? '' : 'none';
+    });
+  });
+})();
 </script>
 </body>
 </html>
