@@ -59,15 +59,45 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
 <h2 style="margin-top:0;font-size:1em">Contents</h2>
 <ul style="margin:4px 0;padding-left:20px">
-<li><a href="#idea">★ The Idea</a></li>
-<li><a href="#process">★ The Process</a></li>
-<li><a href="#design">★ The Design</a>
+<li><a href="#idea">★ The Idea</a>
 <ul style="margin:2px 0;padding-left:20px">
-<li><a href="#s1">1. OBC Hardware</a></li>
-<li><a href="#s2">2. Flight Software (FSW)</a></li>
-<li><a href="#s3">3. CDH Data &amp; Networking</a></li>
+<li><a href="#cores">Cores</a></li>
+<li><a href="#freq">Operating Speed / Frequency</a></li>
+<li><a href="#size">Operating Size</a></li>
+<li><a href="#fsw-code">FSW Core Code</a></li>
+<li><a href="#hw-sw">How Hardware to Software</a></li>
+<li><a href="#bits">Bits Explained</a></li>
+<li><a href="#ops">Operations Explained</a></li>
 </ul>
 </li>
+<li><a href="#design">★ The Design</a>
+<ul style="margin:2px 0;padding-left:20px">
+<li><a href="#s1">1. OBC Hardware</a>
+<ul style="margin:2px 0;padding-left:20px">
+<li><a href="#1-1">1.1 Processor</a></li>
+<li><a href="#1-2">1.2 Memory</a></li>
+<li><a href="#1-3">1.3 FPGA</a></li>
+<li><a href="#1-4">1.4 Storage</a></li>
+<li><a href="#1-5">1.5 Error Protection</a></li>
+</ul>
+</li>
+<li><a href="#s2">2. Flight Software (FSW)</a>
+<ul style="margin:2px 0;padding-left:20px">
+<li><a href="#2-1">2.1 Software Images</a></li>
+<li><a href="#2-2">2.2 Radiation Effects</a></li>
+</ul>
+</li>
+<li><a href="#s3">3. CDH Data &amp; Networking</a>
+<ul style="margin:2px 0;padding-left:20px">
+<li><a href="#time-dist">Time Distribution</a></li>
+<li><a href="#data-buses">Data Buses</a></li>
+<li><a href="#cmd-tlm">Command &amp; Telemetry</a></li>
+<li><a href="#fdir">FDIR</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#process">★ The Process</a></li>
 <li><a href="#s4">Design Walkthrough — Worked Example</a></li>
 <li><a href="#refs">★ References</a></li>
 </ul>
@@ -84,28 +114,32 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <tr><td style="padding:4px 8px"><strong>Data &amp; Networking</strong></td><td style="padding:4px 8px">The <em>communication backbone</em> — data buses (SpaceWire, MIL-STD-1553, CAN), time distribution, command uplink, telemetry downlink, and fault management that tie all subsystems together.</td></tr>
 </table>
 <p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These three pillars work together: the OBC hardware runs the FSW, FSW controls the spacecraft and processes data, and the data network carries commands from the ground and telemetry to every subsystem — all while radiation, heat, and power constraints push every design decision. The sections below break each pillar apart in detail.</p>
-</section>
 
-<section class="section-card" id="process">
-<h2 style="margin-top:0">★ The Process</h2>
-<p><strong>Responsible Engineers:</strong> CDH Engineer, Flight Software Engineer, Systems Engineer, Electronics Engineer</p>
-<p><strong>Users:</strong> Systems Engineers, Flight Software Engineers, Operations Engineers, Integration &amp; Test Engineers, Payload Scientists</p>
-<p>Designing a CDH subsystem begins with the mission's processing, memory, and data-handling requirements. The OBC hardware must run the flight software within real-time deadlines, store enough telemetry between ground contacts, and communicate reliably with every other subsystem — all while surviving the radiation environment.</p>
-<p>The typical design workflow:</p>
-<ol style="margin:8px 0;padding-left:20px">
-<li><strong>Define processing requirements</strong> — control loop rates, data throughput, FSW complexity, radiation tolerance</li>
-<li><strong>Select the processor architecture</strong> — ARM, RISC-V, PowerPC, or x86; single-core vs. multi-core; FPGA companion or SoC</li>
-<li><strong>Size the memory hierarchy</strong> — RAM for code + data, NOR Flash for XIP code storage, NAND/SSD for bulk telemetry</li>
-<li><strong>Choose the data bus topology</strong> — CAN vs. MIL-STD-1553 vs. SpaceWire; harness mass, speed, and redundancy trades</li>
-<li><strong>Design the FDIR strategy</strong> — watchdog hierarchy, health monitors, failover logic, safe mode entry/exit criteria</li>
-<li><strong>Iterate and converge</strong> — revisit each choice as power, mass, cost, and radiation constraints tighten the design</li>
-</ol>
-<p>A complete step-by-step walkthrough is in the <a href="#s4">Design Walkthrough — Worked Example</a> below.</p>
+<h3 id="cores" style="margin-top:20px">Cores</h3>
+<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
+
+<h3 id="freq" style="margin-top:20px">Operating Speed / Frequency</h3>
+<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
+
+<h3 id="size" style="margin-top:20px">Operating Size</h3>
+<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
+
+<h3 id="fsw-code" style="margin-top:20px">FSW Core Code</h3>
+<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
+
+<h3 id="hw-sw" style="margin-top:20px">How Hardware to Software</h3>
+<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
+
+<h3 id="bits" style="margin-top:20px">Bits Explained</h3>
+<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
+
+<h3 id="ops" style="margin-top:20px">Operations Explained</h3>
+<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
 </section>
 
 <section class="section-card" id="design">
 <h2 style="margin-top:0">★ The Design</h2>
-<p>The sections below provide the detailed reference material — OBC hardware (processors, memory, FPGAs, storage), flight software (RTOS, images, radiation effects), and data networking (buses, timekeeping, command &amp; telemetry, FDIR). Use these as a lookup reference while following the design process above.</p>
+<p>The sections below provide the detailed reference material — OBC hardware (processors, memory, FPGAs, storage), flight software (RTOS, images, radiation effects), and data networking (buses, timekeeping, command &amp; telemetry, FDIR). Use these as a lookup reference while following the design process below.</p>
 
 <div style="text-align:center;margin:20px 0;overflow-x:auto">
 <svg viewBox="0 0 660 500" width="100%" style="max-width:660px">
@@ -313,7 +347,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <h3 style="margin-top:0">1. OBC Hardware</h3>
 <p>The OBC hardware is the physical computing platform of the CDH subsystem — the processors, memory, FPGAs, storage, and interconnects that execute instructions and hold data. Every OBC board must balance performance, power, radiation tolerance, and reliability against the mission's requirements.</p>
 
-<h2 style="margin-top:0">1.1 Processor</h2>
+<h2 id="1-1" style="margin-top:0">1.1 Processor</h2>
 <p>A device that receives input data, performs mathematical and logical calculations, and executes instructions to run apps and operating systems (OS).</p>
 
 <div style="text-align:center;margin:16px 0;overflow-x:auto">
@@ -534,7 +568,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 style="margin-top:0">1.2 Memory</h2>
+<h2 id="1-2" style="margin-top:0">1.2 Memory</h2>
 <p style="margin-top:0">A device that temporarily holds data and instructions for immediate access. Memory is broadly categorized into <strong>Volatile Memory (VM)</strong> and <strong>Non-Volatile Memory (NVM)</strong>, which differ in how they retain data when power is removed.</p>
 
 <div style="text-align:center;margin:16px 0;overflow-x:auto">
@@ -809,7 +843,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 style="margin-top:0">1.3 FPGA (Field-Programmable Gate Array)</h2>
+<h2 id="1-3" style="margin-top:0">1.3 FPGA (Field-Programmable Gate Array)</h2>
 <p>A type of configurable integrated circuit that can be repeatedly programmed after manufacturing. FPGAs consist of a grid-connected array of programmable logic blocks that can be configured to implement custom digital circuits.</p>
 <ul>
 <li>Reconfigurable after deployment</li>
@@ -972,7 +1006,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 style="margin-top:0">1.4 Storage — SSD (NVMe vs SATA)</h2>
+<h2 id="1-4" style="margin-top:0">1.4 Storage — SSD (NVMe vs SATA)</h2>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
 <svg viewBox="0 0 400 90" width="100%" style="max-width:400px">
@@ -996,7 +1030,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </ul>
 <p class="note">Flash-based SSDs began replacing hard drives in the late 2000s. SATA was originally designed for spinning disks, which is why it caps at ~600 MB/s with high latency and a single command queue. NVMe, released in 2011, was built from the ground up for flash — it connects directly via PCIe lanes and supports up to 65,535 parallel command queues. In spacecraft, radiation-hardened SSDs with custom controllers are used for bulk data storage, often in RAID-1 configurations for redundancy.</p>
 
-<h2 style="margin-top:0">1.5 Error Protection — EDAC &amp; RAID</h2>
+<h2 id="1-5" style="margin-top:0">1.5 Error Protection — EDAC &amp; RAID</h2>
 
 <h3>EDAC (Error Detection and Correction)</h3>
 
@@ -1224,7 +1258,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 style="margin-top:0">2.1 Software Images</h2>
+<h2 id="2-1" style="margin-top:0">2.1 Software Images</h2>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
 <svg viewBox="0 0 400 100" width="100%" style="max-width:400px">
@@ -1256,7 +1290,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <li><strong>Layered Images</strong>, <strong>Virtual Machine Image</strong>, <strong>Microkernel Images</strong></li>
 </ul>
 
-<h2 style="margin-top:0">2.2 Radiation Effects — LET &amp; TID</h2>
+<h2 id="2-2" style="margin-top:0">2.2 Radiation Effects — LET &amp; TID</h2>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
 <svg viewBox="0 0 400 100" width="100%" style="max-width:400px">
@@ -1307,7 +1341,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <tr><td><strong>FDIR</strong></td><td>Fault detection, isolation, and recovery — watchdog timers, health monitors, safe mode</td></tr>
 </table>
 
-<details>
+<details id="time-dist">
 <summary>Time Distribution — RTC / PPS / PPM</summary>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
@@ -1385,7 +1419,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </ul>
 </details>
 
-<details>
+<details id="data-buses">
 <summary>Data Buses — Physical Layer &amp; Protocol Trade-offs</summary>
 <p>Spacecraft use dedicated data buses to connect the OBC with instruments, sensors, and other subsystems. The choice of bus has major implications for the <strong>harness mass</strong> (number of wires, shielding), <strong>connector pin count</strong>, <strong>power draw</strong> (driver circuits, termination), and <strong>fault tolerance</strong> (galvanic isolation, differential signaling).</p>
 
@@ -1429,7 +1463,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <p class="note">SpaceWire was developed by ESA in the 1990s and is now widely used on NASA and ESA missions for high-rate data. MIL-STD-1553 dates from the 1970s and remains the standard for military and aerospace command/response buses due to its deterministic behavior and galvanic isolation. CAN, originally developed by Bosch for automotive, is increasingly used in CubeSats for its simplicity and multi-master capability. The trend in next-generation spacecraft (e.g. ESA's OPS-SAT, NASA's HALO) is toward CAN-FD for command/response and SpaceFibre for high-rate payload links.</p>
 </details>
 
-<details>
+<details id="cmd-tlm">
 <summary>Command &amp; Telemetry — Framing, Standards &amp; Packetization</summary>
 <p>The CDH subsystem processes commands uplinked from the ground and packages telemetry for downlink. FSW handles the protocol stack — from raw RF frames up to application-level commands and telemetry packets. Multiple standards coexist depending on the mission type, agency, and data rate.</p>
 
@@ -1517,7 +1551,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <p class="note">CCSDS was formed in 1982 by the world's space agencies to create common data handling standards. Before CCSDS, every mission used bespoke frame formats, making cross-support between agencies nearly impossible. The most recent major addition is CCSDS 766.1 (CFDP), ratified in 2022, which enables reliable file transfer with automatic retransmission — critical for deep-space missions where round-trip delays are measured in minutes to hours.</p>
 </details>
 
-<details>
+<details id="fdir">
 <summary>FDIR — Fault Detection, Isolation &amp; Recovery</summary>
 <p>FDIR is the safety net of the CDH subsystem. It continuously monitors spacecraft health and takes autonomous action when something goes wrong — from resetting a crashed task to switching to a redundant unit or entering safe mode. In deep-space missions where light-speed delay can be minutes to hours, FDIR <em>must</em> work without ground intervention.</p>
 
@@ -1567,6 +1601,23 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <p class="note">A well-designed FDIR strategy is critical for deep-space missions where light-speed delay makes real-time ground intervention impossible. NASA's Mars rovers and ESA's comet-chasing Rosetta both carried sophisticated onboard FDIR that kept the spacecraft alive through anomalies without ground contact. Rosetta famously survived a 957-day deep-space hibernation and autonomously woke up, oriented to Earth, and established communication — a pure FDIR achievement. On the near-Earth side, SpaceX's Dragon capsule performs continuous FDIR during crewed flight, with redundant flight computers, cross-strapped sensors, and autonomous abort capability.</p>
 </details>
 </section>
+</section>
+
+<section class="section-card" id="process">
+<h2 style="margin-top:0">★ The Process</h2>
+<p><strong>Responsible Engineers:</strong> CDH Engineer, Flight Software Engineer, Systems Engineer, Electronics Engineer</p>
+<p><strong>Users:</strong> Systems Engineers, Flight Software Engineers, Operations Engineers, Integration &amp; Test Engineers, Payload Scientists</p>
+<p>Designing a CDH subsystem begins with the mission's processing, memory, and data-handling requirements. The OBC hardware must run the flight software within real-time deadlines, store enough telemetry between ground contacts, and communicate reliably with every other subsystem — all while surviving the radiation environment.</p>
+<p>The typical design workflow:</p>
+<ol style="margin:8px 0;padding-left:20px">
+<li><strong>Define processing requirements</strong> — control loop rates, data throughput, FSW complexity, radiation tolerance</li>
+<li><strong>Select the processor architecture</strong> — ARM, RISC-V, PowerPC, or x86; single-core vs. multi-core; FPGA companion or SoC</li>
+<li><strong>Size the memory hierarchy</strong> — RAM for code + data, NOR Flash for XIP code storage, NAND/SSD for bulk telemetry</li>
+<li><strong>Choose the data bus topology</strong> — CAN vs. MIL-STD-1553 vs. SpaceWire; harness mass, speed, and redundancy trades</li>
+<li><strong>Design the FDIR strategy</strong> — watchdog hierarchy, health monitors, failover logic, safe mode entry/exit criteria</li>
+<li><strong>Iterate and converge</strong> — revisit each choice as power, mass, cost, and radiation constraints tighten the design</li>
+</ol>
+<p>A complete step-by-step walkthrough is in the <a href="#s4">Design Walkthrough — Worked Example</a> below.</p>
 </section>
 
 <section class="section-card" id="s4">

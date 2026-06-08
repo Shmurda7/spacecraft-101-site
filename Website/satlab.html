@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <title>SatLab — Build & Launch Your Spacecraft</title>
+<!-- ===== STYLES ===== -->
 <style>@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 :root{--bg:#f0e8f5;--card-bg:#fff9fb;--text:#3a2a4a;--text-light:#7a6a8a;--link:#d0608a;--link-hover:#c04070;--shadow:rgba(208,96,138,.12);--border:#e0d0e5;--accent:#e8a050;--accent2:#7bc4b0;--accent3:#b080d0;--accent4:#6888c0}
 body.dark{--bg:#0a0515;--card-bg:#151020;--text:#e0d0e8;--link:#f0a0b0;--link-hover:#e88090;--shadow:rgba(240,160,176,.12);--border:#3a2a50;--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
+#search-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+#search-bar label{font-size:13px;font-weight:700;color:var(--text-light);white-space:nowrap}
+#search-input{flex:1;padding:8px 14px;border:2px solid var(--border);border-radius:50px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+#search-input:focus{border-color:var(--link)}
+#search-input::placeholder{color:var(--text-light)}
+.search-match{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px;padding:0 2px}
 html{scroll-behavior:smooth}
 body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:900px;margin:auto;padding:30px 20px;background:var(--bg);color:var(--text);transition:background .4s,color .4s;overflow-x:hidden;opacity:0;animation:pageIn .5s ease-out forwards}
 @keyframes pageIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
@@ -99,13 +106,20 @@ a.button:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 8px 20px var(
 @keyframes flashBang{0%{width:30px;height:30px;opacity:1}50%{width:250px;height:250px;opacity:.6;background:#fbbf24}100%{width:400px;height:400px;opacity:0}}
 #launch-failed{display:none;text-align:center;padding:30px 20px}
 #launch-failed.active{display:block;animation:fadeUp .5s ease-out}
-#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:hidden}
-.p-star{position:absolute;border-radius:50%;opacity:0;animation:starFloat linear infinite}@keyframes starFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-5vh) scale(1) rotate(360deg)}}</style>
+</style>
+<!-- ===== END HEAD ===== -->
 </head>
 <body>
+<!-- ===== SEARCH BAR ===== -->
+<div id="search-bar">
+  <label for="search-input">✦ Search</label>
+  <input type="text" id="search-input" placeholder="Filter topics..." />
+</div>
+<!-- ===== TOGGLE BUTTON ===== -->
 <button id="toggle-theme">☾ Dark</button>
 
 <a href="index.html" class="back-link">← Back to Knowledge Base</a>
+<!-- ===== PAGE TITLE ===== -->
 <h1 style="margin:4px 0 0">🛰️ SatLab</h1>
 <p style="margin:2px 0 12px;opacity:.7;font-size:0.9em">Build a spacecraft. Pick your parts. Launch it.</p>
 
@@ -770,14 +784,38 @@ function resetAll(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
+<!-- ===== THEME TOGGLE SCRIPT ===== -->
 <script>
-(function(){let c=document.getElementById('particles');if(!c){c=document.createElement('div');c.id='particles';document.body.prepend(c)}for(let i=32;i--;){let s=document.createElement('div');s.className='p-star';let sz=2+Math.random()*4;s.style.cssText='left:'+(Math.random()*100)+'%;width:'+sz+'px;height:'+sz+'px;background:rgba(255,255,255,'+(.2+Math.random()*.4)+');animation-duration:'+(10+Math.random()*20)+'s;animation-delay:'+(Math.random()*20)+'s';c.appendChild(s)}
+(function(){
 const btn=document.getElementById('toggle-theme');const stored=localStorage.getItem('theme');
 if(stored==='dark'){document.body.classList.add('dark');btn.textContent='\u2606 Light'}
 btn.onclick=()=>{document.body.classList.toggle('dark');const isDark=document.body.classList.contains('dark');localStorage.setItem('theme',isDark?'dark':'light');btn.textContent=isDark?'\u2606 Light':'\u2605 Dark'};
+})();
 </script>
+
+<!-- ===== SEARCH SCRIPT ===== -->
+<script>
+(function(){
+  var input = document.getElementById('search-input');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.section-card').forEach(function(el){
+      var text = el.textContent.toLowerCase();
+      var match = !q || text.includes(q);
+      el.style.display = match ? '' : 'none';
+    });
+  });
+})();
+</script>
+
+<!-- ===== FEEDBACK FOOTER ===== -->
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center; background: var(--bg-color, #f8f9fa); padding: 8px 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-size: 14px;">
   Got feedback? <a href="https://github.com/avivfaraj/spacecraft-101-site/issues/new" target="_blank" style="color: var(--primary-color, #007bff); font-weight: 600;">Open an issue</a>
 </div>
+
+<!-- ===== END BODY ===== -->
 </body>
+
+<!-- ===== END HTML ===== -->
 </html>

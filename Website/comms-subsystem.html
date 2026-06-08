@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <title>Communications (COMMS) Subsystem</title>
+<!-- ===== STYLES ===== -->
 <style>@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 :root{--bg:#f0e8f5;--card-bg:#fff9fb;--card-bg-nested:#faf0f5;--text:#3a2a4a;--text-light:#7a6a8a;--border:#e0d0e5;--th-bg:#f5eaf5;--link:#d0608a;--link-hover:#c04070;--note:#9a8aa0;--hr:#e5d5ea;--shadow:rgba(208,96,138,.12);--accent:#e8a050;--accent2:#7bc4b0;--accent3:#b080d0;--accent4:#6888c0}
 body.dark{--bg:#0a0515;--card-bg:#151020;--card-bg-nested:#1f1530;--text:#e0d0e8;--text-light:#a090b0;--border:#3a2a50;--th-bg:#1f1530;--link:#f0a0b0;--link-hover:#e88090;--note:#9080a0;--hr:#3a2a50;--shadow:rgba(240,160,176,.12);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
+#search-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+#search-bar label{font-size:13px;font-weight:700;color:var(--text-light);white-space:nowrap}
+#search-input{flex:1;padding:8px 14px;border:2px solid var(--border);border-radius:50px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+#search-input:focus{border-color:var(--link)}
+#search-input::placeholder{color:var(--text-light)}
+.search-match{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px;padding:0 2px}
 html{scroll-behavior:smooth}
 body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .4s,color .4s;opacity:0;animation:pageIn .5s ease-out forwards}
 @keyframes pageIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
@@ -47,20 +54,27 @@ tr:last-child td:last-child{border-bottom-right-radius:12px}
 #toggle-theme{position:fixed;top:16px;right:16px;padding:8px 18px;background:linear-gradient(135deg,var(--card-bg),color-mix(in srgb,var(--accent) 6%,var(--card-bg)));color:var(--text);border:2px solid var(--border);border-radius:50px;cursor:pointer;font-size:.82em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;z-index:100;transition:all .2s;letter-spacing:.03em}
 #toggle-theme:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px var(--shadow)}
 hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
-#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:hidden}
-.p-star{position:absolute;border-radius:50%;opacity:0;animation:starFloat linear infinite}@keyframes starFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-5vh) scale(1) rotate(360deg)}}</style>
+</style>
+<!-- ===== END HEAD ===== -->
 </head>
 <body>
+<!-- ===== SEARCH BAR ===== -->
+<div id="search-bar">
+  <label for="search-input">✦ Search</label>
+  <input type="text" id="search-input" placeholder="Filter topics..." />
+</div>
+<!-- ===== TOGGLE BUTTON ===== -->
 <button id="toggle-theme">☾ Dark</button>
 <a href="index.html">← Home</a>
+<!-- ===== PAGE TITLE ===== -->
 <h1>Communications (COMMS) Subsystem</h1>
 <p>The <strong>Communications (COMMS)</strong> subsystem is the spacecraft's link to the ground. It receives commands, transmits telemetry and science data, and may support cross-link communication between spacecraft. Designing a COMMS subsystem starts from the mission's data requirements — how much data needs to come down, how often you can talk to the ground, and how much power, mass, and money you have to spend. Everything else follows from there.</p>
 
+<!-- ===== TABLE OF CONTENTS ===== -->
 <nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
 <h2 style="margin-top:0;font-size:1em">Contents</h2>
 <ul style="margin:4px 0;padding-left:20px">
-<li><a href="#idea">★ The Idea</a></li>
-<li><a href="#process">★ The Process</a></li>
+<li><a href="#fundamentals">★ The Fundamentals</a></li>
 <li><a href="#design">★ The Design</a>
 <ul style="margin:2px 0;padding-left:20px">
 <li><a href="#s1">1. RF Fundamentals</a></li>
@@ -71,13 +85,15 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <li><a href="#s6">6. Regulations &amp; Licensing</a></li>
 </ul>
 </li>
+<li><a href="#process">★ The Process</a></li>
 <li><a href="#s7">Design Walkthrough — Worked Example</a></li>
 <li><a href="#refs">★ References</a></li>
 </ul>
 </nav>
 
-<section class="section-card" id="idea">
-<h2 style="margin-top:0">★ The Idea</h2>
+<!-- ===== SECTION: FUNDAMENTALS ===== -->
+<section class="section-card" id="fundamentals">
+<h2 style="margin-top:0">★ The Fundamentals</h2>
 <p style="margin:8px 0">The <strong>COMMS subsystem</strong> is the only connection between the spacecraft and the mission team. If the link fails, the spacecraft is unreachable — no commands can be sent, no data can be recovered. Every COMMS design starts with a simple question: <em>how much data do I need to get down, and how often can I talk to the ground?</em></p>
 <p style="margin:8px 0">The sections below give you the reference material — frequency bands, modulation schemes, antenna types, link budgets, ground stations. But if you're designing a comms system from scratch, start with <a href="#s7">Section 7</a> — it walks through a complete example (a cubesat measuring radiation in the Van Allen Belt) step by step, showing how each decision flows from the data requirement.</p>
 <p style="margin:8px 0">Every COMMS subsystem is built from six fundamental elements:</p>
@@ -93,27 +109,12 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These elements work together: the modem produces a modulated signal, the transmitter amplifies it, and the antenna radiates it to the ground station — with every stage subject to frequency allocation, power limits, and link budget constraints.</p>
 </section>
 
-<section class="section-card" id="process">
-<h2 style="margin-top:0">★ The Process</h2>
-<p><strong>Responsible Engineers:</strong> RF Engineer, Systems Engineer, Communications Engineer</p>
-<p><strong>Users:</strong> Systems Engineers, Operations Engineers, Flight Software Engineers, Ground Station Operators</p>
-<p>Designing a communications subsystem begins with the mission's data requirement — how much data needs to come down, how often you can talk to the ground, and how much power, mass, and money you have available. Everything else follows from there.</p>
-<p>The typical design workflow:</p>
-<ol style="margin:8px 0;padding-left:20px">
-<li><strong>Determine the data requirement</strong> — science data volume per orbit, housekeeping telemetry, ground contact schedule</li>
-<li><strong>Choose the modulation scheme</strong> — spectral efficiency vs. Eb/N₀ trade; BPSK, QPSK, or higher-order</li>
-<li><strong>Select the frequency band</strong> — driven by data rate, antenna size constraints, and regulatory environment</li>
-<li><strong>Pick polarization and antenna type</strong> — circular vs. linear; patch, helix, dish, or phased array</li>
-<li><strong>Build the link budget</strong> — verify that received power and Eb/N₀ meet the required bit error rate with margin</li>
-<li><strong>Iterate and converge</strong> — revisit each choice as trades tighten mass, power, cost, and performance</li>
-</ol>
-<p>A complete step-by-step walkthrough is in the <a href="#s7">Design Walkthrough — Worked Example</a> below.</p>
-</section>
-
+<!-- ===== SECTION: DESIGN ===== -->
 <section class="section-card" id="design">
 <h2 style="margin-top:0">★ The Design</h2>
-<p>The sections below provide the detailed reference material — frequency bands, antenna parameters, transmitter/receiver architectures, link budget equations, ground segment standards, and regulatory requirements. Use these as a lookup reference while following the design process above.</p>
+<p>The sections below provide the detailed reference material — frequency bands, antenna parameters, transmitter/receiver architectures, link budget equations, ground segment standards, and regulatory requirements. Use these as a lookup reference while following the design process below.</p>
 
+<!-- ===== SECTION: RF FUNDAMENTALS ===== -->
 <section class="section-card" id="s1">
 <h3 style="margin-top:0">1. RF Fundamentals</h3>
 <p>Radio-frequency fundamentals underpin every COMMS design. Frequency band choice determines antenna size, atmospheric loss, and data rate capability. Modulation and coding determine how efficiently you use the bandwidth and how robust the link is to noise. The key insight: <strong>there is no direct conversion from frequency to data rate</strong> — the relationship depends entirely on how data is modulated onto the carrier wave.</p>
@@ -164,6 +165,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </details>
 </section>
 
+<!-- ===== SECTION: ANTENNAS ===== -->
 <section class="section-card" id="s2">
 <h3 style="margin-top:0">2. Antennas</h3>
 <p>The antenna converts electrical signals into radiated electromagnetic waves and vice versa. Antenna design starts with Maxwell's equations — the four laws that describe how electric and magnetic fields are generated and interact. Understanding these fundamentals is essential because antenna performance directly determines whether your link closes, and every parameter (gain, directivity, efficiency, polarization, radiation pattern) involves trade-offs.</p>
@@ -246,6 +248,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </details>
 </section>
 
+<!-- ===== SECTION: TRANSMITTERS & RECEIVERS ===== -->
 <section class="section-card" id="s3">
 <h3 style="margin-top:0">3. Transmitters &amp; Receivers</h3>
 <p>The transmitter amplifies and radiates the modulated signal; the receiver captures and demodulates the weak ground signal. Together they define the achievable data rate and link margin.</p>
@@ -287,6 +290,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </details>
 </section>
 
+<!-- ===== SECTION: LINK ANALYSIS ===== -->
 <section class="section-card" id="s4">
 <h3 style="margin-top:0">4. Link Analysis</h3>
 <p>The link budget is the fundamental calculation that proves the communication link will work. It accounts for every gain and loss between the transmitter and receiver — transmit power, antenna gains, free-space path loss, atmospheric effects, pointing error, and implementation margin. The result is compared against the required signal quality for your modulation and coding scheme to determine whether the link has positive margin.</p>
@@ -412,6 +416,7 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </details>
 </section>
 
+<!-- ===== SECTION: GROUND SEGMENT ===== -->
 <section class="section-card" id="s5">
 <h3 style="margin-top:0">5. Ground Segment</h3>
 <p>The ground segment is the earth-side half of the communication link. Ground stations, antenna tracking, Doppler compensation, and protocol stacks must be designed together with the spacecraft COMMS subsystem.</p>
@@ -449,6 +454,7 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </details>
 </section>
 
+<!-- ===== SECTION: REGULATIONS & LICENSING ===== -->
 <section class="section-card" id="s6">
 <h3 style="margin-top:0">6. Regulations &amp; Licensing</h3>
 <p>Space communications are regulated internationally by the ITU and nationally by agencies like the FCC (US) or OFCOM (UK). Frequency allocation, power limits, and orbital slot registration must be secured before launch.</p>
@@ -486,6 +492,25 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </section>
 </section>
 
+<!-- ===== SECTION: PROCESS ===== -->
+<section class="section-card" id="process">
+<h2 style="margin-top:0">★ The Process</h2>
+<p><strong>Responsible Engineers:</strong> RF Engineer, Systems Engineer, Communications Engineer</p>
+<p><strong>Users:</strong> Systems Engineers, Operations Engineers, Flight Software Engineers, Ground Station Operators</p>
+<p>Designing a communications subsystem begins with the mission's data requirement — how much data needs to come down, how often you can talk to the ground, and how much power, mass, and money you have available. Everything else follows from there.</p>
+<p>The typical design workflow:</p>
+<ol style="margin:8px 0;padding-left:20px">
+<li><strong>Determine the data requirement</strong> — science data volume per orbit, housekeeping telemetry, ground contact schedule</li>
+<li><strong>Choose the modulation scheme</strong> — spectral efficiency vs. Eb/N₀ trade; BPSK, QPSK, or higher-order</li>
+<li><strong>Select the frequency band</strong> — driven by data rate, antenna size constraints, and regulatory environment</li>
+<li><strong>Pick polarization and antenna type</strong> — circular vs. linear; patch, helix, dish, or phased array</li>
+<li><strong>Build the link budget</strong> — verify that received power and Eb/N₀ meet the required bit error rate with margin</li>
+<li><strong>Iterate and converge</strong> — revisit each choice as trades tighten mass, power, cost, and performance</li>
+</ol>
+<p>A complete step-by-step walkthrough is in the <a href="#s7">Design Walkthrough — Worked Example</a> below.</p>
+</section>
+
+<!-- ===== SECTION: DESIGN WALKTHROUGH ===== -->
 <section class="section-card" id="s7">
 <h2 style="margin-top:0">Design Walkthrough — Worked Example</h2>
 <p>This section walks through designing a COMMS subsystem from scratch using a concrete example. Every decision flows from the data requirement, and each step references the relevant reference section above. The design is iterative — expect to loop back through the steps as choices in one area constrain options in another.</p>
@@ -616,6 +641,7 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 </details>
 </section>
 
+<!-- ===== REFERENCES ===== -->
 <section class="section-card" id="refs">
 <h2 style="margin-top:0">★ References</h2>
 <p>Standards, tutorials, and further reading for communications subsystem design:</p>
@@ -634,14 +660,38 @@ P<sub>rx</sub> = EIRP + G<sub>rx</sub> − FSL − L<sub>env</sub> − L<sub>poi
 <p style="font-size:0.85em;color:var(--note)">These resources complement the content on this page. The worked example above is adapted from the <a href="https://docs.google.com/spreadsheets/d/1St7OgRfg7CElAO7TT4rqVKN-ZBS_3-LcApncXWG3Z-4/edit" target="_blank">Link Budget Google Sheet</a> referenced in the spacecraft learning notes.</p>
 </section>
 
+<!-- ===== THEME TOGGLE SCRIPT ===== -->
 <script>
-(function(){let c=document.getElementById('particles');if(!c){c=document.createElement('div');c.id='particles';document.body.prepend(c)}for(let i=32;i--;){let s=document.createElement('div');s.className='p-star';let sz=2+Math.random()*4;s.style.cssText='left:'+(Math.random()*100)+'%;width:'+sz+'px;height:'+sz+'px;background:rgba(255,255,255,'+(.2+Math.random()*.4)+');animation-duration:'+(10+Math.random()*20)+'s;animation-delay:'+(Math.random()*20)+'s';c.appendChild(s)}
+(function(){
 const btn=document.getElementById('toggle-theme');const stored=localStorage.getItem('theme');
 if(stored==='dark'){document.body.classList.add('dark');btn.textContent='\u2606 Light'}
 btn.onclick=()=>{document.body.classList.toggle('dark');const isDark=document.body.classList.contains('dark');localStorage.setItem('theme',isDark?'dark':'light');btn.textContent=isDark?'\u2606 Light':'\u2605 Dark'};
+})();
 </script>
+
+<!-- ===== SEARCH SCRIPT ===== -->
+<script>
+(function(){
+  var input = document.getElementById('search-input');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.section-card').forEach(function(el){
+      var text = el.textContent.toLowerCase();
+      var match = !q || text.includes(q);
+      el.style.display = match ? '' : 'none';
+    });
+  });
+})();
+</script>
+
+<!-- ===== FEEDBACK FOOTER ===== -->
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center; background: var(--bg-color, #f8f9fa); padding: 8px 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-size: 14px;">
   Got feedback? <a href="https://github.com/avivfaraj/spacecraft-101-site/issues/new" target="_blank" style="color: var(--primary-color, #007bff); font-weight: 600;">Open an issue</a>
 </div>
+
+<!-- ===== END BODY ===== -->
 </body>
+
+<!-- ===== END HTML ===== -->
 </html>
