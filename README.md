@@ -1,2 +1,2 @@
-# Spacecraft-101
+# Spacecraft-101-Site
 Things is a set of info pages that I've created documenting general knowledge of spacecraft architecture design, documentation, implementation, testing, etc...
