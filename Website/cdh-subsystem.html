@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <title>Command & Data Handling (CDH) Subsystem</title>
+<!-- ===== STYLES ===== -->
 <style>@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 :root{--bg:#f0e8f5;--card-bg:#fff9fb;--card-bg-nested:#faf0f5;--text:#3a2a4a;--text-light:#7a6a8a;--border:#e0d0e5;--th-bg:#f5eaf5;--link:#d0608a;--link-hover:#c04070;--note:#9a8aa0;--hr:#e5d5ea;--shadow:rgba(208,96,138,.12);--accent:#e8a050;--accent2:#7bc4b0;--accent3:#b080d0;--accent4:#6888c0}
 body.dark{--bg:#0a0515;--card-bg:#151020;--card-bg-nested:#1f1530;--text:#e0d0e8;--text-light:#a090b0;--border:#3a2a50;--th-bg:#1f1530;--link:#f0a0b0;--link-hover:#e88090;--note:#9080a0;--hr:#3a2a50;--shadow:rgba(240,160,176,.12);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
+#search-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+#search-bar label{font-size:13px;font-weight:700;color:var(--text-light);white-space:nowrap}
+#search-input{flex:1;padding:8px 14px;border:2px solid var(--border);border-radius:50px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+#search-input:focus{border-color:var(--link)}
+#search-input::placeholder{color:var(--text-light)}
+.search-match{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px;padding:0 2px}
 html{scroll-behavior:smooth}
 body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .4s,color .4s;opacity:0;animation:pageIn .5s ease-out forwards}
 @keyframes pageIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
@@ -47,19 +54,46 @@ tr:last-child td:last-child{border-bottom-right-radius:12px}
 #toggle-theme{position:fixed;top:16px;right:16px;padding:8px 18px;background:linear-gradient(135deg,var(--card-bg),color-mix(in srgb,var(--accent) 6%,var(--card-bg)));color:var(--text);border:2px solid var(--border);border-radius:50px;cursor:pointer;font-size:.82em;font-weight:700;font-family:'Quicksand','Nunito',sans-serif;z-index:100;transition:all .2s;letter-spacing:.03em}
 #toggle-theme:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px var(--shadow)}
 hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
-#particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:hidden}
-.p-star{position:absolute;border-radius:50%;opacity:0;animation:starFloat linear infinite}@keyframes starFloat{0%{opacity:0;transform:translateY(100vh) scale(0) rotate(0deg)}10%{opacity:.6}90%{opacity:.6}100%{opacity:0;transform:translateY(-5vh) scale(1) rotate(360deg)}}</style>
+</style>
+<!-- ===== END HEAD ===== -->
 </head>
 <body>
+
+<!-- ===== SEARCH BAR ===== -->
+<div id="search-bar">
+  <label for="search-input">✦ Search</label>
+  <input type="text" id="search-input" placeholder="Filter topics..." />
+</div>
+
+<!-- ===== TOGGLE BUTTON ===== -->
 <button id="toggle-theme">☾ Dark</button>
 <a href="index.html">← Home</a>
-<h1>Command &amp; Data Handling (CDH) Subsystem</h1>
-<p>The <strong>Command &amp; Data Handling (CDH)</strong> subsystem is the central nervous system of a spacecraft. It processes commands from the ground, executes flight software, manages onboard data, and coordinates all other subsystems. The CDH subsystem is built around three pillars: the <strong>OBC hardware</strong> that provides compute and storage, the <strong>Flight Software (FSW)</strong> that controls every aspect of the mission, and the <strong>data network</strong> that ties everything together.</p>
 
+<!-- ===== PAGE TITLE ===== -->
+<h1>Command &amp; Data Handling (CDH) Subsystem</h1>
+<p>The <strong>Command &amp; Data Handling (CDH)</strong> subsystem forms the infrastructure at which all spacecraft functions depend on.
+  The CDH subsystem is built around 3 key components:
+  <ul>
+    <li>
+      <strong> On-Board Computer (OBC)</strong>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <strong> Flight Software (FSW) </strong>
+    </li>
+  </ul>
+  <ul>
+    <li>
+      <strong> Data Network </strong>
+    </li>
+  </ul>
+
+  <!-- ===== TABLE OF CONTENTS ===== -->
 <nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
 <h2 style="margin-top:0;font-size:1em">Contents</h2>
 <ul style="margin:4px 0;padding-left:20px">
-<li><a href="#idea">★ The Idea</a>
+<li><a href="#fundamentals">★ The Fundamentals</a>
 <ul style="margin:2px 0;padding-left:20px">
 <li><a href="#cores">Cores</a></li>
 <li><a href="#freq">Operating Speed / Frequency</a></li>
@@ -103,40 +137,44 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </ul>
 </nav>
 
-<section class="section-card" id="idea">
-<h2 style="margin-top:0">★ The Idea</h2>
-<p style="margin:8px 0">The <strong>CDH subsystem</strong> is the brain and nervous system of a spacecraft. It receives commands from the ground, runs flight software, collects and stores science data, manages the spacecraft's time, and talks to every other subsystem — all while withstanding extreme temperatures, vibration, and ionizing radiation.</p>
-<p style="margin:8px 0">Every CDH subsystem is built from three fundamental capabilities:</p>
+<!-- ===== SECTION: FUNDAMENTALS ===== -->
+<section class="section-card" id="fundamentals">
+<h2 style="margin-top:0">★ The Fundamentals</h2>
+<p style="margin:8px 0">
+  The <strong>CDH subsystem</strong> acts as the "brain and nervous system" of the spacecraft. 
+  It provides command, control, data management, and communication interfaces to every subsystem in some way.
+</p>
+<p style="margin:8px 0">
+  Every CDH subsystem is built from these fundamental capabilities:
+</p>
 <table style="width:100%;border-collapse:collapse;margin:8px 0">
-<tr><th style="width:100px;text-align:left;padding:4px 8px">Pillar</th><th style="text-align:left;padding:4px 8px">What it does</th></tr>
-<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>OBC Hardware</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">The <em>physical platform</em> — processors, memory, FPGAs, and storage that execute instructions and hold data. Choice of <strong>CISC</strong> or <strong>RISC</strong> processor, memory architecture, and FPGA strategy determines performance, power, and radiation tolerance.</td></tr>
-<tr><td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Flight Software (FSW)</strong></td><td style="padding:4px 8px;border-bottom:1px solid var(--border)">The <em>intelligence</em> — the operating system, applications, drivers, and bootloader that control every aspect of the mission. A <strong>Real-Time OS (RTOS)</strong> is used because missing a deadline can mean losing the spacecraft.</td></tr>
-<tr><td style="padding:4px 8px"><strong>Data &amp; Networking</strong></td><td style="padding:4px 8px">The <em>communication backbone</em> — data buses (SpaceWire, MIL-STD-1553, CAN), time distribution, command uplink, telemetry downlink, and fault management that tie all subsystems together.</td></tr>
+<tr>
+  <th style="width:100px;text-align:left;padding:4px 8px">Pillar</th>
+  <th style="text-align:left;padding:4px 8px">What it does</th>
+</tr>
+<tr>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>OBC Hardware</strong></td>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)">
+    Consists of the processors, memory, FPGAs, and storage that execute instructions and store data. 
+    Choice of processor achitecture, memory architecture, and FPGA strategy determines performance, power, and reliability.</td>
+</tr>
+<tr>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Flight Software (FSW)</strong></td>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)">
+    Consists of the operating system (OS), applications, drivers, and bootloader to perform logic operations that are routine or commanded. 
+    Choice of OS, applications, features, and drivers determine performance, efficiency, and configurability.</td>
+</tr>
+<tr>
+  <td style="padding:4px 8px"><strong>Data &amp; Networking</strong></td>
+  <td style="padding:4px 8px">
+    Consists of the data buses (SpaceWire, MIL-STD-1553, CAN) and time distribution to communication with every other component.
+    Choice of the data bus architecture and timing determine communication speed and accuracy timed executions.</td>
+</tr>
 </table>
-<p style="margin:8px 0 0 0;color:var(--note);font-size:0.9em">These three pillars work together: the OBC hardware runs the FSW, FSW controls the spacecraft and processes data, and the data network carries commands from the ground and telemetry to every subsystem — all while radiation, heat, and power constraints push every design decision. The sections below break each pillar apart in detail.</p>
-
-<h3 id="cores" style="margin-top:20px">Cores</h3>
-<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
-
-<h3 id="freq" style="margin-top:20px">Operating Speed / Frequency</h3>
-<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
-
-<h3 id="size" style="margin-top:20px">Operating Size</h3>
-<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
-
-<h3 id="fsw-code" style="margin-top:20px">FSW Core Code</h3>
-<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
-
-<h3 id="hw-sw" style="margin-top:20px">How Hardware to Software</h3>
-<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
-
-<h3 id="bits" style="margin-top:20px">Bits Explained</h3>
-<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
-
-<h3 id="ops" style="margin-top:20px">Operations Explained</h3>
-<p style="margin:4px 0;color:var(--note);font-style:italic">Details coming soon.</p>
 </section>
 
+
+<!-- ===== SECTION: DESIGN ===== -->
 <section class="section-card" id="design">
 <h2 style="margin-top:0">★ The Design</h2>
 <p>The sections below provide the detailed reference material — OBC hardware (processors, memory, FPGAs, storage), flight software (RTOS, images, radiation effects), and data networking (buses, timekeeping, command &amp; telemetry, FDIR). Use these as a lookup reference while following the design process below.</p>
@@ -158,7 +196,8 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
       <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#f59e0b"/>
     </linearGradient>
     <linearGradient id="cache-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fcd34d"/><stop offset="100%" stop-color="#fbbf24"/>
+      <stop offset="0%" stop-color="#fcd34d"/><stop offset="100%" stop-color=", failover logic, safe mode entry/exit criteria</li>
+<li><strong>Iterate and converge</strong> — revisit each choice as power, mass, c#fbbf24"/>
     </linearGradient>
     <linearGradient id="vm-grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/>
@@ -343,11 +382,12 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </svg>
 </div>
 
+<!-- ===== SECTION: OBC HARDWARE ===== -->
 <section class="section-card" id="s1">
 <h3 style="margin-top:0">1. OBC Hardware</h3>
 <p>The OBC hardware is the physical computing platform of the CDH subsystem — the processors, memory, FPGAs, storage, and interconnects that execute instructions and hold data. Every OBC board must balance performance, power, radiation tolerance, and reliability against the mission's requirements.</p>
 
-<h2 id="1-1" style="margin-top:0">1.1 Processor</h2>
+<h2 style="margin-top:0">1.1 Processor</h2>
 <p>A device that receives input data, performs mathematical and logical calculations, and executes instructions to run apps and operating systems (OS).</p>
 
 <div style="text-align:center;margin:16px 0;overflow-x:auto">
@@ -568,7 +608,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 id="1-2" style="margin-top:0">1.2 Memory</h2>
+<h2 style="margin-top:0">1.2 Memory</h2>
 <p style="margin-top:0">A device that temporarily holds data and instructions for immediate access. Memory is broadly categorized into <strong>Volatile Memory (VM)</strong> and <strong>Non-Volatile Memory (NVM)</strong>, which differ in how they retain data when power is removed.</p>
 
 <div style="text-align:center;margin:16px 0;overflow-x:auto">
@@ -843,7 +883,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 id="1-3" style="margin-top:0">1.3 FPGA (Field-Programmable Gate Array)</h2>
+<h2 style="margin-top:0">1.3 FPGA (Field-Programmable Gate Array)</h2>
 <p>A type of configurable integrated circuit that can be repeatedly programmed after manufacturing. FPGAs consist of a grid-connected array of programmable logic blocks that can be configured to implement custom digital circuits.</p>
 <ul>
 <li>Reconfigurable after deployment</li>
@@ -1006,7 +1046,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 id="1-4" style="margin-top:0">1.4 Storage — SSD (NVMe vs SATA)</h2>
+<h2 style="margin-top:0">1.4 Storage — SSD (NVMe vs SATA)</h2>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
 <svg viewBox="0 0 400 90" width="100%" style="max-width:400px">
@@ -1030,7 +1070,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </ul>
 <p class="note">Flash-based SSDs began replacing hard drives in the late 2000s. SATA was originally designed for spinning disks, which is why it caps at ~600 MB/s with high latency and a single command queue. NVMe, released in 2011, was built from the ground up for flash — it connects directly via PCIe lanes and supports up to 65,535 parallel command queues. In spacecraft, radiation-hardened SSDs with custom controllers are used for bulk data storage, often in RAID-1 configurations for redundancy.</p>
 
-<h2 id="1-5" style="margin-top:0">1.5 Error Protection — EDAC &amp; RAID</h2>
+<h2 style="margin-top:0">1.5 Error Protection — EDAC &amp; RAID</h2>
 
 <h3>EDAC (Error Detection and Correction)</h3>
 
@@ -1085,6 +1125,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </ul>
 </section>
 
+<!-- ===== SECTION: FLIGHT SOFTWARE ===== -->
 <section class="section-card" id="s2">
 <h3 style="margin-top:0">2. Flight Software (FSW)</h3>
 <p>Flight Software (FSW) is the intelligence of the CDH subsystem — the operating system, applications, drivers, and bootloader that control every aspect of the mission. FSW runs on the OBC hardware, schedules tasks, manages resources, and provides a stable environment for mission-critical applications. In space, a <strong>Real-Time OS (RTOS)</strong> is the standard choice because missing a deadline can mean losing the spacecraft.</p>
@@ -1258,7 +1299,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 id="2-1" style="margin-top:0">2.1 Software Images</h2>
+<h2 style="margin-top:0">2.1 Software Images</h2>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
 <svg viewBox="0 0 400 100" width="100%" style="max-width:400px">
@@ -1290,7 +1331,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <li><strong>Layered Images</strong>, <strong>Virtual Machine Image</strong>, <strong>Microkernel Images</strong></li>
 </ul>
 
-<h2 id="2-2" style="margin-top:0">2.2 Radiation Effects — LET &amp; TID</h2>
+<h2 style="margin-top:0">2.2 Radiation Effects — LET &amp; TID</h2>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
 <svg viewBox="0 0 400 100" width="100%" style="max-width:400px">
@@ -1329,6 +1370,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </ul>
 </section>
 
+<!-- ===== SECTION: DATA & NETWORKING ===== -->
 <section class="section-card" id="s3">
 <h3 style="margin-top:0">3. CDH Data &amp; Networking</h3>
 <p>The CDH data network ties every subsystem together. It carries commands from the ground, telemetry from instruments, time synchronization across the spacecraft, and fault alerts between components. The right choice of data bus, timing protocol, and fault management strategy is critical for mission success.</p>
@@ -1341,7 +1383,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <tr><td><strong>FDIR</strong></td><td>Fault detection, isolation, and recovery — watchdog timers, health monitors, safe mode</td></tr>
 </table>
 
-<details id="time-dist">
+<details>
 <summary>Time Distribution — RTC / PPS / PPM</summary>
 
 <div style="text-align:center;margin:12px 0;overflow-x:auto">
@@ -1419,7 +1461,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </ul>
 </details>
 
-<details id="data-buses">
+<details>
 <summary>Data Buses — Physical Layer &amp; Protocol Trade-offs</summary>
 <p>Spacecraft use dedicated data buses to connect the OBC with instruments, sensors, and other subsystems. The choice of bus has major implications for the <strong>harness mass</strong> (number of wires, shielding), <strong>connector pin count</strong>, <strong>power draw</strong> (driver circuits, termination), and <strong>fault tolerance</strong> (galvanic isolation, differential signaling).</p>
 
@@ -1463,7 +1505,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <p class="note">SpaceWire was developed by ESA in the 1990s and is now widely used on NASA and ESA missions for high-rate data. MIL-STD-1553 dates from the 1970s and remains the standard for military and aerospace command/response buses due to its deterministic behavior and galvanic isolation. CAN, originally developed by Bosch for automotive, is increasingly used in CubeSats for its simplicity and multi-master capability. The trend in next-generation spacecraft (e.g. ESA's OPS-SAT, NASA's HALO) is toward CAN-FD for command/response and SpaceFibre for high-rate payload links.</p>
 </details>
 
-<details id="cmd-tlm">
+<details>
 <summary>Command &amp; Telemetry — Framing, Standards &amp; Packetization</summary>
 <p>The CDH subsystem processes commands uplinked from the ground and packages telemetry for downlink. FSW handles the protocol stack — from raw RF frames up to application-level commands and telemetry packets. Multiple standards coexist depending on the mission type, agency, and data rate.</p>
 
@@ -1551,7 +1593,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <p class="note">CCSDS was formed in 1982 by the world's space agencies to create common data handling standards. Before CCSDS, every mission used bespoke frame formats, making cross-support between agencies nearly impossible. The most recent major addition is CCSDS 766.1 (CFDP), ratified in 2022, which enables reliable file transfer with automatic retransmission — critical for deep-space missions where round-trip delays are measured in minutes to hours.</p>
 </details>
 
-<details id="fdir">
+<details>
 <summary>FDIR — Fault Detection, Isolation &amp; Recovery</summary>
 <p>FDIR is the safety net of the CDH subsystem. It continuously monitors spacecraft health and takes autonomous action when something goes wrong — from resetting a crashed task to switching to a redundant unit or entering safe mode. In deep-space missions where light-speed delay can be minutes to hours, FDIR <em>must</em> work without ground intervention.</p>
 
@@ -1603,6 +1645,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </section>
 </section>
 
+<!-- ===== SECTION: PROCESS ===== -->
 <section class="section-card" id="process">
 <h2 style="margin-top:0">★ The Process</h2>
 <p><strong>Responsible Engineers:</strong> CDH Engineer, Flight Software Engineer, Systems Engineer, Electronics Engineer</p>
@@ -1614,12 +1657,12 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <li><strong>Select the processor architecture</strong> — ARM, RISC-V, PowerPC, or x86; single-core vs. multi-core; FPGA companion or SoC</li>
 <li><strong>Size the memory hierarchy</strong> — RAM for code + data, NOR Flash for XIP code storage, NAND/SSD for bulk telemetry</li>
 <li><strong>Choose the data bus topology</strong> — CAN vs. MIL-STD-1553 vs. SpaceWire; harness mass, speed, and redundancy trades</li>
-<li><strong>Design the FDIR strategy</strong> — watchdog hierarchy, health monitors, failover logic, safe mode entry/exit criteria</li>
-<li><strong>Iterate and converge</strong> — revisit each choice as power, mass, cost, and radiation constraints tighten the design</li>
+<li><strong>Design the FDIR strategy</strong> — watchdog hierarchy, health monitorsost, and radiation constraints tighten the design</li>
 </ol>
 <p>A complete step-by-step walkthrough is in the <a href="#s4">Design Walkthrough — Worked Example</a> below.</p>
 </section>
 
+<!-- ===== SECTION: DESIGN WALKTHROUGH ===== -->
 <section class="section-card" id="s4">
 <h2 style="margin-top:0">Design Walkthrough — Worked Example</h2>
 
@@ -1806,6 +1849,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </details>
 </section>
 
+<!-- ===== REFERENCES ===== -->
 <section class="section-card" id="refs">
 <h2 style="margin-top:0">★ References</h2>
 <p>Standards, tutorials, and further reading for command &amp; data handling subsystem design:</p>
@@ -1823,14 +1867,36 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <p style="font-size:0.85em;color:var(--note)">These resources complement the content on this page and provide deeper dives into processor architectures, memory technologies, data bus standards, and flight software design.</p>
 </section>
 
+<!-- ===== THEME TOGGLE SCRIPT ===== -->
 <script>
-(function(){let c=document.getElementById('particles');if(!c){c=document.createElement('div');c.id='particles';document.body.prepend(c)}for(let i=32;i--;){let s=document.createElement('div');s.className='p-star';let sz=2+Math.random()*4;s.style.cssText='left:'+(Math.random()*100)+'%;width:'+sz+'px;height:'+sz+'px;background:rgba(255,255,255,'+(.2+Math.random()*.4)+');animation-duration:'+(10+Math.random()*20)+'s;animation-delay:'+(Math.random()*20)+'s';c.appendChild(s)}
+(function(){
 const btn=document.getElementById('toggle-theme');const stored=localStorage.getItem('theme');
 if(stored==='dark'){document.body.classList.add('dark');btn.textContent='\u2606 Light'}
 btn.onclick=()=>{document.body.classList.toggle('dark');const isDark=document.body.classList.contains('dark');localStorage.setItem('theme',isDark?'dark':'light');btn.textContent=isDark?'\u2606 Light':'\u2605 Dark'};
+})();
 </script>
+
+<!-- ===== SEARCH SCRIPT ===== -->
+<script>
+(function(){
+  var input = document.getElementById('search-input');
+  if (!input) return;
+  input.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.section-card').forEach(function(el){
+      var text = el.textContent.toLowerCase();
+      var match = !q || text.includes(q);
+      el.style.display = match ? '' : 'none';
+    });
+  });
+})();
+</script>
+
+<!-- ===== FEEDBACK FOOTER ===== -->
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center; background: var(--bg-color, #f8f9fa); padding: 8px 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-size: 14px;">
   Got feedback? <a href="https://github.com/avivfaraj/spacecraft-101-site/issues/new" target="_blank" style="color: var(--primary-color, #007bff); font-weight: 600;">Open an issue</a>
 </div>
+<!-- ===== END BODY ===== -->
 </body>
+<!-- ===== END HTML ===== -->
 </html>
