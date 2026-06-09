@@ -1,0 +1,244 @@
+<p class="note">Intel released the 8086 processor in 1978, launching the x86 architecture. 
+  The 8086 was a 16-bit CISC processor with 29,000 transistors running at 5-10 MHz. 
+  The architecture was later extended to 32-bit (IA-32) with the 80386 in 1985 and to 64-bit (x86-64) by AMD in 2003. 
+  Today x86 dominates desktop, server, and many embedded applications, though its power consumption is a concern for spacecraft.</p>
+
+  <p class="note">The RISC philosophy originated at UC Berkeley in 1980 under David Patterson's RISC-I project. 
+  ARM (Acorn RISC Machine) began as a collaboration between Acorn Computers and VLSI Technology in 1985 — the ARM1 had just 25,000 transistors (roughly the same as the 8086) but consumed only 0.1 W. 
+  Today ARM powers billions of mobile and embedded devices. RISC-V, an open-standard ISA, started at UC Berkeley in 2010 and is gaining traction in space applications for its openness and customizability.</p>
+
+  <h2>PowerPC</h2>
+<p>A RISC architecture originally developed by the AIM alliance (Apple, IBM, Motorola) in 1991. 
+  Known for high reliability, used extensively in aerospace, automotive, and networking.</p>
+<table>
+<tr><th>Pros</th><th>Cons</th></tr>
+<tr><td>Excellent radiation tolerance — many rad-hard variants exist</td><td>Declining commercial ecosystem — fewer consumer products</td></tr>
+<tr><td>High reliability — proven in decades of space missions</td><td>Higher power consumption than ARM at equivalent performance</td></tr>
+<tr><td>Strong floating-point performance for scientific computing</td><td>Limited software ecosystem compared to ARM or x86</td></tr>
+<tr><td>Deterministic execution — ideal for hard real-time systems</td><td>Architecture is legacy, no major new designs</td></tr>
+</table>
+<h2>TRICORE</h2>
+<p>A 32-bit RISC architecture developed by Siemens/Infineon for real-time embedded systems, particularly automotive and industrial control. Features a unique tri-core design optimized for deterministic task execution.</p>
+<table>
+<tr><th>Pros</th><th>Cons</th></tr>
+<tr><td>Extremely deterministic — predictable execution for hard real-time</td><td>Primarily single-source (Infineon)</td></tr>
+<tr><td>Built-in safety features — ECC, lockstep cores for ISO 26262 ASIL-D</td><td>Limited to automotive/industrial — small ecosystem</td></tr>
+<tr><td>Superior interrupt handling with minimal latency</td><td>Not designed for general-purpose computing</td></tr>
+<tr><td>Automotive-grade reliability (AEC-Q100 qualified)</td><td>Higher cost per unit than ARM alternatives</td></tr>
+</table>
+<h2>RH850</h2>
+<p>A 32-bit RISC architecture from Renesas designed for automotive body control, chassis, and safety systems. Succeeded the earlier V850 architecture with higher performance and expanded safety features.</p>
+<table>
+<tr><th>Pros</th><th>Cons</th></tr>
+<tr><td>Automotive-grade reliability with hardware safety mechanisms</td><td>Limited to Renesas — single-source supply</td></tr>
+<tr><td>Low power consumption for always-on automotive modules</td><td>Less suited for complex compute; targets control tasks</td></tr>
+<tr><td>Rich peripheral set — CAN-FD, Ethernet, FlexRay integrated</td><td>Toolchain and debug ecosystem is proprietary</td></tr>
+<tr><td>ASIL-B / ASIL-D safety certification support</td><td>Not used outside automotive/industrial</td></tr>
+</table>
+<h2>GTM IP (Generic Timer Module)</h2>
+<p>While technically a timer/co-processor IP core rather than a standalone CPU, GTM IP is a RISC-like programmable microcontroller used in automotive and space systems for precise timing, PWM generation, and motor control.</p>
+<table>
+<tr><th>Pros</th><th>Cons</th></tr>
+<tr><td>Extremely precise timing — hardware-driven, no jitter</td><td>Not a general-purpose CPU — only handles timing/I/O</td></tr>
+<tr><td>Offloads timing tasks from main processor</td><td>Requires a host CPU to configure and manage it</td></tr>
+<tr><td>Deterministic output — critical for motor control and ignition</td><td>Limited programming model</td></tr>
+<tr><td>Integrated with Infineon AURIX and other automotive MCUs</td><td>Vendor-specific, not portable</td></tr>
+</table>
+<h2>MIPS (Microprocessor without Interlocked Pipeline Stages)</h2>
+<p>A pioneering RISC architecture designed by John L. Hennessy at Stanford in 1981. Was widely used in routers, game consoles, and embedded systems but has largely been displaced by ARM.</p>
+<table>
+<tr><th>Pros</th><th>Cons</th></tr>
+<tr><td>Clean, simple ISA — easy to implement and teach</td><td>Declining ecosystem — most vendors have moved to ARM</td></tr>
+<tr><td>Historically strong in networking and telecom</td><td>Limited modern software and toolchain support</td></tr>
+<tr><td>Very efficient pipeline — good performance per watt</td><td>No major new designs since 2010s</td></tr>
+<tr><td>Open MIPS architecture available (Wave Computing open-sourced it)</td><td>Wave Computing bankruptcy halted momentum</td></tr>
+</table>
+<h2>COLDFIRE</h2>
+<p>A 32-bit RISC architecture from Freescale (now NXP), derived from the Motorola 68000 family. Widely used in industrial control, avionics, and legacy embedded systems.</p>
+<table>
+<tr><th>Pros</th><th>Cons</th></tr>
+<tr><td>Code-compatible with legacy 68000 family — easy migration path</td><td>Legacy architecture — limited new development</td></tr>
+<tr><td>Proven in safety-critical industrial and avionics systems</td><td>Lower performance than modern ARM alternatives</td></tr>
+<tr><td>Low interrupt latency — good for real-time control</td><td>Small and shrinking ecosystem</td></tr>
+<tr><td>Extensive peripheral integration (CAN, Ethernet, USB)</td><td>Higher power consumption than equivalent ARM MCUs</td></tr>
+</table>
+<h2>RISC-V</h2>
+<p>An open-standard RISC ISA originally developed at UC Berkeley in 2010. Unlike all other RISC architectures, RISC-V is completely free and open — anyone can implement a processor without licensing fees. Rapidly gaining adoption in space, AI, and embedded systems.</p>
+<table>
+<tr><th>Pros</th><th>Cons</th></tr>
+<tr><td>Completely open and royalty-free — no licensing costs</td><td>Ecosystem is still maturing — fewer tools, RTOS ports</td></tr>
+<tr><td>Modular design — base ISA plus optional extensions (vector, hypervisor, crypto)</td><td>Multiple competing implementations — no single reference</td></tr>
+<tr><td>Customizable — ideal for FPGA-based soft processors in spacecraft</td><td>Less software and library support than ARM</td></tr>
+<tr><td>Growing space ecosystem — ESA, NASA evaluating for future missions</td><td>Performance varies widely across implementations</td></tr>
+<tr><td>Strong academic and government backing</td><td>Hardware maturity still behind ARM for high-end designs</td></tr>
+</table>
+
+
+<details>
+<summary>DRAM (Dynamic RAM)</summary>
+<p>DRAM uses a capacitor-transistor cell (1T1C) that stores data as an electrical charge. Because capacitors leak charge over time, DRAM requires periodic refresh to retain data. It is the densest and most cost-effective volatile memory technology, making it the standard choice for main system memory.</p>
+<table>
+<tr><th>Feature</th><th>DRAM (Dynamic RAM)</th></tr>
+<tr><td><strong>Storage Cell</strong></td><td>Capacitor + transistor (1T1C — one transistor, one capacitor)</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Requires periodic refresh (~64 ms interval)</td></tr>
+<tr><td><strong>Speed</strong></td><td>Moderate (~50–100 ns access time)</td></tr>
+<tr><td><strong>Density</strong></td><td>Very high — single transistor per cell enables multi-Gb chips</td></tr>
+<tr><td><strong>Cost</strong></td><td>Low per bit — cheapest volatile memory technology</td></tr>
+<tr><td><strong>Power</strong></td><td>Higher — needs refresh circuitry; standby power still significant</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>Main system memory (RAM modules, DDR4/DDR5)</td></tr>
+<tr><td><strong>Data Remanence</strong></td><td>Limited — residual charge persists seconds to minutes after power-off; longer at low temperatures</td></tr>
+</table>
+<p class="note">DRAM was invented by Robert Dennard at IBM in 1966. Modern DDR5 DIMMs pack 16–64 GB per module with transfer rates exceeding 60 GB/s. In spacecraft, DRAM is often derated (run below max speed) and paired with ECC to mitigate SEUs. Data remanence at low temperatures is a security concern — sensitive data can persist longer than expected after power-off.</p>
+</details>
+
+<details>
+<summary>SRAM (Static RAM)</summary>
+<p>SRAM uses a flip-flop circuit (typically 6 transistors per cell) that holds data as long as power is supplied — no refresh needed. It is faster and more reliable than DRAM but significantly less dense and more expensive, limiting it to applications where speed matters most.</p>
+<table>
+<tr><th>Feature</th><th>SRAM (Static RAM)</th></tr>
+<tr><td><strong>Storage Cell</strong></td><td>Flip-flop (6 transistors per bit — 6T cell)</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Holds data as long as power is on; no refresh required</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~1–10 ns access time)</td></tr>
+<tr><td><strong>Density</strong></td><td>Low — 6 transistors per cell limits capacity</td></tr>
+<tr><td><strong>Cost</strong></td><td>High per bit — 4–6× more expensive than DRAM</td></tr>
+<tr><td><strong>Power</strong></td><td>Lower dynamic power than DRAM (no refresh); higher static leakage</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>CPU cache (L1, L2, L3), FPGA block RAM, register files</td></tr>
+<tr><td><strong>Data Remanence</strong></td><td>Minimal — loses data within microseconds when powered off</td></tr>
+</table>
+<p class="note">SRAM predates DRAM and was used in early magnetic core memory systems. It remains essential as the cache hierarchy that bridges the speed gap between the CPU and main memory. In FPGAs, distributed SRAM (LUTRAM) and block RAM (BRAM) provide fast on-chip storage for buffers, FIFOs, and small lookup tables. Space-grade SRAM devices often include built-in ECC and latch-up protection.</p>
+</details>
+
+<details>
+<summary>VRAM (Video RAM)</summary>
+<p>VRAM is a dual-ported variant of DRAM designed specifically for graphics processing. Its defining feature is the ability to perform simultaneous reads (for display refresh) and writes (from the GPU), eliminating the contention that would occur with single-ported memory in a graphics pipeline.</p>
+<table>
+<tr><th>Feature</th><th>VRAM (Video RAM)</th></tr>
+<tr><td><strong>Storage Cell</strong></td><td>Dual-ported DRAM — two independent access paths per cell</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Requires periodic refresh (same as DRAM)</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~2–10 ns per port depending on generation)</td></tr>
+<tr><td><strong>Density</strong></td><td>Moderate — dual-port structure increases cell size over DRAM</td></tr>
+<tr><td><strong>Cost</strong></td><td>Higher than DRAM due to dual-ported architecture</td></tr>
+<tr><td><strong>Power</strong></td><td>Moderate to high — dual-port operation increases switching activity</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>Graphics card frame buffer, GPU texture memory</td></tr>
+<tr><td><strong>Key Feature</strong></td><td>Dual-ported — read (display) and write (render) occur simultaneously</td></tr>
+</table>
+<p class="note">VRAM was introduced in the 1980s as a specialized memory for high-resolution graphics. Modern GPUs have largely moved to GDDR (Graphics DDR) — a high-bandwidth variant of DDR SDRAM — and HBM (High Bandwidth Memory), which stacks DRAM dies vertically with through-silicon vias (TSVs). While not strictly VRAM, these technologies serve the same purpose. In spacecraft, radiation-tolerant GPUs with dedicated VRAM may be used for image processing and compression.</p>
+</details>
+
+<details>
+<summary>FRAM (Ferroelectric RAM)</summary>
+<p>FRAM uses a ferroelectric crystal layer (typically PZT — lead zirconate titanate) between two electrodes. Data is stored in the polarization state of the crystal, which remains intact when power is removed. FRAM combines the speed of RAM with non-volatile storage, but is limited in density and capacity.</p>
+<table>
+<tr><th>Feature</th><th>FRAM (Ferroelectric RAM)</th></tr>
+<tr><td><strong>Storage Mechanism</strong></td><td>Ferroelectric capacitor (PZT crystal) — polarization stores data</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Non-volatile — retains data for 10+ years without power</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~50–100 ns read/write, comparable to DRAM)</td></tr>
+<tr><td><strong>Density</strong></td><td>Low — larger cell size limits capacity to ~8 Mb per chip</td></tr>
+<tr><td><strong>Cost</strong></td><td>Higher per bit than DRAM or Flash</td></tr>
+<tr><td><strong>Power</strong></td><td>Very low — no refresh, non-volatile, low active power</td></tr>
+<tr><td><strong>Endurance</strong></td><td>Very high (10¹⁰ – 10¹⁵ write cycles)</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>Embedded systems, smart cards, RFID, spacecraft configuration storage</td></tr>
+<tr><td><strong>Radiation Tolerance</strong></td><td>Good — not affected by magnetic interference; moderate SEU immunity</td></tr>
+</table>
+<p class="note">FRAM was first developed by Ramtron (now part of Cypress/Infineon) in the 1990s. It offers the fastest write speed of any non-volatile memory technology and consumes significantly less power than EEPROM or Flash. In spacecraft, FRAM is used for critical configuration data, telemetry counters, and black-box event logging where instant non-volatile writes are essential. Fujitsu and Infineon are the primary suppliers of FRAM devices.</p>
+</details>
+
+<details>
+<summary>MRAM (Magnetoresistive RAM)</summary>
+<p>MRAM stores data using magnetic tunnel junctions (MTJs) — two ferromagnetic plates separated by a thin insulating barrier. Data is represented by the magnetic orientation of the free layer relative to the fixed layer. MRAM combines near-SRAM performance with non-volatility and excellent radiation tolerance.</p>
+<table>
+<tr><th>Feature</th><th>MRAM (Magnetoresistive RAM)</th></tr>
+<tr><td><strong>Storage Mechanism</strong></td><td>Magnetic tunnel junction (MTJ) — ferromagnetic plates + tunneling barrier</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Non-volatile — retains data for 20+ years without power</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~10–50 ns read/write, approaching SRAM)</td></tr>
+<tr><td><strong>Density</strong></td><td>Moderate — 1–256 Mb per chip (STT-MRAM scaling to Gb)</td></tr>
+<tr><td><strong>Cost</strong></td><td>Higher per bit than DRAM; complex manufacturing process</td></tr>
+<tr><td><strong>Power</strong></td><td>Moderate — no refresh; write current is the main draw</td></tr>
+<tr><td><strong>Endurance</strong></td><td>Very high (10¹⁵+ cycles — essentially unlimited)</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>High-speed persistent memory, aerospace storage, cache replacement, buffer memory</td></tr>
+<tr><td><strong>Radiation Tolerance</strong></td><td>Excellent — immune to SEUs; no charge-based storage mechanism</td></tr>
+</table>
+<p class="note">MRAM was first commercialized by Freescale (now NXP) in 2006. The newer STT-MRAM (Spin-Transfer Torque MRAM) variant reduces write current and improves density, making it a candidate for universal memory — replacing both DRAM and NAND Flash in some applications. Everspin is the leading commercial supplier, and NASA/ESA are evaluating MRAM for next-generation spacecraft mass memory due to its radiation hardness and high endurance.</p>
+</details>
+
+<details>
+<summary>DDR (Double Data Rate)</summary>
+<p>A type of RAM that transfers data twice per clock cycle to increase speed. Each generation brings higher clock speeds, transfer rates, storage capacity, and improved power consumption.</p>
+<table>
+<tr><th>Feature</th><th>DDR1</th><th>DDR2</th><th>DDR3</th><th>DDR4</th><th>DDR5</th><th>DDR6</th></tr>
+<tr><td><strong>Year</strong></td><td>2000</td><td>2003</td><td>2007</td><td>2014</td><td>2020</td><td>~2026</td></tr>
+<tr><td><strong>Clock (MHz)</strong></td><td>100–200</td><td>200–400</td><td>400–1066</td><td>800–1600</td><td>1600–3600</td><td>~3200–6400</td></tr>
+<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>200–400</td><td>400–800</td><td>800–2133</td><td>1600–3200</td><td>3200–8800</td><td>~6400–17000</td></tr>
+<tr><td><strong>Voltage (V)</strong></td><td>2.5–2.6</td><td>1.8</td><td>1.35–1.5</td><td>1.2</td><td>1.1</td><td>~0.9–1.0</td></tr>
+<tr><td><strong>Prefetch</strong></td><td>2n</td><td>4n</td><td>8n</td><td>8n</td><td>16n</td><td>16n</td></tr>
+<tr><td><strong>Banks</strong></td><td>4</td><td>4–8</td><td>8–16</td><td>16</td><td>32</td><td>32+</td></tr>
+<tr><td><strong>Package</strong></td><td>TSOP</td><td>FBGA</td><td>FBGA</td><td>FBGA</td><td>FBGA</td><td>FBGA</td></tr>
+<tr><td><strong>Key Innovation</strong></td><td>First DDR; double data rate</td><td>Higher speed; ODT (on-die termination)</td><td>Lower voltage; higher density</td><td>Bank groups; DQ bus inversion; CRC</td><td>On-die ECC; dual 32-bit channels; PMIC on DIMM</td><td>Higher bandwidth; PAM-4 signaling expected</td></tr>
+</table>
+<h2>Key Differences Between Generations</h2>
+<ul>
+<li><strong>Voltage</strong> — each generation drops voltage significantly (2.5V → ~1.0V), reducing power consumption</li>
+<li><strong>Prefetch buffer</strong> — doubled from 2n to 16n, allowing more data per memory access</li>
+<li><strong>Banks</strong> — increased from 4 to 32+, enabling more parallel accesses</li>
+<li><strong>Bandwidth</strong> — DDR1 peaks at 3.2 GB/s (PC-3200), DDR5 exceeds 60+ GB/s</li>
+<li><strong>DDR5</strong> introduced on-die ECC, dual 32-bit sub-channels per DIMM, and an on-module PMIC (power management IC)</li>
+<li><strong>DDR6</strong> (in development) is expected to use PAM-4 signaling (4-level pulse amplitude modulation) to achieve even higher data rates without doubling pin speed</li>
+</ul>
+
+<p class="note">In spacecraft, <strong>error correcting code (ECC)</strong> memory is critical — ionizing radiation can flip individual bits (single-event upsets (SEUs)). 
+  Many rad-hard memory devices include built-in ECC or utilize scrubbing techniques where memory is periodically read, corrected, and rewritten to prevent error accumulation.</p>
+
+
+<p class="note">SDRAM (Synchronous DRAM) was first standardized by JEDEC in 1993. DDR SDRAM doubled the transfer rate without increasing the clock by transferring data on both edges of the clock signal. Each generation roughly doubles bandwidth while cutting voltage — DDR1 modules peaked at 3.2 GB/s using 2.5V, while DDR5 modules deliver 60+ GB/s at just 1.1V. For spacecraft, DDR memory is often derated (run below max speed) and paired with ECC to mitigate radiation-induced single-event upsets (SEUs).</p>
+</details>
+
+<p class="note">Intel introduced NOR flash in 1988 as a high-reliability, random-access memory technology. Toshiba's Fujio Masuoka invented NAND flash the following year (1989), prioritizing density and cost over random access. Both were breakthroughs over EEPROM — Fujio Masuoka also invented the original floating-gate EEPROM technology that made flash possible.</p>
+
+<p class="note">DRAM was invented by Robert Dennard at IBM in 1966. Modern DDR5 DIMMs pack 16–64 GB per module with transfer rates exceeding 60 GB/s. In spacecraft, DRAM is often derated (run below max speed) and paired with ECC to mitigate SEUs. Data remanence at low temperatures is a security concern — sensitive data can persist longer than expected after power-off.</p>
+
+<p class="note">SRAM predates DRAM and was used in early magnetic core memory systems. It remains essential as the cache hierarchy that bridges the speed gap between the CPU and main memory. In FPGAs, distributed SRAM (LUTRAM) and block RAM (BRAM) provide fast on-chip storage for buffers, FIFOs, and small lookup tables. Space-grade SRAM devices often include built-in ECC and latch-up protection.</p>
+
+<p class="note">VRAM was introduced in the 1980s as a specialized memory for high-resolution graphics. Modern GPUs have largely moved to GDDR (Graphics DDR) — a high-bandwidth variant of DDR SDRAM — and HBM (High Bandwidth Memory), which stacks DRAM dies vertically with through-silicon vias (TSVs). While not strictly VRAM, these technologies serve the same purpose. In spacecraft, radiation-tolerant GPUs with dedicated VRAM may be used for image processing and compression.</p>
+
+<p class="note">FRAM was first developed by Ramtron (now part of Cypress/Infineon) in the 1990s. It offers the fastest write speed of any non-volatile memory technology and consumes significantly less power than EEPROM or Flash. In spacecraft, FRAM is used for critical configuration data, telemetry counters, and black-box event logging where instant non-volatile writes are essential. Fujitsu and Infineon are the primary suppliers of FRAM devices.</p>
+
+<p class="note">MRAM was first commercialized by Freescale (now NXP) in 2006. The newer STT-MRAM (Spin-Transfer Torque MRAM) variant reduces write current and improves density, making it a candidate for universal memory — replacing both DRAM and NAND Flash in some applications. Everspin is the leading commercial supplier, and NASA/ESA are evaluating MRAM for next-generation spacecraft mass memory due to its radiation hardness and high endurance.</p>
+
+<p class="note">SDRAM (Synchronous DRAM) was first standardized by JEDEC in 1993. DDR SDRAM doubled the transfer rate without increasing the clock by transferring data on both edges of the clock signal. Each generation roughly doubles bandwidth while cutting voltage — DDR1 modules peaked at 3.2 GB/s using 2.5V, while DDR5 modules deliver 60+ GB/s at just 1.1V. For spacecraft, DDR memory is often derated (run below max speed) and paired with ECC to mitigate radiation-induced single-event upsets (SEUs).</p>
+
+<details>
+<summary>NOR vs NAND Flash</summary>
+<p>Two memory architectures for storing information in memory cells made from floating-gate transistors.</p>
+<table>
+<tr><th>Feature</th><th>NOR Flash</th><th>NAND Flash</th></tr>
+<tr><td>Architecture</td><td>Each memory cell connects directly to bit line (resembles NOR gate)</td><td>Memory cells connected in series (resembles NAND gate)</td></tr>
+<tr><td>Read / Access</td><td>Random access, short read times. Best for code execution (XIP — eXecute In Place).</td><td>Slower read, indirect I/O-mapped interface. Requires shadowing to RAM for code execution.</td></tr>
+<tr><td>Bit Quality</td><td>100% known good bits for life</td><td>~98% good bits, bit failures over lifetime require ECC</td></tr>
+<tr><td>Cost / Density</td><td>Larger cell size, higher cost per bit, slower write/erase</td><td>Smaller cell size, lower cost per bit, high write/erase speed</td></tr>
+<tr><td>Memory Range</td><td>64 Mb – 2 Gb</td><td>1 Gb – 16 Gb (better for data storage)</td></tr>
+<tr><td>Erase Block</td><td>64 KB – 256 KB</td><td>8 KB – 32 KB</td></tr>
+<tr><td>Erase Speed</td><td>~520 ms per 128 KB block</td><td>~3.5 ms per 128 KB block (~150x faster)</td></tr>
+</table>
+<p><strong>Note that often there is NOR or NAND flash memery defined by the communication protocol used to interface with hardware.
+  For example SPI NOR</strong> is a type of flash memory that uses the SPI communication protocol.</p>
+</details>
+
+<details>
+<summary>EEPROM, MRAM, FRAM & Other NVM</summary>
+<p>A comparison of specialized non-volatile memory technologies used in embedded and spacecraft systems.</p>
+<table>
+<tr><th>Feature</th><th>EEPROM</th><th>MRAM</th><th>FRAM</th><th>ROM</th></tr>
+<tr><td><strong>Full Name</strong></td><td>Electrically Erasable Programmable ROM</td><td>Magnetoresistive RAM</td><td>Ferroelectric RAM</td><td>Read-Only Memory</td></tr>
+<tr><td><strong>Storage Mechanism</strong></td><td>Floating-gate transistors</td><td>Magnetic tunnel junction (ferromagnetic plates)</td><td>Ferroelectric layer (PZT — lead zirconate titanate)</td><td>Hardwired / mask-programmed</td></tr>
+<tr><td><strong>Rewritable</strong></td><td>Yes — byte or page level</td><td>Yes</td><td>Yes</td><td>No (or very limited)</td></tr>
+<tr><td><strong>Write Speed</strong></td><td>Slow (byte) / moderate (page)</td><td>Fast</td><td>Fast</td><td>N/A (not written in-field)</td></tr>
+<tr><td><strong>Endurance</strong></td><td>~10,000 – 100,000 write cycles</td><td>Very high (10¹⁵+)</td><td>Very high (10¹⁰ – 10¹⁵)</td><td>N/A</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>~10 years</td><td>~20+ years</td><td>~10+ years</td><td>Permanent</td></tr>
+<tr><td><strong>Typical Capacity</strong></td><td>~512 bytes – 1 Mb</td><td>1 Mb – 256 Mb</td><td>4 Kb – 8 Mb</td><td>Varies (mask ROM)</td></tr>
+<tr><td><strong>Power Consumption</strong></td><td>Low</td><td>Moderate</td><td>Very low</td><td>None (passive)</td></tr>
+<tr><td><strong>Radiation Tolerance</strong></td><td>Moderate</td><td>Good (immune to magnetic interference)</td><td>Good (not affected by magnetic interference)</td><td>Good</td></tr>
+<tr><td><strong>Key Limitation</strong></td><td>Limited write cycles; slow writes</td><td>Complex manufacturing; potential read errors</td><td>Low density; higher cost per bit</td><td>Cannot be modified in-field</td></tr>
+</table>
+</details>
+
+<p class="note">The first FPGA was invented by Ross Freeman at Xilinx in 1985. The XC2064 had just 64 logic blocks and 58 I/O pins using 2 µm technology — a far cry from modern FPGAs with millions of logic cells. FPGAs are widely used in spacecraft because they can be reconfigured after launch, allowing bug fixes and feature upgrades without a hardware respin. NASA's James Webb Space Telescope uses radiation-tolerant FPGAs for instrument control and data processing.</p>

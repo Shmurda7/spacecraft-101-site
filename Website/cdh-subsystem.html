@@ -7,12 +7,7 @@
 <style>@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
 :root{--bg:#f0e8f5;--card-bg:#fff9fb;--card-bg-nested:#faf0f5;--text:#3a2a4a;--text-light:#7a6a8a;--border:#e0d0e5;--th-bg:#f5eaf5;--link:#d0608a;--link-hover:#c04070;--note:#9a8aa0;--hr:#e5d5ea;--shadow:rgba(208,96,138,.12);--accent:#e8a050;--accent2:#7bc4b0;--accent3:#b080d0;--accent4:#6888c0}
 body.dark{--bg:#0a0515;--card-bg:#151020;--card-bg-nested:#1f1530;--text:#e0d0e8;--text-light:#a090b0;--border:#3a2a50;--th-bg:#1f1530;--link:#f0a0b0;--link-hover:#e88090;--note:#9080a0;--hr:#3a2a50;--shadow:rgba(240,160,176,.12);--accent:#e8a050;--accent2:#6ab0a0;--accent3:#b080c8;--accent4:#6888c0}
-#search-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
-#search-bar label{font-size:13px;font-weight:700;color:var(--text-light);white-space:nowrap}
-#search-input{flex:1;padding:8px 14px;border:2px solid var(--border);border-radius:50px;background:var(--card-bg);color:var(--text);font-family:'Quicksand','Nunito',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
-#search-input:focus{border-color:var(--link)}
-#search-input::placeholder{color:var(--text-light)}
-.search-match{background:color-mix(in srgb,var(--accent) 30%,transparent);border-radius:4px;padding:0 2px}
+
 html{scroll-behavior:smooth}
 body{font-family:'Quicksand','Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:1100px;margin:auto;padding:30px;background:var(--bg);color:var(--text);transition:background .4s,color .4s;opacity:0;animation:pageIn .5s ease-out forwards}
 @keyframes pageIn{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
@@ -59,37 +54,43 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </head>
 <body>
 
-<!-- ===== SEARCH BAR ===== -->
-<div id="search-bar">
-  <label for="search-input">✦ Search</label>
-  <input type="text" id="search-input" placeholder="Filter topics..." />
-</div>
-
 <!-- ===== TOGGLE BUTTON ===== -->
 <button id="toggle-theme">☾ Dark</button>
 <a href="index.html">← Home</a>
 
 <!-- ===== PAGE TITLE ===== -->
-<h1>Command &amp; Data Handling (CDH) Subsystem</h1>
-<p>The <strong>Command &amp; Data Handling (CDH)</strong> subsystem forms the infrastructure at which all spacecraft functions depend on.
-  The CDH subsystem is built around 3 key components:
-  <ul>
-    <li>
-      <strong> On-Board Computer (OBC)</strong>
-    </li>
-  </ul>
-  <ul>
-    <li>
-      <strong> Flight Software (FSW) </strong>
-    </li>
-  </ul>
-  <ul>
-    <li>
-      <strong> Data Network </strong>
-    </li>
-  </ul>
+<section class="section-card">
+<h2 style="margin-top:0">★ High-Level Overview</h2>
+<p>The <strong>Command &amp; Data Handling (CDH)</strong> subsystem acts as the "brain" of the spacecraft.
+  It provides command, control, data management, and communication interfaces to every subsystem in some way.
+  The CDH subsystem is built around 3 key components:</p>
+<table style="width:100%;border-collapse:collapse;margin:8px 0">
+<tr>
+  <th style="width:100px;text-align:left;padding:4px 8px">Component</th>
+  <th style="text-align:left;padding:4px 8px">Function</th>
+</tr>
+<tr>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>OBC Hardware</strong></td>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)">
+    Consists of the processors, memory, FPGAs, and storage that execute instructions and store data. 
+    Choice of processor achitecture, memory architecture, and FPGA strategy determines performance, power, and reliability.</td>
+</tr>
+<tr>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Flight Software (FSW)</strong></td>
+  <td style="padding:4px 8px;border-bottom:1px solid var(--border)">
+    Consists of the operating system (OS), applications, drivers, and bootloader to perform logic operations that are routine or commanded. 
+    Choice of OS, applications, features, and drivers determine performance, efficiency, and configurability.</td>
+</tr>
+<tr>
+  <td style="padding:4px 8px"><strong>Data &amp; Networking</strong></td>
+  <td style="padding:4px 8px">
+    Consists of the data buses (SpaceWire, MIL-STD-1553, CAN) and time distribution to communication with every other component.
+    Choice of the data bus architecture and timing determine communication speed and accuracy timed executions.</td>
+</tr>
+</table>
+</section>
 
-  <!-- ===== TABLE OF CONTENTS ===== -->
+<!-- ===== TABLE OF CONTENTS ===== -->
 <nav id="toc" style="background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:12px 20px;margin:16px 0;">
 <h2 style="margin-top:0;font-size:1em">Contents</h2>
 <ul style="margin:4px 0;padding-left:20px">
@@ -141,43 +142,78 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <section class="section-card" id="fundamentals">
 <h2 style="margin-top:0">★ The Fundamentals</h2>
 <p style="margin:8px 0">
-  The <strong>CDH subsystem</strong> acts as the "brain and nervous system" of the spacecraft. 
-  It provides command, control, data management, and communication interfaces to every subsystem in some way.
-</p>
-<p style="margin:8px 0">
   Every CDH subsystem is built from these fundamental capabilities:
 </p>
-<table style="width:100%;border-collapse:collapse;margin:8px 0">
-<tr>
-  <th style="width:100px;text-align:left;padding:4px 8px">Pillar</th>
-  <th style="text-align:left;padding:4px 8px">What it does</th>
-</tr>
-<tr>
-  <td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>OBC Hardware</strong></td>
-  <td style="padding:4px 8px;border-bottom:1px solid var(--border)">
-    Consists of the processors, memory, FPGAs, and storage that execute instructions and store data. 
-    Choice of processor achitecture, memory architecture, and FPGA strategy determines performance, power, and reliability.</td>
-</tr>
-<tr>
-  <td style="padding:4px 8px;border-bottom:1px solid var(--border)"><strong>Flight Software (FSW)</strong></td>
-  <td style="padding:4px 8px;border-bottom:1px solid var(--border)">
-    Consists of the operating system (OS), applications, drivers, and bootloader to perform logic operations that are routine or commanded. 
-    Choice of OS, applications, features, and drivers determine performance, efficiency, and configurability.</td>
-</tr>
-<tr>
-  <td style="padding:4px 8px"><strong>Data &amp; Networking</strong></td>
-  <td style="padding:4px 8px">
-    Consists of the data buses (SpaceWire, MIL-STD-1553, CAN) and time distribution to communication with every other component.
-    Choice of the data bus architecture and timing determine communication speed and accuracy timed executions.</td>
-</tr>
-</table>
+
+<details>
+<summary>Volatile Memory (VM)</summary>
+<p>Called volatile because the stored information is not persistent and does not survive power cycles.</p>
+
+<h2 style="margin-top:0">Key Characteristics</h2>
+<ul>
+  <li><strong>Data retention</strong>: loses all stored data when power is disconnected or turned off. Unsuitable for long-term storage.</li>
+  <li><strong>Speed</strong>: fast read and write operations compared to NVM. Used for quick access and manipulation of data during operations.</li>
+  <li><strong>Usage</strong>: primarily for short-term data storage, running apps, and is managed by the OS.</li>
+</ul>
+
+<details>
+<summary>Types of Volatile Data</summary>
+<ul>
+  <li><strong>Session data</strong> — Web browsers, apps, user inputs, opened files</li>
+  <li><strong>Clipboard data</strong> — Copied or cut text, copied files</li>
+  <li><strong>Temporary files</strong> — Created by apps or OS for operations, deleted when no longer needed</li>
+  <li><strong>Operating system state</strong> — Running processes, opened files, system variables — reset when computer is rebooted</li>
+  <li><strong>Network buffers</strong> — Data packets sent or received over network — cleared when operation completes</li>
+  <li><strong>Printer queues</strong> — Documents waiting to be printed — removed when printed or canceled</li>
+</ul>
+</details>
+
+<details>
+<summary>Deep Dive</summary>
+
+</details>
+</details>
+
+<details>
+<summary>Non-Volatile Memory (NVM)</summary>
+<p>A type of computer memory that permanently stores data and retains data when power is removed. Called non-volatile because the stored information is persistent and survives power cycles.</p>
+
+<h2 style="margin-top:0">Key Characteristics</h2>
+<ul>
+<li><strong>Data retention</strong> — retains stored data across power cycles, maintains data integrity without power</li>
+<li><strong>Speed</strong> — typically slower read and write operations, but offers data persistence</li>
+<li><strong>Usage</strong> — long-term data storage, firmware storage</li>
+</ul>
+
+<details>
+<summary>Types of Non-Volatile Data</summary>
+<ul>
+<li><strong>File storage</strong> — Documents, images, videos, apps, etc.</li>
+<li><strong>Operating system</strong> — System files, drivers, configuration settings</li>
+<li><strong>Firmware</strong> — Controls device functions; may include BIOS firmware</li>
+<li><strong>Bootloader</strong> — Initializes the boot process; loads the OS into RAM during startup</li>
+<li><strong>User data</strong> — Profiles, settings, preferences, accounts</li>
+<li><strong>Configuration settings</strong> — Device and app configuration, network settings, display preferences</li>
+<li><strong>BIOS / UEFI settings</strong> — Hardware and system parameter configuration</li>
+<li><strong>Archival data</strong> — Historical records, legal documents, digital archives</li>
+<li><strong>System backups</strong> — Backup copies to recover from data loss or system failures</li>
+</ul>
+</details>
+
+<details>
+<summary>Deep Dive</summary>
+
+</details>
+</details>
 </section>
 
 
 <!-- ===== SECTION: DESIGN ===== -->
 <section class="section-card" id="design">
 <h2 style="margin-top:0">★ The Design</h2>
-<p>The sections below provide the detailed reference material — OBC hardware (processors, memory, FPGAs, storage), flight software (RTOS, images, radiation effects), and data networking (buses, timekeeping, command &amp; telemetry, FDIR). Use these as a lookup reference while following the design process below.</p>
+<p>To get started with understnading how to design a CDH subsystem. 
+  There are multiple different components and types of components that need to be explained first.
+  The sections below provide the detailed overview of the different aspects of components for the CDH subsystem.</p>
 
 <div style="text-align:center;margin:20px 0;overflow-x:auto">
 <svg viewBox="0 0 660 500" width="100%" style="max-width:660px">
@@ -384,11 +420,15 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 
 <!-- ===== SECTION: OBC HARDWARE ===== -->
 <section class="section-card" id="s1">
-<h3 style="margin-top:0">1. OBC Hardware</h3>
-<p>The OBC hardware is the physical computing platform of the CDH subsystem — the processors, memory, FPGAs, storage, and interconnects that execute instructions and hold data. Every OBC board must balance performance, power, radiation tolerance, and reliability against the mission's requirements.</p>
+<h3 style="margin-top:0">1. The On-Board Computer</h3>
+<p> An OBC is responsible for executin instructions and performing calculations reliably.
+  This consists of a board design with processors, memory, powering conditioning, and field-programmable gate arrays (FPGAs).</p>
 
-<h2 style="margin-top:0">1.1 Processor</h2>
-<p>A device that receives input data, performs mathematical and logical calculations, and executes instructions to run apps and operating systems (OS).</p>
+<h2 style="margin-top:0">1.1 Processors</h2>
+<p style="margin-top:0">A device that receives input data, performs athematical and logical calculations, and executes instructions to run apps and operating systems (OS).
+  The first key trade space for processor selection is the architecture.
+  These architectures describe the design and organization of a computers processor.
+</p>
 
 <div style="text-align:center;margin:16px 0;overflow-x:auto">
 <svg viewBox="0 0 600 120" width="100%" style="max-width:600px">
@@ -426,7 +466,7 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
     <rect x="14" y="0" width="20" height="8" rx="2" fill="#ef4444" opacity="0.6"/>
     <rect x="36" y="0" width="8" height="8" rx="2" fill="#ef4444" opacity="0.6"/>
     <rect x="46" y="0" width="16" height="8" rx="2" fill="#ef4444" opacity="0.6"/>
-    <text x="72" y="8" fill="var(--note)" font-size="6">variable-length instructions (1–15 bytes)</text>
+    <text x="72" y="8" fill="var(--note)" font-size="6">variable-length instructions (1-15 bytes)</text>
   </g>
 
   <!-- Divider -->
@@ -459,157 +499,64 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </svg>
 </div>
 
-<h2 style="margin-top:0">Architectures at a Glance</h2>
-<table>
-<tr><th>Architecture</th><th>Type</th><th>Key Strength</th><th>Key Weakness</th><th>Primary Domain</th></tr>
-<tr><td><strong>x86</strong></td><td>CISC</td><td>Highest single-thread performance, massive ecosystem</td><td>High power consumption, heat</td><td>Desktops, servers, laptops</td></tr>
-<tr><td><strong>ARM</strong></td><td>RISC</td><td>Low power, broad licensing, vast ecosystem</td><td>Licensing costs, fragmentation</td><td>Mobile, embedded, space</td></tr>
-<tr><td><strong>PowerPC</strong></td><td>RISC</td><td>Radiation tolerance, proven in space</td><td>Declining ecosystem</td><td>Aerospace, automotive</td></tr>
-<tr><td><strong>TRICORE</strong></td><td>RISC</td><td>Deterministic real-time, safety features</td><td>Single-source (Infineon)</td><td>Automotive ECU, ADAS</td></tr>
-<tr><td><strong>RH850</strong></td><td>RISC</td><td>Automotive reliability, low power</td><td>Single-source (Renesas)</td><td>Automotive body/chassis</td></tr>
-<tr><td><strong>MIPS</strong></td><td>RISC</td><td>Simple ISA, historically strong in networking</td><td>Declining, limited modern support</td><td>Routers, gateways (legacy)</td></tr>
-<tr><td><strong>COLDFIRE</strong></td><td>RISC</td><td>68000 compatibility, proven industrial</td><td>Legacy, limited performance</td><td>Industrial, avionics</td></tr>
-<tr><td><strong>RISC-V</strong></td><td>RISC</td><td>Open/royalty-free, customizable, growing space support</td><td>Ecosystem still maturing</td><td>Space, AI, embedded, IoT</td></tr>
-</table>
-
 <details>
-<summary>CISC Architecture (Complex Instruction Set Computer)</summary>
-<p>A type of processor capable of complex instruction sets and high code density. The rich set of instructions can perform a variety of tasks, resulting in high code density and efficient use of memory. Known for high performance, used in high degree of parallel processing, and compatible with a wide range of software.</p>
-<p class="note">Intel released the 8086 processor in 1978, launching the x86 architecture. The 8086 was a 16-bit CISC processor with 29,000 transistors running at 5–10 MHz. The architecture was later extended to 32-bit (IA-32) with the 80386 in 1985 and to 64-bit (x86-64) by AMD in 2003. Today x86 dominates desktop, server, and many embedded applications, though its power consumption is a concern for spacecraft.</p>
+<summary>Complex Instruction Set Computer (CISC) Architecture</summary>
+<p>A type of architecture capable of complex instruction sets and high code density. 
+  The complicated set of instructions can describe a variaty of tasks to perform, which results in high code density and efficient use of memory. 
+  This architecture is known for it's high performance and high degree of parallel processing.
+  It's also compatible with a wide range of software.</p>
 
-<h2>x86 / Intel & AMD</h2>
-<p>The dominant CISC architecture in computing. Developed by Intel in 1978 and later adopted by AMD. Powers the majority of desktop, server, and some embedded systems.</p>
+<h2>x86 / Intel</h2>
+<p>The dominant CISC architecture in computing. 
+  Developed by Intel in 1978 and later adopted by AMD. 
+  Powers the majority of desktop and servers in the world.</p>
 <table>
 <tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Massive software ecosystem — compatible with Windows, Linux, macOS, countless apps</td><td>High power consumption and heat generation</td></tr>
-<tr><td>Highest single-thread performance of any architecture</td><td>Complex instruction decode and pipeline — more silicon area</td></tr>
-<tr><td>Rich instruction set — single instructions can replace multiple RISC instructions</td><td>Backwards compatibility constraints limit architectural innovation</td></tr>
-<tr><td>Elite process technology — Intel/AMD lead in node manufacturing</td><td>License restricted — only Intel and AMD can produce x86</td></tr>
+<tr><td>Compatible with most OS such as Windows, Linux, macOS, etc...</td><td>High power consumption and heat generation</td></tr>
+<tr><td>Highest single-thread performance of any architecture</td><td></td></tr>
+<tr><td>Rich instruction set — single instructions can replace multiple RISC instructions</td><td></td></tr>
 </table>
 </details>
 
 <details>
-<summary>RISC Architecture (Reduced Instruction Set Computer)</summary>
-<p>Capable of simple instruction sets, faster execution, and less power. Known for high performance, energy efficiency, and ability to handle multiple tasks simultaneously.</p>
-<p class="note">The RISC philosophy originated at UC Berkeley in 1980 under David Patterson's RISC-I project. ARM (Acorn RISC Machine) began as a collaboration between Acorn Computers and VLSI Technology in 1985 — the ARM1 had just 25,000 transistors (roughly the same as the 8086) but consumed only 0.1 W. Today ARM powers billions of mobile and embedded devices. RISC-V, an open-standard ISA, started at UC Berkeley in 2010 and is gaining traction in space applications for its openness and customizability.</p>
-
+<summary>Reduced Instruction Set Computer (RISC) Architecture</summary>
+<p>A type of architecture capable of simple instruction sets, faster execution, and less power. 
+  Known for high performance, energy efficiency, and ability to handle multiple tasks simultaneously.</p>
+  
 <h2>ARM (Advanced RISC Machine)</h2>
-<p>The dominant RISC architecture in mobile, embedded, and increasingly server/space applications. ARM Holdings designs the architecture and licenses it to manufacturers who implement their own chips.</p>
+<p>The dominant RISC architecture in mobile, embedded, and increasingly server/space applications. 
+  One the main reasons for it's popularity is that it's licensed to other companies which allow them to use the architecture in thier on processor designs.</p>
 <table>
 <tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Very low power consumption — ideal for battery-powered and spacecraft systems</td><td>Royalty licensing costs (though lower than proprietary ISAs)</td></tr>
-<tr><td>Ecosystem is massive — extensive toolchains, RTOS support, software libraries</td><td>Architecture fragmentation (ARMv7, ARMv8, ARMv9, Thumb, AArch64)</td></tr>
-<tr><td>Licensing model allows customization for specific mission needs</td><td>Not fully open — licensees must pay for access</td></tr>
-<tr><td>Radiation-hardened variants available (BAE RAD750, Cobham ARM)</td><td>Performance per clock is lower than x86 for complex workloads</td></tr>
-</table>
-<h2>PowerPC</h2>
-<p>A RISC architecture originally developed by the AIM alliance (Apple, IBM, Motorola) in 1991. Known for high reliability, used extensively in aerospace, automotive, and networking.</p>
-<table>
-<tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Excellent radiation tolerance — many rad-hard variants exist</td><td>Declining commercial ecosystem — fewer consumer products</td></tr>
-<tr><td>High reliability — proven in decades of space missions</td><td>Higher power consumption than ARM at equivalent performance</td></tr>
-<tr><td>Strong floating-point performance for scientific computing</td><td>Limited software ecosystem compared to ARM or x86</td></tr>
-<tr><td>Deterministic execution — ideal for hard real-time systems</td><td>Architecture is legacy, no major new designs</td></tr>
-</table>
-<h2>TRICORE</h2>
-<p>A 32-bit RISC architecture developed by Siemens/Infineon for real-time embedded systems, particularly automotive and industrial control. Features a unique tri-core design optimized for deterministic task execution.</p>
-<table>
-<tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Extremely deterministic — predictable execution for hard real-time</td><td>Primarily single-source (Infineon)</td></tr>
-<tr><td>Built-in safety features — ECC, lockstep cores for ISO 26262 ASIL-D</td><td>Limited to automotive/industrial — small ecosystem</td></tr>
-<tr><td>Superior interrupt handling with minimal latency</td><td>Not designed for general-purpose computing</td></tr>
-<tr><td>Automotive-grade reliability (AEC-Q100 qualified)</td><td>Higher cost per unit than ARM alternatives</td></tr>
-</table>
-<h2>RH850</h2>
-<p>A 32-bit RISC architecture from Renesas designed for automotive body control, chassis, and safety systems. Succeeded the earlier V850 architecture with higher performance and expanded safety features.</p>
-<table>
-<tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Automotive-grade reliability with hardware safety mechanisms</td><td>Limited to Renesas — single-source supply</td></tr>
-<tr><td>Low power consumption for always-on automotive modules</td><td>Less suited for complex compute; targets control tasks</td></tr>
-<tr><td>Rich peripheral set — CAN-FD, Ethernet, FlexRay integrated</td><td>Toolchain and debug ecosystem is proprietary</td></tr>
-<tr><td>ASIL-B / ASIL-D safety certification support</td><td>Not used outside automotive/industrial</td></tr>
-</table>
-<h2>GTM IP (Generic Timer Module)</h2>
-<p>While technically a timer/co-processor IP core rather than a standalone CPU, GTM IP is a RISC-like programmable microcontroller used in automotive and space systems for precise timing, PWM generation, and motor control.</p>
-<table>
-<tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Extremely precise timing — hardware-driven, no jitter</td><td>Not a general-purpose CPU — only handles timing/I/O</td></tr>
-<tr><td>Offloads timing tasks from main processor</td><td>Requires a host CPU to configure and manage it</td></tr>
-<tr><td>Deterministic output — critical for motor control and ignition</td><td>Limited programming model</td></tr>
-<tr><td>Integrated with Infineon AURIX and other automotive MCUs</td><td>Vendor-specific, not portable</td></tr>
-</table>
-<h2>MIPS (Microprocessor without Interlocked Pipeline Stages)</h2>
-<p>A pioneering RISC architecture designed by John L. Hennessy at Stanford in 1981. Was widely used in routers, game consoles, and embedded systems but has largely been displaced by ARM.</p>
-<table>
-<tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Clean, simple ISA — easy to implement and teach</td><td>Declining ecosystem — most vendors have moved to ARM</td></tr>
-<tr><td>Historically strong in networking and telecom</td><td>Limited modern software and toolchain support</td></tr>
-<tr><td>Very efficient pipeline — good performance per watt</td><td>No major new designs since 2010s</td></tr>
-<tr><td>Open MIPS architecture available (Wave Computing open-sourced it)</td><td>Wave Computing bankruptcy halted momentum</td></tr>
-</table>
-<h2>COLDFIRE</h2>
-<p>A 32-bit RISC architecture from Freescale (now NXP), derived from the Motorola 68000 family. Widely used in industrial control, avionics, and legacy embedded systems.</p>
-<table>
-<tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Code-compatible with legacy 68000 family — easy migration path</td><td>Legacy architecture — limited new development</td></tr>
-<tr><td>Proven in safety-critical industrial and avionics systems</td><td>Lower performance than modern ARM alternatives</td></tr>
-<tr><td>Low interrupt latency — good for real-time control</td><td>Small and shrinking ecosystem</td></tr>
-<tr><td>Extensive peripheral integration (CAN, Ethernet, USB)</td><td>Higher power consumption than equivalent ARM MCUs</td></tr>
-</table>
-<h2>RISC-V</h2>
-<p>An open-standard RISC ISA originally developed at UC Berkeley in 2010. Unlike all other RISC architectures, RISC-V is completely free and open — anyone can implement a processor without licensing fees. Rapidly gaining adoption in space, AI, and embedded systems.</p>
-<table>
-<tr><th>Pros</th><th>Cons</th></tr>
-<tr><td>Completely open and royalty-free — no licensing costs</td><td>Ecosystem is still maturing — fewer tools, RTOS ports</td></tr>
-<tr><td>Modular design — base ISA plus optional extensions (vector, hypervisor, crypto)</td><td>Multiple competing implementations — no single reference</td></tr>
-<tr><td>Customizable — ideal for FPGA-based soft processors in spacecraft</td><td>Less software and library support than ARM</td></tr>
-<tr><td>Growing space ecosystem — ESA, NASA evaluating for future missions</td><td>Performance varies widely across implementations</td></tr>
-<tr><td>Strong academic and government backing</td><td>Hardware maturity still behind ARM for high-end designs</td></tr>
+<tr><td>Very low power consumption</td><td>License costs and royalty licensing costs</td></tr>
+<tr><td>Massive community support; extensive toolchains, RTOS support, software libraries</td><td>Architecture fragmentation (ARMv7, ARMv8, ARMv9, Thumb, AArch64)</td></tr>
+<tr><td>Licensing model allows customization for specific mission needs</td><td></td></tr>
+<tr><td>Radiation-hardened variants available (BAE RAD750, Cobham ARM)</td><td></td></tr>
 </table>
 </details>
 
 <details>
 <summary>Processor Providers & Products</summary>
-<p>Common manufacturers of processor cores, SoCs, and microcontrollers across CISC and RISC architectures:</p>
+<p>Here is a simple list of common manufacturers of the different types of manufacturers across CISC and RISC architectures:</p>
 <table>
 <tr><th>Architecture</th><th>Manufacturer</th><th>Product</th><th>Application</th></tr>
 <tr><td><strong>x86</strong></td><td>Intel</td><td>Core i3/i5/i7/i9 (14th gen, Ultra)</td><td>Desktop, laptop, workstation</td></tr>
-<tr><td><strong>x86</strong></td><td>Intel</td><td>Xeon Scalable (4th/5th gen)</td><td>Server, cloud computing, HPC</td></tr>
-<tr><td><strong>x86</strong></td><td>Intel</td><td>Atom (x6000 series)</td><td>Embedded, industrial, edge computing</td></tr>
 <tr><td><strong>x86</strong></td><td>AMD</td><td>Ryzen 5/7/9 (7000/8000 series)</td><td>Desktop, laptop, workstation</td></tr>
-<tr><td><strong>x86</strong></td><td>AMD</td><td>EPYC (9004/9005 series)</td><td>Server, cloud, data center</td></tr>
-<tr><td><strong>x86</strong></td><td>AMD</td><td>Ryzen Embedded (V2000, V3000)</td><td>Industrial, networking, aerospace</td></tr>
 <tr><td><strong>ARM</strong></td><td>Cobham / CAES</td><td>GR740, GR712RC</td><td>Space-grade ARM for satellites, ESA missions</td></tr>
-<tr><td><strong>ARM</strong></td><td>NXP</td><td>i.MX series</td><td>Automotive, industrial, embedded systems</td></tr>
 <tr><td><strong>ARM</strong></td><td>Texas Instruments</td><td>Sitara AM64x</td><td>Industrial control, IoT gateways</td></tr>
 <tr><td><strong>ARM</strong></td><td>Rockchip</td><td>RK3588</td><td>Single-board computers, edge AI</td></tr>
-<tr><td><strong>ARM</strong></td><td>Apple</td><td>M1 / M2 / M3</td><td>Desktop/laptop — custom ARM implementation</td></tr>
-<tr><td><strong>PowerPC</strong></td><td>BAE Systems</td><td>RAD750</td><td>Mars rovers, James Webb, Juno</td></tr>
-<tr><td><strong>PowerPC</strong></td><td>IBM</td><td>POWER9 / POWER10</td><td>High-performance servers, supercomputing</td></tr>
-<tr><td><strong>PowerPC</strong></td><td>NXP (Freescale)</td><td>MPC7xxx, QorIQ series</td><td>Avionics, telecom, industrial control</td></tr>
-<tr><td><strong>PowerPC</strong></td><td>Cobham</td><td>UT699 LEON3FT</td><td>Space-grade SPARC/PowerPC hybrid</td></tr>
+<tr><td><strong>PowerPC</strong></td><td>BAE Systems</td><td>RAD750</td><td>Mars rovers, James Webb, Juno</td></tr>>
 <tr><td><strong>TRICORE</strong></td><td>Infineon</td><td>AURIX TC2xx / TC3xx / TC4xx</td><td>Automotive ECU, ADAS, braking, airbag</td></tr>
-<tr><td><strong>TRICORE</strong></td><td>Infineon</td><td>TC1xx series</td><td>Industrial control, motor drives</td></tr>
-<tr><td><strong>RH850</strong></td><td>Renesas</td><td>RH850/F1x, RH850/U2A</td><td>Automotive body control, gateway</td></tr>
-<tr><td><strong>RH850</strong></td><td>Renesas</td><td>RH850/P1x</td><td>Hybrid/EV powertrain control</td></tr>
-<tr><td><strong>RH850</strong></td><td>Renesas</td><td>RH850/D1x</td><td>Instrument clusters, head-up displays</td></tr>
 <tr><td><strong>MIPS</strong></td><td>Qualcomm (Atheros)</td><td>AR7xxx, AR9xxx series</td><td>Wi-Fi routers, home gateways</td></tr>
-<tr><td><strong>MIPS</strong></td><td>Broadcom</td><td>BCM47xx, BCM63xx</td><td>Cable modems, DSL gateways</td></tr>
-<tr><td><strong>MIPS</strong></td><td>MediaTek</td><td>MT7620, MT7621</td><td>Consumer routers, NAS devices</td></tr>
 <tr><td><strong>MIPS</strong></td><td>Microchip (former MIPS)</td><td>PIC32MZ series</td><td>Embedded control, IoT endpoints</td></tr>
 <tr><td><strong>COLDFIRE</strong></td><td>NXP (Freescale)</td><td>MCF520x, MCF530x, MCF544x</td><td>Industrial control, avionics, medical</td></tr>
-<tr><td><strong>COLDFIRE</strong></td><td>NXP (Freescale)</td><td>MCF51xx (ColdFire+)</td><td>Cost-sensitive embedded control</td></tr>
 <tr><td><strong>RISC-V</strong></td><td>SiFive</td><td>U74, S76, P650 series</td><td>Space-grade RISC-V, AI accelerators</td></tr>
-<tr><td><strong>RISC-V</strong></td><td>Western Digital</td><td>SweRV Core</td><td>Open-source core for storage controllers</td></tr>
-<tr><td><strong>RISC-V</strong></td><td>Microchip</td><td>PolarFire SoC (RISC-V + FPGA)</td><td>Space-grade FPGA with RISC-V core</td></tr>
-<tr><td><strong>RISC-V</strong></td><td>Gaisler (Frontgrade)</td><td>NOEL-V</td><td>Rad-hard RISC-V for ESA/NASA missions</td></tr>
-<tr><td><strong>RISC-V</strong></td><td>Alibaba (T-Head)</td><td>Xuantie C910</td><td>High-performance RISC-V for servers</td></tr>
-<tr><td><strong>RISC-V</strong></td><td>Espressif</td><td>ESP32-C5, ESP32-C6</td><td>Low-cost RISC-V MCUs for IoT</td></tr>
 </table>
 </details>
 
 <h2 style="margin-top:0">1.2 Memory</h2>
-<p style="margin-top:0">A device that temporarily holds data and instructions for immediate access. Memory is broadly categorized into <strong>Volatile Memory (VM)</strong> and <strong>Non-Volatile Memory (NVM)</strong>, which differ in how they retain data when power is removed.</p>
+<p style="margin-top:0">A device that temporarily or permanently holds data and instructions for immediate access. 
+  Memory is broadly categorized into <strong>Volatile Memory (VM)</strong> and <strong>Non-Volatile Memory (NVM)</strong>, which differ in how they retain data when power is removed.</p>
 
 <div style="text-align:center;margin:16px 0;overflow-x:auto">
 <svg viewBox="0 0 500 210" width="100%" style="max-width:500px">
@@ -690,82 +637,30 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 
 <table>
 <tr><th>Category</th><th>Retention</th><th>Speed</th><th>Use Case</th></tr>
-<tr><td><strong>Volatile (VM)</strong></td><td>Loses data when power is off</td><td>Fast</td><td>Active processing, temporary storage</td></tr>
-<tr><td><strong>Non-Volatile (NVM)</strong></td><td>Retains data without power</td><td>Slower</td><td>Long-term storage, firmware, config</td></tr>
+<tr><td><strong>Volatile (VM)</strong></td>
+  <td>Loses data when power is off</td>
+  <td>Fast</td>
+  <td>Active processing, temporary data storage</td></tr>
+<tr><td><strong>Non-Volatile (NVM)</strong></td>
+  <td>Retains data without power</td><td>Slower</td>
+  <td>Long-term data storage, firmware, config</td></tr>
 </table>
 
-<p class="note">In spacecraft, <strong>ECC (Error Correcting Code)</strong> memory is critical — ionizing radiation can flip individual bits (single-event upsets / SEUs). Many rad-hard memory devices include built-in ECC or utilize scrubbing techniques where memory is periodically read, corrected, and rewritten to prevent error accumulation.</p>
-
-<details>
-<summary>Volatile Memory (VM)</summary>
-<p>A type of computer memory that temporarily stores data and loses that data when power is removed. Called volatile because the stored information is not persistent and does not survive power cycles.</p>
-
-<h2 style="margin-top:0">Key Characteristics</h2>
-<ul>
-<li><strong>Data retention</strong> — loses all stored data when power is disconnected or turned off. Unsuitable for long-term storage.</li>
-<li><strong>Speed</strong> — fast read and write operations compared to NVM. Used for quick access and manipulation of data during operations.</li>
-<li><strong>Usage</strong> — primarily for quick data storage, running apps, storing actively-processed data, managed by the OS.</li>
-</ul>
-
-<h2>Types of VM Hardware</h2>
-<h3>Random Access Memory (RAM)</h3>
-<table>
-<tr><th>Type</th><th>Full Name</th><th>Primary Use</th></tr>
-<tr><td><strong>DRAM</strong></td><td>Dynamic RAM</td><td>Main system memory</td></tr>
-<tr><td><strong>VRAM</strong></td><td>Video RAM</td><td>Graphics data, textures, frame buffers</td></tr>
-</table>
-
-<h3>Cache</h3>
-<p>CPU cache memory stores frequently used data for faster access. Typically faster than RAM because it is located within the CPU itself.</p>
-<table>
-<tr><th>Level</th><th>Size</th><th>Location</th><th>Latency</th><th>Purpose</th></tr>
-<tr><td>L1</td><td>16 KB – 128 KB per core</td><td>Embedded inside individual core, split into instruction and data caches</td><td>1 – 3 clock cycles</td><td>Holds instructions and data the CPU is actively processing</td></tr>
-<tr><td>L2</td><td>256 KB – 1 MB per core</td><td>Attached to each core, separate from execution units</td><td>4 – 10 clock cycles</td><td>Holds data that will be used soon</td></tr>
-<tr><td>L3</td><td>2 MB – 128+ MB shared across all cores</td><td>Sits on processor, shared dynamically by all CPU cores</td><td>10 – 20+ clock cycles</td><td>Central safety net holding larger datasets; allows cores to share info efficiently</td></tr>
-</table>
-<p>Typical operation: CPU checks L1 first. If data is found, it is used; if not, checks L2, then L3, then RAM.</p>
-
-<h3>Registers</h3>
-<table>
-<tr><th>Feature</th><th>Details</th></tr>
-<tr><td>Location</td><td>Inside the CPU, closest to the execution units</td></tr>
-<tr><td>Speed</td><td>Fastest memory type — faster than cache (no additional lookup latency)</td></tr>
-<tr><td>Purpose</td><td>Temporary storage during computations (operands, addresses, results)</td></tr>
-<tr><td>Size</td><td>Very limited (typically 16–64 per core, each 32–64 bits)</td></tr>
-</table>
-
-<details>
-<summary>DRAM & SRAM</summary>
-<p>The two main types of volatile RAM — DRAM is dense and cheap but needs constant refresh; SRAM is fast and static but expensive.</p>
-<table>
-<tr><th>Feature</th><th>DRAM (Dynamic RAM)</th><th>SRAM (Static RAM)</th></tr>
-<tr><td><strong>Storage Cell</strong></td><td>Capacitor + transistor (MOS)</td><td>Flip-flop (6 transistors per cell)</td></tr>
-<tr><td><strong>Data Retention</strong></td><td>Requires periodic refresh (~64 ms)</td><td>Holds data as long as power is on</td></tr>
-<tr><td><strong>Speed</strong></td><td>Moderate (~50–100 ns access)</td><td>Fast (~1–10 ns access)</td></tr>
-<tr><td><strong>Density</strong></td><td>High (single transistor per cell)</td><td>Low (6 transistors per cell)</td></tr>
-<tr><td><strong>Cost</strong></td><td>Low per bit</td><td>High per bit</td></tr>
-<tr><td><strong>Power</strong></td><td>Higher (needs refresh circuitry)</td><td>Lower (no refresh, but more leakage)</td></tr>
-<tr><td><strong>Typical Use</strong></td><td>Main system memory (RAM modules)</td><td>CPU cache (L1, L2, L3)</td></tr>
-<tr><td><strong>Data Remanence</strong></td><td>Limited — residual charge can persist after power-off</td><td>Minimal — loses data quickly when powered off</td></tr>
-</table>
-<p class="note">DRAM was invented by Robert Dennard at IBM in 1966. SRAM predates DRAM and was used in early core memory systems. Both remain essential: DRAM provides affordable main memory, while SRAM enables the cache hierarchy that keeps modern CPUs fed with data. For spacecraft, DRAM's data remanence at low temperatures means sensitive data can persist longer than expected after power-off — a security concern.</p>
-</details>
-
-<details>
-<summary>DDR (Double Data Rate)</summary>
+<details open>
+<summary>Double Data Rate (DDR)</summary>
 <p>A type of RAM that transfers data twice per clock cycle to increase speed. Each generation brings higher clock speeds, transfer rates, storage capacity, and improved power consumption.</p>
+
 <table>
-<tr><th>Feature</th><th>DDR1</th><th>DDR2</th><th>DDR3</th><th>DDR4</th><th>DDR5</th><th>DDR6</th></tr>
-<tr><td><strong>Year</strong></td><td>2000</td><td>2003</td><td>2007</td><td>2014</td><td>2020</td><td>~2026</td></tr>
-<tr><td><strong>Clock (MHz)</strong></td><td>100–200</td><td>200–400</td><td>400–1066</td><td>800–1600</td><td>1600–3600</td><td>~3200–6400</td></tr>
-<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>200–400</td><td>400–800</td><td>800–2133</td><td>1600–3200</td><td>3200–8800</td><td>~6400–17000</td></tr>
-<tr><td><strong>Voltage (V)</strong></td><td>2.5–2.6</td><td>1.8</td><td>1.35–1.5</td><td>1.2</td><td>1.1</td><td>~0.9–1.0</td></tr>
-<tr><td><strong>Prefetch</strong></td><td>2n</td><td>4n</td><td>8n</td><td>8n</td><td>16n</td><td>16n</td></tr>
-<tr><td><strong>Banks</strong></td><td>4</td><td>4–8</td><td>8–16</td><td>16</td><td>32</td><td>32+</td></tr>
-<tr><td><strong>Package</strong></td><td>TSOP</td><td>FBGA</td><td>FBGA</td><td>FBGA</td><td>FBGA</td><td>FBGA</td></tr>
-<tr><td><strong>Key Innovation</strong></td><td>First DDR; double data rate</td><td>Higher speed; ODT (on-die termination)</td><td>Lower voltage; higher density</td><td>Bank groups; DQ bus inversion; CRC</td><td>On-die ECC; dual 32-bit channels; PMIC on DIMM</td><td>Higher bandwidth; PAM-4 signaling expected</td></tr>
+<tr><th>Generation</th><th>Full Name</th><th>Description</th><th>Primary Use</th></tr>
+<tr><td><strong>DDR1</strong></td><td>DDR SDRAM</td><td>First generation; doubled data rate over SDRAM</td><td>Early 2000s desktop PCs, servers</td></tr>
+<tr><td><strong>DDR2</strong></td><td>DDR2 SDRAM</td><td>Higher speed with lower power; ODT for signal integrity</td><td>Mid-2000s desktops, laptops, servers</td></tr>
+<tr><td><strong>DDR3</strong></td><td>DDR3 SDRAM</td><td>Lower voltage; higher density and bandwidth</td><td>2007–2014 mainstream computing</td></tr>
+<tr><td><strong>DDR4</strong></td><td>DDR4 SDRAM</td><td>Bank groups; DQ bus inversion; CRC for reliability</td><td>2014–2020 mainstream, servers, HPC</td></tr>
+<tr><td><strong>DDR5</strong></td><td>DDR5 SDRAM</td><td>On-die ECC; dual 32-bit channels; PMIC on DIMM</td><td>2020+ modern systems, workstations</td></tr>
+<tr><td><strong>DDR6</strong></td><td>DDR6 SDRAM</td><td>PAM-4 signaling; even higher bandwidth</td><td>Future high-performance systems</td></tr>
 </table>
-<h2>Key Differences Between Generations</h2>
+
+<h4>Key Differences Between Generations</h4>
 <ul>
 <li><strong>Voltage</strong> — each generation drops voltage significantly (2.5V → ~1.0V), reducing power consumption</li>
 <li><strong>Prefetch buffer</strong> — doubled from 2n to 16n, allowing more data per memory access</li>
@@ -774,91 +669,247 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <li><strong>DDR5</strong> introduced on-die ECC, dual 32-bit sub-channels per DIMM, and an on-module PMIC (power management IC)</li>
 <li><strong>DDR6</strong> (in development) is expected to use PAM-4 signaling (4-level pulse amplitude modulation) to achieve even higher data rates without doubling pin speed</li>
 </ul>
-<p class="note">SDRAM (Synchronous DRAM) was first standardized by JEDEC in 1993. DDR SDRAM doubled the transfer rate without increasing the clock by transferring data on both edges of the clock signal. Each generation roughly doubles bandwidth while cutting voltage — DDR1 modules peaked at 3.2 GB/s using 2.5V, while DDR5 modules deliver 60+ GB/s at just 1.1V. For spacecraft, DDR memory is often derated (run below max speed) and paired with ECC to mitigate radiation-induced single-event upsets (SEUs).</p>
+
+<details>
+<summary>DDR1</summary>
+<p>First generation of DDR SDRAM, introduced in 2000. Doubled the data transfer rate of traditional SDRAM by transferring on both rising and falling clock edges.</p>
+<table>
+<tr><th>Feature</th><th>DDR1</th></tr>
+<tr><td><strong>Year</strong></td><td>2000</td></tr>
+<tr><td><strong>Clock (MHz)</strong></td><td>100–200</td></tr>
+<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>200–400</td></tr>
+<tr><td><strong>Voltage (V)</strong></td><td>2.5–2.6</td></tr>
+<tr><td><strong>Prefetch</strong></td><td>2n</td></tr>
+<tr><td><strong>Banks</strong></td><td>4</td></tr>
+<tr><td><strong>Package</strong></td><td>TSOP</td></tr>
+<tr><td><strong>Key Innovation</strong></td><td>First DDR; double data rate</td></tr>
+</table>
 </details>
 
 <details>
-<summary>Types of Volatile Data</summary>
+<summary>DDR2</summary>
+<p>Second generation of DDR SDRAM, introduced in 2003. Improved signal integrity through on-die termination (ODT) and reduced power consumption.</p>
 <table>
-<tr><th>Data Type</th><th>Description</th></tr>
-<tr><td>Session data</td><td>Web browsers, apps, user inputs, opened files</td></tr>
-<tr><td>Clipboard data</td><td>Copied or cut text, copied files</td></tr>
-<tr><td>Temporary files</td><td>Created by apps or OS for operations, deleted when no longer needed</td></tr>
-<tr><td>Operating system state</td><td>Running processes, opened files, system variables — reset when computer is rebooted</td></tr>
-<tr><td>Network buffers</td><td>Data packets sent or received over network — cleared when operation completes</td></tr>
-<tr><td>Printer queues</td><td>Documents waiting to be printed — removed when printed or canceled</td></tr>
+<tr><th>Feature</th><th>DDR2</th></tr>
+<tr><td><strong>Year</strong></td><td>2003</td></tr>
+<tr><td><strong>Clock (MHz)</strong></td><td>200–400</td></tr>
+<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>400–800</td></tr>
+<tr><td><strong>Voltage (V)</strong></td><td>1.8</td></tr>
+<tr><td><strong>Prefetch</strong></td><td>4n</td></tr>
+<tr><td><strong>Banks</strong></td><td>4–8</td></tr>
+<tr><td><strong>Package</strong></td><td>FBGA</td></tr>
+<tr><td><strong>Key Innovation</strong></td><td>Higher speed; ODT (on-die termination)</td></tr>
+</table>
+</details>
+
+<details>
+<summary>DDR3</summary>
+<p>Third generation of DDR SDRAM, introduced in 2007. Offered lower voltage operation and higher density while maintaining backward compatibility in signaling.</p>
+<table>
+<tr><th>Feature</th><th>DDR3</th></tr>
+<tr><td><strong>Year</strong></td><td>2007</td></tr>
+<tr><td><strong>Clock (MHz)</strong></td><td>400–1066</td></tr>
+<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>800–2133</td></tr>
+<tr><td><strong>Voltage (V)</strong></td><td>1.35–1.5</td></tr>
+<tr><td><strong>Prefetch</strong></td><td>8n</td></tr>
+<tr><td><strong>Banks</strong></td><td>8–16</td></tr>
+<tr><td><strong>Package</strong></td><td>FBGA</td></tr>
+<tr><td><strong>Key Innovation</strong></td><td>Lower voltage; higher density</td></tr>
+</table>
+</details>
+
+<details>
+<summary>DDR4</summary>
+<p>Fourth generation of DDR SDRAM, introduced in 2014. Brought bank groups for higher parallelism, DQ bus inversion for reduced noise, and CRC for improved data integrity.</p>
+<table>
+<tr><th>Feature</th><th>DDR4</th></tr>
+<tr><td><strong>Year</strong></td><td>2014</td></tr>
+<tr><td><strong>Clock (MHz)</strong></td><td>800–1600</td></tr>
+<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>1600–3200</td></tr>
+<tr><td><strong>Voltage (V)</strong></td><td>1.2</td></tr>
+<tr><td><strong>Prefetch</strong></td><td>8n</td></tr>
+<tr><td><strong>Banks</strong></td><td>16</td></tr>
+<tr><td><strong>Package</strong></td><td>FBGA</td></tr>
+<tr><td><strong>Key Innovation</strong></td><td>Bank groups; DQ bus inversion; CRC</td></tr>
+</table>
+</details>
+
+<details>
+<summary>DDR5</summary>
+<p>Fifth generation of DDR SDRAM, introduced in 2020. Features on-die ECC for error correction, dual 32-bit sub-channels per DIMM for improved efficiency, and an on-module PMIC (power management IC).</p>
+<table>
+<tr><th>Feature</th><th>DDR5</th></tr>
+<tr><td><strong>Year</strong></td><td>2020</td></tr>
+<tr><td><strong>Clock (MHz)</strong></td><td>1600–3600</td></tr>
+<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>3200–8800</td></tr>
+<tr><td><strong>Voltage (V)</strong></td><td>1.1</td></tr>
+<tr><td><strong>Prefetch</strong></td><td>16n</td></tr>
+<tr><td><strong>Banks</strong></td><td>32</td></tr>
+<tr><td><strong>Package</strong></td><td>FBGA</td></tr>
+<tr><td><strong>Key Innovation</strong></td><td>On-die ECC; dual 32-bit channels; PMIC on DIMM</td></tr>
+</table>
+</details>
+
+<details>
+<summary>DDR6</summary>
+<p>Sixth generation of DDR SDRAM, expected around 2026. Anticipated to use PAM-4 signaling (4-level pulse amplitude modulation) to achieve higher data rates without doubling pin speed.</p>
+<table>
+<tr><th>Feature</th><th>DDR6</th></tr>
+<tr><td><strong>Year</strong></td><td>~2026</td></tr>
+<tr><td><strong>Clock (MHz)</strong></td><td>~3200–6400</td></tr>
+<tr><td><strong>Transfer Rate (MT/s)</strong></td><td>~6400–17000</td></tr>
+<tr><td><strong>Voltage (V)</strong></td><td>~0.9–1.0</td></tr>
+<tr><td><strong>Prefetch</strong></td><td>16n</td></tr>
+<tr><td><strong>Banks</strong></td><td>32+</td></tr>
+<tr><td><strong>Package</strong></td><td>FBGA</td></tr>
+<tr><td><strong>Key Innovation</strong></td><td>Higher bandwidth; PAM-4 signaling expected</td></tr>
+</table>
+</details>
+</details>
+
+<h2 style="margin-top:0">1.2.1 Memory Hardware and Types</h2>
+<p style="margin-top:0">Locate sections which describe the different types of memory hardware and learn about them</p>
+
+<details>
+<summary>Types of VM Hardware</summary>
+<h3>Registers</h3>
+<p> Located inside the CPU the registors are closest to the execution units (the component which performs operations and calculations forwarded from the instruction unit).
+  This is the fastest type of memory because there is no additional lookup latency.
+  Typically used for storage during computations such as; operands, addresses, and results.
+  Although registors are very limited in size, with about 16-64 registors per core, each at a size of 32-64 bits.
+</p>
+
+<h3>Cache</h3>
+<p>CPU cache memory stores frequently used data for faster access. 
+  Typically faster than RAM because it is located within the CPU itself.</p>
+<table>
+<tr><th>Level</th><th>Size</th><th>Location</th><th>Latency</th><th>Purpose</th></tr>
+<tr><td>L1</td><td>16 KB – 128 KB per core</td><td>Embedded inside individual core, split into instruction and data caches</td><td>1 – 3 clock cycles</td><td>Holds instructions and data the CPU is actively processing</td></tr>
+<tr><td>L2</td><td>256 KB – 1 MB per core</td><td>Attached to each core, separate from execution units</td><td>4 – 10 clock cycles</td><td>Holds data that will be used soon</td></tr>
+<tr><td>L3</td><td>2 MB – 128+ MB shared across all cores</td><td>Sits on processor, shared dynamically by all CPU cores</td><td>10 – 20+ clock cycles</td><td>Central safety net holding larger datasets; allows cores to share info efficiently</td></tr>
+</table>
+<p>Typical operation: CPU checks L1 first. If data is found, it is used; if not, checks L2, then L3, then RAM.</p>
+
+<h3>RAM</h3>
+<table>
+<tr><th>Type</th><th>Full Name</th><th>Description</th><th>Primary Use</th></tr>
+<tr><td><strong>DRAM</strong></td><td>Dynamic RAM</td><td>Capacitor-transistor cell; requires periodic refresh</td><td>Main system memory, typically external RAM</td></tr>
+<tr><td><strong>SRAM</strong></td><td>Static RAM</td><td>Flip-flop circuit; no refresh needed, faster but denser</td><td>CPU cache (L1, L2, L3)</td></tr>
+<tr><td><strong>VRAM</strong></td><td>Video RAM</td><td>Dual-ported memory for parallel read/write of graphics data</td><td>Graphics card frame buffer</td></tr>
+</table>
+
+<details>
+<summary>DRAM (Dynamic RAM)</summary>
+<p>DRAM uses a capacitor-transistor cell (1T1C) that stores data as an electrical charge. Because capacitors leak charge over time, DRAM requires periodic refresh to retain data. It is the densest and most cost-effective volatile memory technology, making it the standard choice for main system memory.</p>
+<table>
+<tr><th>Feature</th><th>DRAM (Dynamic RAM)</th></tr>
+<tr><td><strong>Storage Cell</strong></td><td>Capacitor + transistor (1T1C — one transistor, one capacitor)</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Requires periodic refresh (~64 ms interval)</td></tr>
+<tr><td><strong>Speed</strong></td><td>Moderate (~50–100 ns access time)</td></tr>
+<tr><td><strong>Density</strong></td><td>Very high — single transistor per cell enables multi-Gb chips</td></tr>
+<tr><td><strong>Cost</strong></td><td>Low per bit — cheapest volatile memory technology</td></tr>
+<tr><td><strong>Power</strong></td><td>Higher — needs refresh circuitry; standby power still significant</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>Main system memory (RAM modules, DDR4/DDR5)</td></tr>
+<tr><td><strong>Data Remanence</strong></td><td>Limited — residual charge persists seconds to minutes after power-off; longer at low temperatures</td></tr>
+</table>
+</details>
+
+<details>
+<summary>SRAM (Static RAM)</summary>
+<p>SRAM uses a flip-flop circuit (typically 6 transistors per cell) that holds data as long as power is supplied — no refresh needed. It is faster and more reliable than DRAM but significantly less dense and more expensive, limiting it to applications where speed matters most.</p>
+<table>
+<tr><th>Feature</th><th>SRAM (Static RAM)</th></tr>
+<tr><td><strong>Storage Cell</strong></td><td>Flip-flop (6 transistors per bit — 6T cell)</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Holds data as long as power is on; no refresh required</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~1–10 ns access time)</td></tr>
+<tr><td><strong>Density</strong></td><td>Low — 6 transistors per cell limits capacity</td></tr>
+<tr><td><strong>Cost</strong></td><td>High per bit — 4–6× more expensive than DRAM</td></tr>
+<tr><td><strong>Power</strong></td><td>Lower dynamic power than DRAM (no refresh); higher static leakage</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>CPU cache (L1, L2, L3), FPGA block RAM, register files</td></tr>
+<tr><td><strong>Data Remanence</strong></td><td>Minimal — loses data within microseconds when powered off</td></tr>
+</table>
+</details>
+
+<details>
+<summary>VRAM (Video RAM)</summary>
+<p>VRAM is a dual-ported variant of DRAM designed specifically for graphics processing. Its defining feature is the ability to perform simultaneous reads (for display refresh) and writes (from the GPU), eliminating the contention that would occur with single-ported memory in a graphics pipeline.</p>
+<table>
+<tr><th>Feature</th><th>VRAM (Video RAM)</th></tr>
+<tr><td><strong>Storage Cell</strong></td><td>Dual-ported DRAM — two independent access paths per cell</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Requires periodic refresh (same as DRAM)</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~2–10 ns per port depending on generation)</td></tr>
+<tr><td><strong>Density</strong></td><td>Moderate — dual-port structure increases cell size over DRAM</td></tr>
+<tr><td><strong>Cost</strong></td><td>Higher than DRAM due to dual-ported architecture</td></tr>
+<tr><td><strong>Power</strong></td><td>Moderate to high — dual-port operation increases switching activity</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>Graphics card frame buffer, GPU texture memory</td></tr>
+<tr><td><strong>Key Feature</strong></td><td>Dual-ported — read (display) and write (render) occur simultaneously</td></tr>
 </table>
 </details>
 </details>
 
 <details>
-<summary>Non-Volatile Memory (NVM)</summary>
-<p>A type of computer memory that permanently stores data and retains data when power is removed. Called non-volatile because the stored information is persistent and survives power cycles.</p>
+<summary>Types of NVM Hardware</summary>
+<h3>Read-Only Memory (ROM)</h3>
+<p>A type of memory that is typically used for large-volume products that would not require updates after the device is manufactured.</p>
+<p><strong>Programmable read-only memory (PROM)</strong> can be modifed after the device has be manufactured.
+This can only be modifed 1 time.
+Often the programming is actually conducted after it's recieved from the manufacturer and before the device is installed onto it's system.</p>
+<p><strong>Erase programmable read-only memory (EPROM)</strong> is ROM that can be changed more that 1 time.
+This requires a <strong>one-time programmable (OTP)</strong> device that is used to clear the quartz window with ultraviolet light.</p>
+<p><strong>Electrically erasable programmable read-only memory (EEPROM)</strong> uses voltage to erase memory.
+This requires a lot of time to erase and write data.</p>
 
-<h2 style="margin-top:0">Key Characteristics</h2>
+<h3>Flash Memory</h3>
+<p>Another type of electrically erasable memory.
+  Conducts erase operations on a block basis, with a larger capacity than EEPROM.</p>
+<p>To map data there are 2 types of flash technologies:</p>
 <ul>
-<li><strong>Data retention</strong> — retains stored data across power cycles, maintains data integrity without power</li>
-<li><strong>Speed</strong> — typically slower read and write operations, but offers data persistence</li>
-<li><strong>Usage</strong> — long-term data storage, firmware storage</li>
+  <li><strong>NOR</strong> which provides high-speed random access, reading and writing in data in specific memory locations, and retrieve as little as a single byte of data</li>
+  <li><strong>NAND</strong> reads and writes data in blocks sequentially at high speeds.</li>
+  <ul>
+    <li><strong>BUT</strong> is slower at reading compared to NOR</li>
+    <li>although compared to NOR, NAND flash offers higher capacity</li>
+  </ul>
 </ul>
 
-<h2>Types of NVM Storage Hardware</h2>
+<h3>RAM</h3>
 <table>
-<tr><th>Type</th><th>Description</th><th>Examples</th></tr>
-<tr><td><strong>ROM</strong></td><td>Contains firmware or software that cannot be modified by the user</td><td>BIOS ROM, mask ROM</td></tr>
-<tr><td><strong>Flash Memory</strong></td><td>Electrically erasable, high-density persistent storage</td><td>NOR (code exec), NAND (bulk storage), USB drives, SSDs</td></tr>
-<tr><td><strong>EEPROM</strong></td><td>Byte-level rewritable non-volatile memory</td><td>Configuration storage, calibration data</td></tr>
-<tr><td><strong>NVRAM</strong></td><td>Non-volatile RAM for configuration settings</td><td>Router config, switch settings</td></tr>
+<tr><th>Type</th><th>Full Name</th><th>Description</th><th>Primary Use</th></tr>
+<tr><td><strong>FRAM</strong></td><td>Ferroelectric RAM</td><td>Stores data in ferroelectric crystal layer; non-volatile</td><td>Embedded systems, smart cards, RFID</td></tr>
+<tr><td><strong>MRAM</strong></td><td>Magnetoresistive RAM</td><td>Stores data using magnetic tunnel junctions; non-volatile</td><td>High-speed persistent memory, aerospace storage</td></tr>
 </table>
 
 <details>
-<summary>NOR vs NAND Flash</summary>
-<p>Two memory architectures for storing information in memory cells made from floating-gate transistors.</p>
+<summary>FRAM (Ferroelectric RAM)</summary>
+<p>FRAM uses a ferroelectric crystal layer (typically PZT — lead zirconate titanate) between two electrodes. Data is stored in the polarization state of the crystal, which remains intact when power is removed. FRAM combines the speed of RAM with non-volatile storage, but is limited in density and capacity.</p>
 <table>
-<tr><th>Feature</th><th>NOR Flash</th><th>NAND Flash</th></tr>
-<tr><td>Architecture</td><td>Each memory cell connects directly to bit line (resembles NOR gate)</td><td>Memory cells connected in series (resembles NAND gate)</td></tr>
-<tr><td>Read / Access</td><td>Random access, short read times. Best for code execution (XIP — eXecute In Place).</td><td>Slower read, indirect I/O-mapped interface. Requires shadowing to RAM for code execution.</td></tr>
-<tr><td>Bit Quality</td><td>100% known good bits for life</td><td>~98% good bits, bit failures over lifetime require ECC</td></tr>
-<tr><td>Cost / Density</td><td>Larger cell size, higher cost per bit, slower write/erase</td><td>Smaller cell size, lower cost per bit, high write/erase speed</td></tr>
-<tr><td>Memory Range</td><td>64 Mb – 2 Gb</td><td>1 Gb – 16 Gb (better for data storage)</td></tr>
-<tr><td>Erase Block</td><td>64 KB – 256 KB</td><td>8 KB – 32 KB</td></tr>
-<tr><td>Erase Speed</td><td>~520 ms per 128 KB block</td><td>~3.5 ms per 128 KB block (~150x faster)</td></tr>
-</table>
-<p><strong>SPI NOR</strong> is a type of flash memory that uses the SPI communication protocol to interface with hardware.</p>
-<p class="note">Intel introduced NOR flash in 1988 as a high-reliability, random-access memory technology. Toshiba's Fujio Masuoka invented NAND flash the following year (1989), prioritizing density and cost over random access. Both were breakthroughs over EEPROM — Fujio Masuoka also invented the original floating-gate EEPROM technology that made flash possible.</p>
-</details>
-
-<details>
-<summary>EEPROM, MRAM, FRAM & Other NVM</summary>
-<p>A comparison of specialized non-volatile memory technologies used in embedded and spacecraft systems.</p>
-<table>
-<tr><th>Feature</th><th>EEPROM</th><th>MRAM</th><th>FRAM</th><th>ROM</th></tr>
-<tr><td><strong>Full Name</strong></td><td>Electrically Erasable Programmable ROM</td><td>Magnetoresistive RAM</td><td>Ferroelectric RAM</td><td>Read-Only Memory</td></tr>
-<tr><td><strong>Storage Mechanism</strong></td><td>Floating-gate transistors</td><td>Magnetic tunnel junction (ferromagnetic plates)</td><td>Ferroelectric layer (PZT — lead zirconate titanate)</td><td>Hardwired / mask-programmed</td></tr>
-<tr><td><strong>Rewritable</strong></td><td>Yes — byte or page level</td><td>Yes</td><td>Yes</td><td>No (or very limited)</td></tr>
-<tr><td><strong>Write Speed</strong></td><td>Slow (byte) / moderate (page)</td><td>Fast</td><td>Fast</td><td>N/A (not written in-field)</td></tr>
-<tr><td><strong>Endurance</strong></td><td>~10,000 – 100,000 write cycles</td><td>Very high (10¹⁵+)</td><td>Very high (10¹⁰ – 10¹⁵)</td><td>N/A</td></tr>
-<tr><td><strong>Data Retention</strong></td><td>~10 years</td><td>~20+ years</td><td>~10+ years</td><td>Permanent</td></tr>
-<tr><td><strong>Typical Capacity</strong></td><td>~512 bytes – 1 Mb</td><td>1 Mb – 256 Mb</td><td>4 Kb – 8 Mb</td><td>Varies (mask ROM)</td></tr>
-<tr><td><strong>Power Consumption</strong></td><td>Low</td><td>Moderate</td><td>Very low</td><td>None (passive)</td></tr>
-<tr><td><strong>Radiation Tolerance</strong></td><td>Moderate</td><td>Good (immune to magnetic interference)</td><td>Good (not affected by magnetic interference)</td><td>Good</td></tr>
-<tr><td><strong>Key Limitation</strong></td><td>Limited write cycles; slow writes</td><td>Complex manufacturing; potential read errors</td><td>Low density; higher cost per bit</td><td>Cannot be modified in-field</td></tr>
+<tr><th>Feature</th><th>FRAM (Ferroelectric RAM)</th></tr>
+<tr><td><strong>Storage Mechanism</strong></td><td>Ferroelectric capacitor (PZT crystal) — polarization stores data</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Non-volatile — retains data for 10+ years without power</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~50–100 ns read/write, comparable to DRAM)</td></tr>
+<tr><td><strong>Density</strong></td><td>Low — larger cell size limits capacity to ~8 Mb per chip</td></tr>
+<tr><td><strong>Cost</strong></td><td>Higher per bit than DRAM or Flash</td></tr>
+<tr><td><strong>Power</strong></td><td>Very low — no refresh, non-volatile, low active power</td></tr>
+<tr><td><strong>Endurance</strong></td><td>Very high (10¹⁰ – 10¹⁵ write cycles)</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>Embedded systems, smart cards, RFID, spacecraft configuration storage</td></tr>
+<tr><td><strong>Radiation Tolerance</strong></td><td>Good — not affected by magnetic interference; moderate SEU immunity</td></tr>
 </table>
 </details>
 
 <details>
-<summary>Types of Non-Volatile Data</summary>
+<summary>MRAM (Magnetoresistive RAM)</summary>
+<p>MRAM stores data using magnetic tunnel junctions (MTJs) — two ferromagnetic plates separated by a thin insulating barrier. Data is represented by the magnetic orientation of the free layer relative to the fixed layer. MRAM combines near-SRAM performance with non-volatility and excellent radiation tolerance.</p>
 <table>
-<tr><th>Data Type</th><th>Description</th></tr>
-<tr><td>File storage</td><td>Documents, images, videos, apps, etc.</td></tr>
-<tr><td>Operating system</td><td>System files, drivers, configuration settings</td></tr>
-<tr><td>Firmware</td><td>Controls device functions; may include BIOS firmware</td></tr>
-<tr><td>Bootloader</td><td>Initializes the boot process; loads the OS into RAM during startup</td></tr>
-<tr><td>User data</td><td>Profiles, settings, preferences, accounts</td></tr>
-<tr><td>Configuration settings</td><td>Device and app configuration, network settings, display preferences</td></tr>
-<tr><td>BIOS / UEFI settings</td><td>Hardware and system parameter configuration</td></tr>
-<tr><td>Archival data</td><td>Historical records, legal documents, digital archives</td></tr>
-<tr><td>System backups</td><td>Backup copies to recover from data loss or system failures</td></tr>
+<tr><th>Feature</th><th>MRAM (Magnetoresistive RAM)</th></tr>
+<tr><td><strong>Storage Mechanism</strong></td><td>Magnetic tunnel junction (MTJ) — ferromagnetic plates + tunneling barrier</td></tr>
+<tr><td><strong>Data Retention</strong></td><td>Non-volatile — retains data for 20+ years without power</td></tr>
+<tr><td><strong>Speed</strong></td><td>Fast (~10–50 ns read/write, approaching SRAM)</td></tr>
+<tr><td><strong>Density</strong></td><td>Moderate — 1–256 Mb per chip (STT-MRAM scaling to Gb)</td></tr>
+<tr><td><strong>Cost</strong></td><td>Higher per bit than DRAM; complex manufacturing process</td></tr>
+<tr><td><strong>Power</strong></td><td>Moderate — no refresh; write current is the main draw</td></tr>
+<tr><td><strong>Endurance</strong></td><td>Very high (10¹⁵+ cycles — essentially unlimited)</td></tr>
+<tr><td><strong>Typical Use</strong></td><td>High-speed persistent memory, aerospace storage, cache replacement, buffer memory</td></tr>
+<tr><td><strong>Radiation Tolerance</strong></td><td>Excellent — immune to SEUs; no charge-based storage mechanism</td></tr>
 </table>
 </details>
 </details>
@@ -884,14 +935,13 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </details>
 
 <h2 style="margin-top:0">1.3 FPGA (Field-Programmable Gate Array)</h2>
-<p>A type of configurable integrated circuit that can be repeatedly programmed after manufacturing. FPGAs consist of a grid-connected array of programmable logic blocks that can be configured to implement custom digital circuits.</p>
+<p style="margin-top:0">A type of configurable integrated circuit that can be repeatedly programmed after manufacturing. FPGAs consist of a grid-connected array of programmable logic blocks that can be configured to implement custom digital circuits.</p>
 <ul>
 <li>Reconfigurable after deployment</li>
 <li>Used for parallel processing, custom I/O, and hardware acceleration</li>
 <li>Common in spacecraft for sensor processing, communication interfaces, and glue logic</li>
 <li>Radiation-tolerant variants available for space applications</li>
 </ul>
-<p class="note">The first FPGA was invented by Ross Freeman at Xilinx in 1985. The XC2064 had just 64 logic blocks and 58 I/O pins using 2 µm technology — a far cry from modern FPGAs with millions of logic cells. FPGAs are widely used in spacecraft because they can be reconfigured after launch, allowing bug fixes and feature upgrades without a hardware respin. NASA's James Webb Space Telescope uses radiation-tolerant FPGAs for instrument control and data processing.</p>
 
 <div style="text-align:center;margin:16px 0;overflow-x:auto">
 <svg viewBox="0 0 600 240" width="100%" style="max-width:600px">
@@ -1722,20 +1772,6 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 </table>
 </details>
 
-<h2 style="margin-top:0">What Is Derating?</h2>
-<p>Derating is operating a component below its rated maximum to improve reliability and reduce failure rate in the space environment. For the CDH subsystem, derating applies across every component:</p>
-<table>
-<tr><th>Component</th><th>Derating Example</th></tr>
-<tr><td>Processor</td><td>Run at ≤80% of max rated clock frequency; keep core voltage within 90% of nominal</td></tr>
-<tr><td>FPGA</td><td>Use ≤50% of available logic cells; keep I/O toggle rate ≤70% of max</td></tr>
-<tr><td>Memory</td><td>Limit memory access rate to ≤70% of datasheet maximum; derate operating temperature by 20 °C below abs max</td></tr>
-<tr><td>Bus transceivers</td><td>Drive bus at ≤80% of rated cable length; keep signal swing below ±90% of max differential voltage</td></tr>
-<tr><td>Oscillator</td><td>Operate within ±50% of specified temperature range margin; derate vibration tolerance by 20%</td></tr>
-<tr><td>Power supply (OBC-side)</td><td>Limit continuous load to ≤70% of rated output; derate input voltage range by 10% on each end</td></tr>
-<tr><td>Connectors</td><td>Use ≤60% of rated current per pin; derate temperature rating by 20 °C</td></tr>
-</table>
-<p class="note">Derating margins are specified by standards. ECSS-Q-ST-30-11C (European) and MIL-STD-975 (US) define derating factors per component type and mission class. Higher-class missions (NASA Class A, ESA Class 1) require more conservative derating.</p>
-
 <h2 style="margin-top:0">Typical Design Order</h2>
 <p>CDH design is a dependency chain — each decision constrains the next. A practical order:</p>
 <ol>
@@ -1863,6 +1899,22 @@ hr{border:none;border-top:2px solid var(--hr);margin:24px 0;border-radius:2px}
 <li><a href="https://www.xilinx.com/products/silicon-devices/fpga.html" target="_blank">AMD/Xilinx — FPGA technology for space</a></li>
 <li><a href="https://www.microchip.com/en-us/products/fpgas-and-plds" target="_blank">Microchip — PolarFire FPGAs for space</a></li>
 </ul>
+
+<h3>Memory Technology References</h3>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Dynamic_random-access_memory" target="_blank">Wikipedia — Dynamic RAM (DRAM)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Static_random-access_memory" target="_blank">Wikipedia — Static RAM (SRAM)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Video_random-access_memory" target="_blank">Wikipedia — Video RAM (VRAM)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Non-volatile_memory" target="_blank">Wikipedia — Non-Volatile Memory (NVM)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Ferroelectric_RAM" target="_blank">Wikipedia — Ferroelectric RAM (FRAM)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Magnetoresistive_random-access_memory" target="_blank">Wikipedia — Magnetoresistive RAM (MRAM)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/DDR_SDRAM" target="_blank">Wikipedia — DDR SDRAM (generations &amp; evolution)</a></li>
+<li><a href="https://www.jedec.org/standards-documents/focus/memory" target="_blank">JEDEC — Memory device standards (DDR, LPDDR, GDDR)</a></li>
+<li><a href="https://www.fujitsu.com/global/products/devices/semiconductor/memory/fram/" target="_blank">Fujitsu — FRAM product page &amp; technical documentation</a></li>
+<li><a href="https://www.everspin.com/product-catalog" target="_blank">Everspin — MRAM &amp; STT-MRAM product catalog</a></li>
+<li><a href="https://www.infineon.com/cms/en/product/memories/fram/" target="_blank">Infineon — FRAM memory portfolio</a></li>
+<li><a href="https://www.nasa.gov/smallsat-institute/sst-soa/soa-cdh/" target="_blank">NASA SmallSat SOA — Memory technologies for spacecraft</a></li>
+</ul>
 <hr>
 <p style="font-size:0.85em;color:var(--note)">These resources complement the content on this page and provide deeper dives into processor architectures, memory technologies, data bus standards, and flight software design.</p>
 </section>
@@ -1876,25 +1928,11 @@ btn.onclick=()=>{document.body.classList.toggle('dark');const isDark=document.bo
 })();
 </script>
 
-<!-- ===== SEARCH SCRIPT ===== -->
-<script>
-(function(){
-  var input = document.getElementById('search-input');
-  if (!input) return;
-  input.addEventListener('input', function(){
-    var q = this.value.toLowerCase().trim();
-    document.querySelectorAll('.section-card').forEach(function(el){
-      var text = el.textContent.toLowerCase();
-      var match = !q || text.includes(q);
-      el.style.display = match ? '' : 'none';
-    });
-  });
-})();
-</script>
+
 
 <!-- ===== FEEDBACK FOOTER ===== -->
 <div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; text-align: center; background: var(--bg-color, #f8f9fa); padding: 8px 20px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); font-size: 14px;">
-  Got feedback? <a href="https://github.com/avivfaraj/spacecraft-101-site/issues/new" target="_blank" style="color: var(--primary-color, #007bff); font-weight: 600;">Open an issue</a>
+  Got feedback? <a href="https://github.com/Shmurda7/spacecraft-101-site/issues/new" target="_blank" style="color: var(--primary-color, #007bff); font-weight: 600;">Open an issue</a>
 </div>
 <!-- ===== END BODY ===== -->
 </body>
